@@ -1038,8 +1038,20 @@
             align-items: center;
         }
 
+        .report-subline {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 8px;
+        }
+
         .report-meta {
+            display: flex;
             gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            color: var(--text-secondary);
         }
 
         .report-status {
@@ -1086,7 +1098,7 @@
                     📅 <span id="currentDate"></span>
                 </div>
                 <button class="btn btn-outline" onclick="openSettings()">⚙️</button>
-                <button class="btn btn-success" onclick="downloadWeeklyExcel()">📥 Excel Mingguan</button>
+                <button class="btn btn-success" onclick="downloadRangeExcel()">📥 Excel Rentang</button>
             </div>
         </header>
 
@@ -1140,6 +1152,12 @@
                         <button class="btn btn-outline btn-sm" onclick="changeReportDateOffset(-1)">← Kemarin</button>
                         <input type="date" class="form-control" id="reportDatePicker" onchange="changeReportDate(this.value)">
                         <button class="btn btn-outline btn-sm" onclick="changeReportDateOffset(1)">Besok →</button>
+                    </div>
+                    <div class="date-filter" style="margin-top:10px; gap:10px; align-items:center;">
+                        <label style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Dari</label>
+                        <input type="date" class="form-control" id="exportStartDatePicker" onchange="changeExportStartDate(this.value)">
+                        <label style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Sampai</label>
+                        <input type="date" class="form-control" id="exportEndDatePicker" onchange="changeExportEndDate(this.value)">
                     </div>
                 </div>
                 <div class="filter-group" id="reportFilterGroup"></div>
@@ -1256,11 +1274,15 @@
         let currentImage = '';
         let currentFilter = 'all';
         let selectedReportDate = new Date().toISOString().split('T')[0];
+        let exportStartDate = new Date().toISOString().split('T')[0];
+        let exportEndDate = new Date().toISOString().split('T')[0];
 
         // ==================== INIT ====================
         function init() {
             setCurrentDate();
             document.getElementById('reportDatePicker').value = selectedReportDate;
+            document.getElementById('exportStartDatePicker').value = exportStartDate;
+            document.getElementById('exportEndDatePicker').value = exportEndDate;
             renderTeamGrid();
             renderReportFilters();
             renderReports();
@@ -1278,8 +1300,8 @@
         // ==================== TEAM GRID ====================
         function renderTeamGrid() {
             const grid = document.getElementById('teamGrid');
-            const todayStr = new Date().toDateString();
-            const todayCount = reports.filter(r => new Date(r.date).toDateString() === todayStr);
+            const selectedDateStr = new Date(selectedReportDate).toDateString();
+            const todayCount = reports.filter(r => new Date(r.date).toDateString() === selectedDateStr);
 
             grid.innerHTML = team.map((member, i) => {
                 const count = todayCount.filter(r => r.memberIndex === i).length;
@@ -1568,16 +1590,16 @@
                         <div class="report-top">
                             <div>
                                 <div class="report-name">${member.name}</div>
-                                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;">
+                                <div class="report-subline">
                                     <span class="badge badge-blue">${member.role}</span>
+                                    ${r.status ? `<span class="report-status ${statusClass}">${r.status}</span>` : ''}
                                 </div>
                             </div>
                             <div class="report-date">🕐 ${time} • ${dateShort}</div>
                         </div>
                         <div class="report-task">🔧 <strong>${r.task}</strong></div>
                         <div class="report-meta">
-                                        <div class="report-meta-item"><span>📍</span> ${r.location}</div>
-                            <div class="report-meta-item report-status ${statusClass}">⏱️ ${r.status}</div>
+                            <div class="report-meta-item"><span>📍</span> ${r.location}</div>
                         </div>
                         ${r.notes ? `<div class="report-notes">💬 ${r.notes}</div>` : ''}
                         ${imageHtml}
@@ -1659,6 +1681,16 @@
             updateStats();
         }
 
+        function changeExportStartDate(dateValue) {
+            if (!dateValue) return;
+            exportStartDate = dateValue;
+        }
+
+        function changeExportEndDate(dateValue) {
+            if (!dateValue) return;
+            exportEndDate = dateValue;
+        }
+
         // ==================== STATS ====================
         function updateStats() {
             const selectedDate = new Date(selectedReportDate);
@@ -1677,24 +1709,28 @@
         }
 
         // ==================== EXPORT EXCEL ====================
-        function downloadWeeklyExcel() {
-            const endDate = new Date(selectedReportDate);
-            const startDate = new Date(endDate);
-            startDate.setDate(endDate.getDate() - 6);
+        function downloadRangeExcel() {
+            const startDate = new Date(exportStartDate);
+            const endDate = new Date(exportEndDate);
 
-            const weeklyData = reports.filter(r => {
-                const reportDate = new Date(r.date);
+            if (endDate < startDate) {
+                showToast('❌ Rentang tanggal tidak valid!', 'error');
+                return;
+            }
+
+            const rangeData = reports.filter(r => {
+                const reportDate = new Date(new Date(r.date).toDateString());
                 return reportDate >= startDate && reportDate <= endDate;
             });
 
-            if (weeklyData.length === 0) {
-                showToast('❌ Belum ada data untuk minggu ini!', 'error');
+            if (rangeData.length === 0) {
+                showToast('❌ Belum ada data untuk rentang tanggal ini!', 'error');
                 return;
             }
 
             let csv = 'No,Tanggal,Jam,Nama,Jabatan,Status,Pekerjaan,Lokasi,Catatan\n';
 
-            weeklyData.forEach((r, i) => {
+            rangeData.forEach((r, i) => {
                 const date = new Date(r.date);
                 const dateStr = date.toLocaleDateString('id-ID');
                 const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -1709,11 +1745,11 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Laporan_Mingguan_${startDate.toLocaleDateString('id-ID')}_sampai_${endDate.toLocaleDateString('id-ID')}.csv`;
+            link.download = `Laporan_${exportStartDate}_sampai_${exportEndDate}.csv`;
             link.click();
             URL.revokeObjectURL(url);
 
-            showToast('📥 File Excel mingguan berhasil didownload!', 'success');
+            showToast('📥 File Excel berhasil didownload!', 'success');
         }
 
         // ==================== IMAGE VIEWER ====================
