@@ -1,0 +1,19 @@
+{
+  "name": "hrga-team-dashboard",
+  "version": "1.0.0",
+  "description": "Team Work Dashboard with Database Sync",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["team", "dashboard", "reports"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  }
+}

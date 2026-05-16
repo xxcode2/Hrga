@@ -1148,12 +1148,7 @@
                     <div class="section-title" style="margin-bottom:0">
                         <span>📋</span> Laporan Per Tanggal
                     </div>
-                    <div class="date-filter">
-                        <button class="btn btn-outline btn-sm" onclick="changeReportDateOffset(-1)">← Kemarin</button>
-                        <input type="date" class="form-control" id="reportDatePicker" onchange="changeReportDate(this.value)">
-                        <button class="btn btn-outline btn-sm" onclick="changeReportDateOffset(1)">Besok →</button>
-                    </div>
-                    <div class="date-filter" style="margin-top:10px; gap:10px; align-items:center;">
+                    <div class="date-filter" style="gap:10px; align-items:center;">
                         <label style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Dari</label>
                         <input type="date" class="form-control" id="exportStartDatePicker" onchange="changeExportStartDate(this.value)">
                         <label style="font-size:12px; color:var(--text-muted); white-space:nowrap;">Sampai</label>
@@ -1256,6 +1251,14 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
+        // ==================== API CONFIG ====================
+        const API_BASE_URL = window.location.origin.includes('localhost') 
+            ? 'http://localhost:3000/api' 
+            : '/api';
+        
+        let isOnline = navigator.onLine;
+        let isSyncing = false;
+
         // ==================== DATA ====================
         const defaultTeam = [
             { name: 'Ahmad Fauzi', role: 'Teknisi AC', image: '' },
@@ -1273,14 +1276,137 @@
         let currentMemberIndex = 0;
         let currentImage = '';
         let currentFilter = 'all';
-        let selectedReportDate = new Date().toISOString().split('T')[0];
         let exportStartDate = new Date().toISOString().split('T')[0];
         let exportEndDate = new Date().toISOString().split('T')[0];
+
+        // ==================== NETWORK DETECTION ====================
+        window.addEventListener('online', () => {
+            isOnline = true;
+            showToast('🟢 Terhubung ke server!', 'success');
+            syncWithServer();
+        });
+
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            showToast('🔴 Offline - data disimpan lokal', 'info');
+        });
+
+        // ==================== API SYNC FUNCTIONS ====================
+        async function syncWithServer() {
+            if (!isOnline || isSyncing) return;
+            isSyncing = true;
+
+            try {
+                // Check if server is available
+                const healthResponse = await fetch(`${API_BASE_URL}/health`);
+                if (!healthResponse.ok) throw new Error('Server not available');
+
+                // Push local data to server
+                await pushToServer();
+
+                // Pull latest data from server
+                await pullFromServer();
+
+                showToast('✅ Sinkronisasi berhasil!', 'success');
+            } catch (error) {
+                console.error('Sync error:', error);
+                showToast('⚠️ Sinkronisasi offline - akan coba ulang', 'info');
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        async function pushToServer() {
+            try {
+                // Push team data
+                for (let i = 0; i < team.length; i++) {
+                    const member = team[i];
+                    await fetch(`${API_BASE_URL}/teams`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            member_index: i,
+                            name: member.name,
+                            role: member.role,
+                            image: member.image || null
+                        })
+                    });
+                }
+
+                // Push reports data
+                for (const report of reports) {
+                    await fetch(`${API_BASE_URL}/reports`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id: report.id,
+                            member_index: report.memberIndex,
+                            task: report.task,
+                            location: report.location,
+                            status: report.status,
+                            notes: report.notes,
+                            image: report.image,
+                            date: report.date
+                        })
+                    });
+                }
+            } catch (error) {
+                console.error('Push error:', error);
+            }
+        }
+
+        async function pullFromServer() {
+            try {
+                // Get data from server
+                const response = await fetch(`${API_BASE_URL}/sync`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+
+                const serverData = await response.json();
+
+                // Update teams
+                if (serverData.teams && serverData.teams.length > 0) {
+                    serverData.teams.forEach(serverTeam => {
+                        if (team[serverTeam.member_index]) {
+                            team[serverTeam.member_index].name = serverTeam.name;
+                            team[serverTeam.member_index].role = serverTeam.role;
+                            if (serverTeam.image) {
+                                team[serverTeam.member_index].image = serverTeam.image;
+                            }
+                        }
+                    });
+                    localStorage.setItem('teamData', JSON.stringify(team));
+                }
+
+                // Update reports
+                if (serverData.reports && serverData.reports.length > 0) {
+                    // Convert server format to local format
+                    reports = serverData.reports.map(r => ({
+                        id: r.id,
+                        memberIndex: r.member_index,
+                        task: r.task,
+                        location: r.location,
+                        status: r.status,
+                        notes: r.notes,
+                        image: r.image,
+                        date: r.created_at
+                    }));
+                    localStorage.setItem('reportsData', JSON.stringify(reports));
+                }
+
+                // Refresh UI
+                renderTeamGrid();
+                renderReportFilters();
+                renderReports();
+                renderHistory();
+                updateStats();
+            } catch (error) {
+                console.error('Pull error:', error);
+            }
+        }
 
         // ==================== INIT ====================
         function init() {
             setCurrentDate();
-            document.getElementById('reportDatePicker').value = selectedReportDate;
             document.getElementById('exportStartDatePicker').value = exportStartDate;
             document.getElementById('exportEndDatePicker').value = exportEndDate;
             renderTeamGrid();
@@ -1289,6 +1415,18 @@
             renderHistory();
             updateStats();
             setupUploadArea();
+
+            // Initial sync if online
+            if (isOnline) {
+                syncWithServer();
+            }
+
+            // Sync periodically every 30 seconds
+            setInterval(() => {
+                if (isOnline && !isSyncing) {
+                    syncWithServer();
+                }
+            }, 30000);
         }
 
         function setCurrentDate() {
@@ -1347,10 +1485,7 @@
                 <div class="setup-item">
                     <label>Anggota ${i + 1}</label>
                     <input type="text" class="form-control" id="setupName${i}" value="${member.name}" placeholder="Nama" style="margin-bottom:8px">
-                    <input type="text" class="form-control" id="setupRole${i}" value="${member.role}" placeholder="Role/Jabatan" style="margin-bottom:8px">
-                    <label>Foto Profil</label>
-                    <input type="file" class="form-control" id="setupPhoto${i}" accept="image/*" onchange="previewSetupPhoto(${i})" style="padding:8px">
-                    ${member.image ? `<img src="${member.image}" style="width:40px;height:40px;border-radius:50%;margin-top:8px;object-fit:cover">` : ''}
+                    <input type="text" class="form-control" id="setupRole${i}" value="${member.role}" placeholder="Role/Jabatan">
                 </div>
             `).join('');
             document.getElementById('settingsModal').classList.add('active');
@@ -1360,23 +1495,29 @@
             document.getElementById('settingsModal').classList.remove('active');
         }
 
-        async function previewSetupPhoto(index) {
-            const file = document.getElementById(`setupPhoto${index}`).files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    team[index].image = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
         function saveSettings() {
             team.forEach((member, i) => {
                 member.name = document.getElementById(`setupName${i}`).value || member.name;
                 member.role = document.getElementById(`setupRole${i}`).value || member.role;
             });
             localStorage.setItem('teamData', JSON.stringify(team));
+
+            // Sync to server if online
+            if (isOnline) {
+                team.forEach((member, i) => {
+                    fetch(`${API_BASE_URL}/teams`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            member_index: i,
+                            name: member.name,
+                            role: member.role,
+                            image: member.image || null
+                        })
+                    }).catch(error => console.error('Failed to sync team:', error));
+                });
+            }
+
             closeSettings();
             renderTeamGrid();
             renderReportFilters();
@@ -1477,6 +1618,24 @@
             reports.unshift(report);
             localStorage.setItem('reportsData', JSON.stringify(reports));
 
+            // Sync to server if online
+            if (isOnline) {
+                fetch(`${API_BASE_URL}/reports`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: report.id,
+                        member_index: report.memberIndex,
+                        task: report.task,
+                        location: report.location,
+                        status: report.status,
+                        notes: report.notes,
+                        image: report.image,
+                        date: report.date
+                    })
+                }).catch(error => console.error('Failed to sync report:', error));
+            }
+
             closeModal();
             renderTeamGrid();
             renderReports();
@@ -1508,9 +1667,13 @@
         // ==================== RENDER REPORTS ====================
         function renderReports(filter = 'all') {
             const container = document.getElementById('todayReports');
-            const selectedDate = new Date(selectedReportDate);
-            const selectedDateStr = selectedDate.toDateString();
-            let filtered = reports.filter(r => new Date(r.date).toDateString() === selectedDateStr);
+            const startDate = new Date(exportStartDate);
+            const endDate = new Date(exportEndDate);
+            
+            let filtered = reports.filter(r => {
+                const reportDate = new Date(new Date(r.date).toDateString());
+                return reportDate >= startDate && reportDate <= endDate;
+            });
 
             if (filter !== 'all') {
                 filtered = filtered.filter(r => r.memberIndex === parseInt(filter));
@@ -1520,8 +1683,8 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📭</div>
-                        <h3>Belum ada laporan untuk tanggal ini</h3>
-                        <p>Pilih tanggal di atas untuk melihat laporan kemarin atau sebelumnya.</p>
+                        <h3>Belum ada laporan untuk rentang tanggal ini</h3>
+                        <p>Tambahkan laporan atau ubah rentang tanggal di atas.</p>
                     </div>
                 `;
                 return;
@@ -1615,6 +1778,13 @@
             if (confirm('Yakin hapus laporan ini?')) {
                 reports = reports.filter(r => r.id !== id);
                 localStorage.setItem('reportsData', JSON.stringify(reports));
+
+                // Sync delete to server if online
+                if (isOnline) {
+                    fetch(`${API_BASE_URL}/reports/${id}`, { method: 'DELETE' })
+                        .catch(error => console.error('Failed to delete report on server:', error));
+                }
+
                 renderReports(currentFilter);
                 renderHistory();
                 renderTeamGrid();
@@ -1664,42 +1834,33 @@
             if (tab === 'history') renderHistory();
         }
 
-        function changeReportDate(dateValue) {
-            if (!dateValue) return;
-            selectedReportDate = dateValue;
-            document.getElementById('reportDatePicker').value = selectedReportDate;
-            renderReports(currentFilter);
-            updateStats();
-        }
-
-        function changeReportDateOffset(offset) {
-            const current = new Date(selectedReportDate);
-            current.setDate(current.getDate() + offset);
-            selectedReportDate = current.toISOString().split('T')[0];
-            document.getElementById('reportDatePicker').value = selectedReportDate;
-            renderReports(currentFilter);
-            updateStats();
-        }
-
         function changeExportStartDate(dateValue) {
             if (!dateValue) return;
             exportStartDate = dateValue;
+            renderReports(currentFilter);
+            updateStats();
         }
 
         function changeExportEndDate(dateValue) {
             if (!dateValue) return;
             exportEndDate = dateValue;
+            renderReports(currentFilter);
+            updateStats();
         }
 
         // ==================== STATS ====================
         function updateStats() {
-            const selectedDate = new Date(selectedReportDate);
-            const selectedDateStr = selectedDate.toDateString();
-            const selectedDateReports = reports.filter(r => new Date(r.date).toDateString() === selectedDateStr);
+            const startDate = new Date(exportStartDate);
+            const endDate = new Date(exportEndDate);
+            
+            const rangeReports = reports.filter(r => {
+                const reportDate = new Date(new Date(r.date).toDateString());
+                return reportDate >= startDate && reportDate <= endDate;
+            });
 
-            document.getElementById('statToday').textContent = selectedDateReports.length;
+            document.getElementById('statToday').textContent = rangeReports.length;
 
-            const activeMembers = new Set(selectedDateReports.map(r => r.memberIndex));
+            const activeMembers = new Set(rangeReports.map(r => r.memberIndex));
             document.getElementById('statActive').textContent = `${activeMembers.size}/${team.length}`;
 
             const withImages = reports.filter(r => r.image).length;
