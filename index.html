@@ -1079,11 +1079,7 @@
                     <span>📋</span> Laporan Hari Ini
                 </div>
                 <div class="filter-group">
-                    <button class="filter-btn active" onclick="filterReports('all', this)">Semua</button>
-                    <button class="filter-btn" onclick="filterReports('0', this)">Tim 1</button>
-                    <button class="filter-btn" onclick="filterReports('1', this)">Tim 2</button>
-                    <button class="filter-btn" onclick="filterReports('2', this)">Tim 3</button>
-                    <button class="filter-btn" onclick="filterReports('3', this)">Tim 4</button>
+                        <div class="filter-group" id="reportFilterGroup"></div>
                 </div>
             </div>
             <div class="reports-list" id="todayReports"></div>
@@ -1118,7 +1114,16 @@
                     <input type="text" class="form-control" id="inputLocation" placeholder="Contoh: Gedung A, Lantai 2...">
                 </div>
                 <div class="form-group">
-                    <label>📝 Catatan Tambahan</label>
+                    <label>� Status Pekerjaan</label>
+                    <select class="form-control" id="inputStatus">
+                        <option value="" disabled selected>Pilih status pekerjaan</option>
+                        <option value="Dalam Proses">Dalam Proses</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Menunggu">Menunggu</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>�📝 Catatan Tambahan</label>
                     <textarea class="form-control" id="inputNotes" placeholder="Tambahkan catatan jika perlu..."></textarea>
                 </div>
                 <div class="form-group">
@@ -1189,6 +1194,7 @@
         function init() {
             setCurrentDate();
             renderTeamGrid();
+            renderReportFilters();
             renderReports();
             renderHistory();
             updateStats();
@@ -1232,6 +1238,7 @@
             document.getElementById('modalTitle').innerHTML = `📝 ${team[index].name}`;
             document.getElementById('inputTask').value = '';
             document.getElementById('inputLocation').value = '';
+            document.getElementById('inputStatus').value = '';
             document.getElementById('inputNotes').value = '';
             currentImage = '';
             document.getElementById('uploadPreview').style.display = 'none';
@@ -1282,7 +1289,8 @@
             localStorage.setItem('teamData', JSON.stringify(team));
             closeSettings();
             renderTeamGrid();
-            renderReports();
+            renderReportFilters();
+            renderReports(currentFilter);
             renderHistory();
             showToast('✅ Pengaturan berhasil disimpan!', 'success');
         }
@@ -1347,6 +1355,7 @@
         function submitReport() {
             const task = document.getElementById('inputTask').value.trim();
             const location = document.getElementById('inputLocation').value.trim();
+            const status = document.getElementById('inputStatus').value;
             const notes = document.getElementById('inputNotes').value.trim();
 
             if (!task) {
@@ -1359,11 +1368,17 @@
                 return;
             }
 
+            if (!status) {
+                showToast('❌ Status pekerjaan harus dipilih!', 'error');
+                return;
+            }
+
             const report = {
                 id: Date.now(),
                 memberIndex: currentMemberIndex,
                 task,
                 location,
+                status,
                 notes,
                 image: currentImage,
                 date: new Date().toISOString()
@@ -1378,6 +1393,26 @@
             renderHistory();
             updateStats();
             showToast('🎉 Laporan berhasil dikirim!', 'success');
+        }
+
+        // ==================== FILTER BUTTONS ====================
+        function renderReportFilters() {
+            const filterGroup = document.getElementById('reportFilterGroup');
+            filterGroup.innerHTML = '';
+
+            const allBtn = document.createElement('button');
+            allBtn.className = currentFilter === 'all' ? 'filter-btn active' : 'filter-btn';
+            allBtn.textContent = 'Semua';
+            allBtn.onclick = function() { filterReports('all', allBtn); };
+            filterGroup.appendChild(allBtn);
+
+            team.forEach((member, index) => {
+                const btn = document.createElement('button');
+                btn.className = currentFilter === index.toString() ? 'filter-btn active' : 'filter-btn';
+                btn.textContent = member.name;
+                btn.onclick = function() { filterReports(index.toString(), btn); };
+                filterGroup.appendChild(btn);
+            });
         }
 
         // ==================== RENDER REPORTS ====================
@@ -1446,6 +1481,7 @@
                 ? `<img src="${member.image}" alt="${member.name}">`
                 : initials;
 
+            const statusBadge = r.status ? `<span class="badge badge-green">${r.status}</span>` : '';
             let imageHtml = '';
             if (r.image) {
                 imageHtml = `
@@ -1463,7 +1499,10 @@
                         <div class="report-top">
                             <div>
                                 <div class="report-name">${member.name}</div>
-                                <span class="badge badge-blue">${member.role}</span>
+                                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;">
+                                    <span class="badge badge-blue">${member.role}</span>
+                                    ${statusBadge}
+                                </div>
                             </div>
                             <div class="report-date">🕐 ${time} • ${dateShort}</div>
                         </div>
@@ -1549,7 +1588,7 @@
             }
 
             // CSV Header
-            let csv = 'No,Tanggal,Jam,Nama,Jabatan,Pekerjaan,Lokasi,Catatan\n';
+            let csv = 'No,Tanggal,Jam,Nama,Jabatan,Status,Pekerjaan,Lokasi,Catatan\n';
 
             reports.forEach((r, i) => {
                 const date = new Date(r.date);
@@ -1557,7 +1596,8 @@
                 const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
                 const member = team[r.memberIndex] || { name: 'Unknown', role: '' };
 
-                csv += `${i + 1},"${dateStr}","${timeStr}","${member.name}","${member.role}","${r.task}","${r.location}","${r.notes || '-'}"\n`;
+                csv += `${i + 1},"${dateStr}","${timeStr}","${member.name}","${member.role}","${r.status || '-'}",` +
+                       `"${r.task}","${r.location}","${r.notes || '-'}"\n`;
             });
 
             // Download CSV
