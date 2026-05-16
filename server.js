@@ -29,6 +29,46 @@ startServer();
 
 // ==================== TEAMS ENDPOINTS ====================
 
+// Default teams data
+const defaultTeam = [
+  { name: 'Ahmad Fauzi', role: 'Teknisi AC', image: '' },
+  { name: 'Budi Santoso', role: 'Teknisi Listrik', image: '' },
+  { name: 'Citra Dewi', role: 'Admin Lapangan', image: '' },
+  { name: 'Dian Pratama', role: 'Supervisor', image: '' },
+  { name: 'Eka Prasetya', role: 'Teknisi Pendingin', image: '' },
+  { name: 'Fitri Yulia', role: 'Teknisi Jaringan', image: '' },
+  { name: 'Gilang Haryanto', role: 'Teknisi AC', image: '' },
+  { name: 'Hana Salsabila', role: 'Koordinator Lapangan', image: '' }
+];
+
+// Initialize default teams if empty
+async function initializeDefaultTeams() {
+  try {
+    const result = await pool.query('SELECT COUNT(*) FROM teams');
+    const count = parseInt(result.rows[0].count);
+    
+    if (count === 0) {
+      console.log('📝 Initializing default teams...');
+      for (let i = 0; i < defaultTeam.length; i++) {
+        const team = defaultTeam[i];
+        await pool.query(
+          `INSERT INTO teams (member_index, name, role, image)
+           VALUES ($1, $2, $3, $4)
+           ON CONFLICT (member_index) DO NOTHING`,
+          [i, team.name, team.role, team.image || null]
+        );
+      }
+      console.log('✅ Default teams initialized');
+    }
+  } catch (error) {
+    console.error('Error initializing default teams:', error);
+  }
+}
+
+// Initialize default teams on startup
+setInterval(initializeDefaultTeams, 60000); // Check every minute
+initializeDefaultTeams(); // Also check on startup
+
 // GET all teams
 app.get('/api/teams', async (req, res) => {
   try {

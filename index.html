@@ -1130,7 +1130,6 @@
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('team')">👥 Tim</button>
             <button class="tab-btn" onclick="switchTab('reports')">📋 Laporan</button>
-            <button class="tab-btn" onclick="switchTab('history')">📜 Riwayat</button>
         </div>
 
         <!-- Tab: Team -->
@@ -1158,17 +1157,6 @@
                 <div class="filter-group" id="reportFilterGroup"></div>
             </div>
             <div class="reports-list" id="todayReports"></div>
-        </div>
-
-        <!-- Tab: History -->
-        <div class="tab-content" id="tab-history">
-            <div class="reports-header">
-                <div class="section-title" style="margin-bottom:0">
-                    <span>📜</span> Riwayat Semua Laporan
-                </div>
-                <button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑️ Hapus Semua</button>
-            </div>
-            <div class="reports-list" id="historyReports"></div>
         </div>
     </div>
 
@@ -1363,23 +1351,18 @@
 
                 const serverData = await response.json();
 
-                // Update teams
-                if (serverData.teams && serverData.teams.length > 0) {
-                    serverData.teams.forEach(serverTeam => {
-                        if (team[serverTeam.member_index]) {
-                            team[serverTeam.member_index].name = serverTeam.name;
-                            team[serverTeam.member_index].role = serverTeam.role;
-                            if (serverTeam.image) {
-                                team[serverTeam.member_index].image = serverTeam.image;
-                            }
-                        }
-                    });
+                // Update teams - ALWAYS update from server (even if empty initially)
+                if (serverData.teams && Array.isArray(serverData.teams)) {
+                    team = serverData.teams.map(st => ({
+                        name: st.name,
+                        role: st.role,
+                        image: st.image || ''
+                    }));
                     localStorage.setItem('teamData', JSON.stringify(team));
                 }
 
                 // Update reports
-                if (serverData.reports && serverData.reports.length > 0) {
-                    // Convert server format to local format
+                if (serverData.reports && Array.isArray(serverData.reports)) {
                     reports = serverData.reports.map(r => ({
                         id: r.id,
                         memberIndex: r.member_index,
@@ -1397,7 +1380,6 @@
                 renderTeamGrid();
                 renderReportFilters();
                 renderReports();
-                renderHistory();
                 updateStats();
             } catch (error) {
                 console.error('Pull error:', error);
@@ -1412,7 +1394,6 @@
             renderTeamGrid();
             renderReportFilters();
             renderReports();
-            renderHistory();
             updateStats();
             setupUploadArea();
 
@@ -1502,10 +1483,24 @@
             });
             localStorage.setItem('teamData', JSON.stringify(team));
 
-            // Sync to server if online
+            // Sync to server immediately
             if (isOnline) {
-                team.forEach((member, i) => {
-                    fetch(`${API_BASE_URL}/teams`, {
+                syncTeamsToServer();
+            }
+
+            closeSettings();
+            renderTeamGrid();
+            renderReportFilters();
+            renderReports(currentFilter);
+            updateStats();
+            showToast('✅ Pengaturan berhasil disimpan!', 'success');
+        }
+
+        async function syncTeamsToServer() {
+            try {
+                for (let i = 0; i < team.length; i++) {
+                    const member = team[i];
+                    await fetch(`${API_BASE_URL}/teams`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -1514,16 +1509,12 @@
                             role: member.role,
                             image: member.image || null
                         })
-                    }).catch(error => console.error('Failed to sync team:', error));
-                });
+                    });
+                }
+                console.log('✅ Teams synced to server');
+            } catch (error) {
+                console.error('Error syncing teams:', error);
             }
-
-            closeSettings();
-            renderTeamGrid();
-            renderReportFilters();
-            renderReports(currentFilter);
-            renderHistory();
-            showToast('✅ Pengaturan berhasil disimpan!', 'success');
         }
 
         // ==================== UPLOAD ====================
@@ -1618,7 +1609,14 @@
             reports.unshift(report);
             localStorage.setItem('reportsData', JSON.stringify(reports));
 
-            // Sync to server if online
+            // Show success immediately (before sync)
+            showToast('🎉 Laporan berhasil dikirim!', 'success');
+            closeModal();
+            renderTeamGrid();
+            renderReports();
+            updateStats();
+
+            // Sync to server if online (async, non-blocking)
             if (isOnline) {
                 fetch(`${API_BASE_URL}/reports`, {
                     method: 'POST',
@@ -1635,13 +1633,6 @@
                     })
                 }).catch(error => console.error('Failed to sync report:', error));
             }
-
-            closeModal();
-            renderTeamGrid();
-            renderReports();
-            renderHistory();
-            updateStats();
-            showToast('🎉 Laporan berhasil dikirim!', 'success');
         }
 
         // ==================== FILTER BUTTONS ====================
@@ -1691,39 +1682,6 @@
             }
 
             container.innerHTML = filtered.map(r => createReportCard(r)).join('');
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('historyReports');
-
-            if (reports.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📜</div>
-                        <h3>Belum ada riwayat</h3>
-                        <p>Semua laporan akan muncul di sini</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Group by date
-            const grouped = {};
-            reports.forEach(r => {
-                const dateStr = new Date(r.date).toLocaleDateString('id-ID', {
-                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-                });
-                if (!grouped[dateStr]) grouped[dateStr] = [];
-                grouped[dateStr].push(r);
-            });
-
-            let html = '';
-            for (const [date, items] of Object.entries(grouped)) {
-                html += `<div class="section-title" style="margin-top:20px"><span>📅</span> ${date}</div>`;
-                html += items.map(r => createReportCard(r)).join('');
-            }
-
-            container.innerHTML = html;
         }
 
         function createReportCard(r) {
@@ -1830,8 +1788,9 @@
             event.target.classList.add('active');
             document.getElementById(`tab-${tab}`).classList.add('active');
 
-            if (tab === 'reports') renderReports(currentFilter);
-            if (tab === 'history') renderHistory();
+            if (tab === 'reports') {
+                renderReports(currentFilter);
+            }
         }
 
         function changeExportStartDate(dateValue) {
