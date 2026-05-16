@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" },
+    { "src": "index.html", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/health",      "dest": "/api/health.js" },
+    { "src": "/api/sync",        "dest": "/api/sync.js" },
+    { "src": "/api/teams",       "dest": "/api/teams.js" },
+    { "src": "/api/reports(.*)", "dest": "/api/reports.js" },
+    { "src": "/(.*)",            "dest": "/index.html" }
+  ]
+}

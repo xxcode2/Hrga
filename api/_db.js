@@ -1,16 +1,20 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+// api/_db.js - shared database connection untuk Vercel serverless functions
+// File ini di-import oleh semua handler di folder api/
 
+const { Pool } = require('pg');
+
+// Gunakan connection string dari env
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  max: 1,              // serverless: minimal connection
+  idleTimeoutMillis: 10000,
+  connectionTimeoutMillis: 5000
 });
 
-async function initializeDatabase() {
+async function initDb() {
   const client = await pool.connect();
   try {
-    console.log('🔧 Initializing database schema...');
-
     await client.query(`
       CREATE TABLE IF NOT EXISTS teams (
         id SERIAL PRIMARY KEY,
@@ -22,8 +26,6 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Teams table ready');
-
     await client.query(`
       CREATE TABLE IF NOT EXISTS reports (
         id BIGINT PRIMARY KEY,
@@ -36,22 +38,13 @@ async function initializeDatabase() {
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    console.log('✅ Reports table ready');
-
     await client.query(`CREATE INDEX IF NOT EXISTS idx_reports_member ON reports(member_index);`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_reports_date ON reports(created_at);`);
-
-    console.log('✅ Database initialization complete!');
-  } catch (error) {
-    if (error.code === '42P07' || error.message.includes('already exists')) {
-      console.log('✅ Tables already exist');
-    } else {
-      console.error('❌ Database initialization error:', error.message);
-      throw error;
-    }
+  } catch (e) {
+    if (!e.message.includes('already exists')) throw e;
   } finally {
     client.release();
   }
 }
 
-module.exports = { pool, initializeDatabase };
+module.exports = { pool, initDb };

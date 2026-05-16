@@ -59,7 +59,7 @@
             padding: 24px 20px;
         }
 
-        /* ===== HEADER ===== */
+        /* HEADER */
         .header {
             display: flex;
             justify-content: space-between;
@@ -68,7 +68,6 @@
             gap: 16px;
             flex-wrap: wrap;
         }
-
         .header-left h1 {
             font-size: 26px;
             font-weight: 800;
@@ -78,19 +77,8 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .header-left p {
-            font-size: 13px;
-            color: var(--text3);
-            margin-top: 5px;
-        }
-
-        .header-right {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        .header-left p { font-size: 13px; color: var(--text3); margin-top: 5px; }
+        .header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
         .date-chip {
             background: var(--card);
@@ -115,23 +103,21 @@
             border-radius: 40px;
             background: var(--card);
             border: 1px solid var(--border);
+            cursor: pointer;
         }
-
         .sync-dot {
-            width: 7px;
-            height: 7px;
+            width: 7px; height: 7px;
             border-radius: 50%;
             background: var(--text3);
             flex-shrink: 0;
         }
-
-        .sync-dot.online { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .sync-dot.online  { background: var(--green); box-shadow: 0 0 6px var(--green); }
         .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
         .sync-dot.offline { background: var(--red); }
 
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
+            50%       { opacity: 0.5; transform: scale(0.8); }
         }
 
         .btn {
@@ -148,48 +134,23 @@
             gap: 7px;
             white-space: nowrap;
         }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-            box-shadow: 0 4px 18px var(--accent-glow);
-        }
-
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 18px var(--accent-glow); }
         .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
-
-        .btn-ghost {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text2);
-        }
-
+        .btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--text2); }
         .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-
-        .btn-green {
-            background: linear-gradient(135deg, #0fb87a, #0da068);
-            color: white;
-        }
-
+        .btn-green { background: linear-gradient(135deg, #0fb87a, #0da068); color: white; }
         .btn-green:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,216,138,0.25); }
-
-        .btn-danger {
-            background: var(--red-dim);
-            border: 1px solid rgba(240,69,69,0.2);
-            color: var(--red);
-        }
-
+        .btn-danger { background: var(--red-dim); border: 1px solid rgba(240,69,69,0.2); color: var(--red); }
         .btn-danger:hover { background: var(--red); color: white; }
-
         .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
 
-        /* ===== STATS ===== */
+        /* STATS */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 14px;
             margin-bottom: 30px;
         }
-
         .stat-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -199,37 +160,25 @@
             overflow: hidden;
             transition: border-color 0.2s, transform 0.2s;
         }
-
         .stat-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
-
-        .stat-icon {
-            font-size: 22px;
-            margin-bottom: 14px;
-            display: block;
-        }
-
+        .stat-icon { font-size: 22px; margin-bottom: 14px; display: block; }
         .stat-label { font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
-
         .stat-value { font-size: 30px; font-weight: 800; letter-spacing: -1px; }
-
         .stat-card:nth-child(1) .stat-value { color: var(--accent); }
         .stat-card:nth-child(2) .stat-value { color: var(--green); }
         .stat-card:nth-child(3) .stat-value { color: var(--amber); }
         .stat-card:nth-child(4) .stat-value { color: var(--purple); }
-
         .stat-glow {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 100px; height: 100px;
             border-radius: 50%;
             filter: blur(40px);
             opacity: 0.08;
-            top: -10px;
-            right: -10px;
+            top: -10px; right: -10px;
             pointer-events: none;
         }
 
-        /* ===== SECTION ===== */
+        /* SECTION */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -238,34 +187,16 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+        .section-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text); }
+        .section-badge { background: var(--card); border: 1px solid var(--border); color: var(--text3); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
 
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--text);
-        }
-
-        .section-badge {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text3);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 40px;
-        }
-
-        /* ===== TEAM GRID ===== */
+        /* TEAM GRID */
         .team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 16px;
             margin-bottom: 36px;
         }
-
         .team-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -277,85 +208,31 @@
             position: relative;
             overflow: hidden;
         }
-
-        .team-card:hover {
-            border-color: var(--accent);
-            background: var(--card-hover);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(45,123,244,0.15);
-        }
-
-        .team-card::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(45,123,244,0.04), transparent);
-            opacity: 0;
-            transition: opacity 0.22s;
-        }
-
+        .team-card:hover { border-color: var(--accent); background: var(--card-hover); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(45,123,244,0.15); }
+        .team-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(45,123,244,0.04), transparent); opacity: 0; transition: opacity 0.22s; }
         .team-card:hover::after { opacity: 1; }
-
-        .team-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--green));
-            opacity: 0;
-            transition: opacity 0.22s;
-        }
-
+        .team-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--green)); opacity: 0; transition: opacity 0.22s; }
         .team-card:hover::before { opacity: 1; }
 
         .team-avatar {
-            width: 76px;
-            height: 76px;
+            width: 76px; height: 76px;
             border-radius: 50%;
             margin: 0 auto 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 800;
-            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: 800; color: white;
             border: 3px solid var(--border);
             transition: border-color 0.22s;
             overflow: hidden;
             position: relative;
         }
-
         .team-card:hover .team-avatar { border-color: var(--accent); }
-
         .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        .online-dot {
-            position: absolute;
-            bottom: 3px; right: 3px;
-            width: 13px; height: 13px;
-            background: var(--green);
-            border-radius: 50%;
-            border: 2px solid var(--card);
-            box-shadow: 0 0 6px rgba(16,216,138,0.5);
-        }
+        .online-dot { position: absolute; bottom: 3px; right: 3px; width: 13px; height: 13px; background: var(--green); border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 6px rgba(16,216,138,0.5); }
 
         .team-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
         .team-role { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+        .team-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(45,123,244,0.1); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.2); padding: 5px 12px; border-radius: 40px; font-size: 11px; font-weight: 700; }
 
-        .team-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: rgba(45,123,244,0.1);
-            color: #6fa8f8;
-            border: 1px solid rgba(45,123,244,0.2);
-            padding: 5px 12px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        /* avatar colors */
         .av1 { background: linear-gradient(135deg, #2d7bf4, #1a5fd4); }
         .av2 { background: linear-gradient(135deg, #10d88a, #0aaa6e); }
         .av3 { background: linear-gradient(135deg, #f5a623, #d4841a); }
@@ -365,232 +242,125 @@
         .av7 { background: linear-gradient(135deg, #f97316, #c25810); }
         .av8 { background: linear-gradient(135deg, #60a5fa, #2563eb); }
 
-        /* ===== MODAL ===== */
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: fadeIn 0.18s ease;
-        }
-
+        /* MODAL */
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.18s ease; }
         .overlay.open { display: flex; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .modal {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            width: 100%;
-            max-width: 560px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.25s ease;
-            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 22px 26px;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s ease; box-shadow: 0 32px 80px rgba(0,0,0,0.5); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 22px 26px; border-bottom: 1px solid var(--border); }
         .modal-header h2 { font-size: 18px; font-weight: 700; }
-
-        .modal-close {
-            width: 34px; height: 34px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text2);
-            font-size: 16px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.18s;
-        }
-
+        .modal-close { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
         .modal-close:hover { background: var(--red); border-color: var(--red); color: white; }
-
         .modal-body { padding: 24px 26px; }
+        .modal-footer { padding: 18px 26px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
 
-        .modal-footer {
-            padding: 18px 26px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        /* ===== FORM ===== */
+        /* FORM */
         .form-group { margin-bottom: 18px; }
-
-        .form-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 8px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 11px 14px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--r-sm);
-            color: var(--text);
-            font-family: inherit;
-            font-size: 14px;
-            transition: border-color 0.18s, box-shadow 0.18s;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
-        }
-
+        .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: inherit; font-size: 14px; transition: border-color 0.18s, box-shadow 0.18s; }
+        .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
         .form-input::placeholder { color: var(--text3); }
-
         textarea.form-input { resize: vertical; min-height: 90px; }
+        select.form-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a647d' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
-        select.form-input {
-            appearance: none;
-            cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a647d' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-            padding-right: 36px;
-        }
-
-        /* ===== UPLOAD ===== */
-        .upload-box {
-            border: 2px dashed var(--border);
-            border-radius: var(--r);
-            padding: 28px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        /* UPLOAD */
+        .upload-box { border: 2px dashed var(--border); border-radius: var(--r); padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; }
         .upload-box:hover, .upload-box.drag { border-color: var(--accent); background: rgba(45,123,244,0.04); }
-
         .upload-icon { font-size: 36px; margin-bottom: 8px; }
         .upload-hint { font-size: 13px; color: var(--text3); }
         .upload-hint strong { color: var(--accent); }
-
         .upload-preview { display: none; margin-top: 14px; position: relative; }
         .upload-preview img { max-width: 100%; max-height: 180px; border-radius: var(--r-sm); border: 1px solid var(--border); object-fit: cover; }
-        .remove-img {
-            position: absolute;
-            top: -8px; right: -8px;
-            width: 26px; height: 26px;
-            background: var(--red);
-            border: none; border-radius: 50%;
-            color: white; font-size: 13px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .remove-img { position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; background: var(--red); border: none; border-radius: 50%; color: white; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* ===== SETTINGS GRID ===== */
-        .settings-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
+        /* SETTINGS */
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 480px) { .settings-grid { grid-template-columns: 1fr; } }
+        .settings-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px; }
+        .settings-item .member-label { font-size: 11px; color: var(--text3); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
 
-        .settings-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--r-sm);
-            padding: 14px;
-        }
-
-        .settings-item .member-label {
-            font-size: 11px;
-            color: var(--text3);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===== IMAGE VIEWER ===== */
-        .img-viewer {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.92);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-out;
-        }
-
+        /* IMAGE VIEWER */
+        .img-viewer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 2000; align-items: center; justify-content: center; cursor: zoom-out; }
         .img-viewer.open { display: flex; }
         .img-viewer img { max-width: 90%; max-height: 90vh; border-radius: var(--r); }
 
-        /* ===== TOAST ===== */
-        .toast-wrap {
-            position: fixed;
-            top: 20px; right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .toast {
-            background: var(--bg2);
-            border: 1px solid var(--border);
-            border-radius: var(--r-sm);
-            padding: 12px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-            animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
-            min-width: 260px;
-            max-width: 360px;
-        }
-
-        .toast.ok { border-left: 4px solid var(--green); }
+        /* TOAST */
+        .toast-wrap { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+        .toast { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 18px; font-size: 13px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.4); animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards; min-width: 260px; max-width: 360px; }
+        .toast.ok  { border-left: 4px solid var(--green); }
         .toast.err { border-left: 4px solid var(--red); }
         .toast.info { border-left: 4px solid var(--accent); }
-
-        @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastIn  { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
 
-        /* ===== EMPTY STATE ===== */
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text3);
-        }
-
+        /* EMPTY STATE */
+        .empty { text-align: center; padding: 60px 20px; color: var(--text3); }
         .empty-icon { font-size: 56px; margin-bottom: 14px; }
         .empty h3 { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
         .empty p { font-size: 13px; }
 
-        /* ===== SCROLLBAR ===== */
+        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
 
-        /* ===== RESPONSIVE ===== */
+        /* EXPORT BAR */
+        .export-bar { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+        .export-bar label { font-size: 12px; color: var(--text3); font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+        .export-bar .form-input { width: auto; padding: 8px 12px; font-size: 13px; }
+        .divider { width: 1px; height: 30px; background: var(--border); }
+
+        /* REPORT CARDS */
+        .reports-list { display: flex; flex-direction: column; gap: 12px; }
+        .report-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; display: flex; gap: 16px; transition: border-color 0.18s, background 0.18s; align-items: flex-start; }
+        .report-card:hover { border-color: var(--border-light); background: var(--card-hover); }
+        .rpt-avatar { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: white; flex-shrink: 0; overflow: hidden; }
+        .rpt-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .rpt-body { flex: 1; min-width: 0; }
+        .rpt-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
+        .rpt-name { font-size: 14px; font-weight: 700; }
+        .rpt-role { font-size: 11px; color: var(--text3); margin-top: 2px; }
+        .rpt-time { font-size: 11px; color: var(--text3); background: var(--bg); padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
+        .rpt-task { font-size: 14px; color: var(--text2); margin-bottom: 8px; }
+        .rpt-task strong { color: var(--text); }
+        .rpt-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+        .rpt-meta-item { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+        .rpt-notes { font-size: 12px; color: var(--text3); background: var(--bg); padding: 9px 12px; border-radius: 8px; border-left: 3px solid var(--accent); margin-bottom: 10px; }
+        .rpt-img { max-width: 110px; max-height: 80px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); transition: transform 0.18s, box-shadow 0.18s; object-fit: cover; }
+        .rpt-img:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+        .rpt-img-wrap { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+        .rpt-actions { flex-shrink: 0; }
+        .delete-btn { opacity: 0; transition: opacity 0.18s; }
+        .report-card:hover .delete-btn { opacity: 1; }
+
+        /* STATUS CHIPS */
+        .status-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 40px; font-size: 11px; font-weight: 700; }
+        .s-proses   { background: rgba(45,123,244,0.12); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.2); }
+        .s-selesai  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,216,138,0.2); }
+        .s-menunggu { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+
+        /* FILTER PILLS */
+        .filter-wrap { display: flex; gap: 7px; flex-wrap: wrap; }
+        .filter-pill { padding: 6px 14px; border: 1px solid var(--border); border-radius: 40px; background: transparent; color: var(--text2); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+        .filter-pill.on, .filter-pill:hover { background: var(--accent); border-color: var(--accent); color: white; }
+
+        /* TAB NAV */
+        .tab-nav { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 5px; margin-bottom: 24px; overflow-x: auto; }
+        .tab-btn { padding: 9px 20px; border: none; background: transparent; color: var(--text3); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; border-radius: 7px; transition: all 0.18s; white-space: nowrap; }
+        .tab-btn.on { background: var(--accent); color: white; }
+        .tab-btn:hover:not(.on) { color: var(--text); background: var(--bg); }
+        .tab-pane { display: none; }
+        .tab-pane.on { display: block; }
+
+        /* LOADING */
+        .loading { display: flex; align-items: center; justify-content: center; padding: 40px; gap: 10px; color: var(--text3); font-size: 14px; }
+        .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             .wrap { padding: 16px 14px; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -599,191 +369,16 @@
             .modal-header { padding: 18px; }
             .modal-footer { padding: 14px 18px; }
         }
-
         @media (max-width: 420px) {
             .team-grid { grid-template-columns: 1fr; }
             .stats-grid { gap: 10px; }
             .header-left h1 { font-size: 21px; }
         }
-
-        /* ===== EXPORT SECTION ===== */
-        .export-bar {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .export-bar label { font-size: 12px; color: var(--text3); font-weight: 700; text-transform: uppercase; white-space: nowrap; }
-
-        .export-bar .form-input { width: auto; padding: 8px 12px; font-size: 13px; }
-
-        .divider { width: 1px; height: 30px; background: var(--border); }
-
-        /* ===== REPORT CARDS ===== */
-        .reports-list { display: flex; flex-direction: column; gap: 12px; }
-
-        .report-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 20px;
-            display: flex;
-            gap: 16px;
-            transition: border-color 0.18s, background 0.18s;
-            align-items: flex-start;
-        }
-
-        .report-card:hover { border-color: var(--border-light); background: var(--card-hover); }
-
-        .rpt-avatar {
-            width: 46px; height: 46px;
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; font-weight: 800; color: white;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .rpt-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        .rpt-body { flex: 1; min-width: 0; }
-
-        .rpt-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-        }
-
-        .rpt-name { font-size: 14px; font-weight: 700; }
-        .rpt-role { font-size: 11px; color: var(--text3); margin-top: 2px; }
-
-        .rpt-time {
-            font-size: 11px;
-            color: var(--text3);
-            background: var(--bg);
-            padding: 4px 10px;
-            border-radius: 6px;
-            white-space: nowrap;
-        }
-
-        .rpt-task { font-size: 14px; color: var(--text2); margin-bottom: 8px; }
-        .rpt-task strong { color: var(--text); }
-
-        .rpt-meta {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-
-        .rpt-meta-item { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
-
-        .rpt-notes {
-            font-size: 12px;
-            color: var(--text3);
-            background: var(--bg);
-            padding: 9px 12px;
-            border-radius: 8px;
-            border-left: 3px solid var(--accent);
-            margin-bottom: 10px;
-        }
-
-        .rpt-img {
-            max-width: 110px; max-height: 80px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            transition: transform 0.18s, box-shadow 0.18s;
-            object-fit: cover;
-        }
-
-        .rpt-img:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-
-        .rpt-img-wrap { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-
-        .status-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 40px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .s-proses { background: rgba(45,123,244,0.12); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.2); }
-        .s-selesai { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,216,138,0.2); }
-        .s-menunggu { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
-
-        .rpt-actions { flex-shrink: 0; }
-
-        .delete-btn { opacity: 0; transition: opacity 0.18s; }
-        .report-card:hover .delete-btn { opacity: 1; }
-
-        /* filter pills */
-        .filter-wrap { display: flex; gap: 7px; flex-wrap: wrap; }
-
-        .filter-pill {
-            padding: 6px 14px;
-            border: 1px solid var(--border);
-            border-radius: 40px;
-            background: transparent;
-            color: var(--text2);
-            font-family: inherit;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.18s;
-        }
-
-        .filter-pill.on, .filter-pill:hover { background: var(--accent); border-color: var(--accent); color: white; }
-
-        /* tab nav */
-        .tab-nav {
-            display: flex;
-            gap: 4px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--r-sm);
-            padding: 5px;
-            margin-bottom: 24px;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            padding: 9px 20px;
-            border: none;
-            background: transparent;
-            color: var(--text3);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            border-radius: 7px;
-            transition: all 0.18s;
-            white-space: nowrap;
-        }
-
-        .tab-btn.on { background: var(--accent); color: white; }
-        .tab-btn:hover:not(.on) { color: var(--text); background: var(--bg); }
-
-        .tab-pane { display: none; }
-        .tab-pane.on { display: block; }
     </style>
 </head>
 <body>
 
 <div class="wrap">
-
     <!-- HEADER -->
     <header class="header">
         <div class="header-left">
@@ -792,7 +387,7 @@
         </div>
         <div class="header-right">
             <div class="date-chip">📅 <span id="dateDisplay"></span></div>
-            <div class="sync-indicator">
+            <div class="sync-indicator" onclick="syncAll()" title="Klik untuk sync manual">
                 <div class="sync-dot" id="syncDot"></div>
                 <span id="syncLabel">Mengecek...</span>
             </div>
@@ -849,7 +444,6 @@
 
     <!-- TAB: LAPORAN -->
     <div class="tab-pane" id="tab-reports">
-        <!-- Export Bar -->
         <div class="export-bar">
             <label>Dari</label>
             <input type="date" class="form-input" id="startDate">
@@ -857,15 +451,18 @@
             <input type="date" class="form-input" id="endDate">
             <div class="divider"></div>
             <button class="btn btn-ghost btn-sm" onclick="applyFilter()">🔍 Filter</button>
+            <button class="btn btn-ghost btn-sm" onclick="setToday()">📅 Hari Ini</button>
         </div>
 
         <div class="section-header">
-            <div class="section-title">📋 Riwayat Laporan</div>
+            <div class="section-title">
+                📋 Riwayat Laporan
+                <span class="section-badge" id="reportCount">0 laporan</span>
+            </div>
             <div class="filter-wrap" id="filterWrap"></div>
         </div>
         <div class="reports-list" id="reportList"></div>
     </div>
-
 </div>
 
 <!-- ===== MODAL INPUT LAPORAN ===== -->
@@ -912,7 +509,7 @@
         </div>
         <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeModal('inputModal')">Batal</button>
-            <button class="btn btn-primary" onclick="submitReport()">🚀 Kirim Laporan</button>
+            <button class="btn btn-primary" id="submitBtn" onclick="submitReport()">🚀 Kirim Laporan</button>
         </div>
     </div>
 </div>
@@ -925,7 +522,7 @@
             <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
         </div>
         <div class="modal-body">
-            <p style="font-size:13px;color:var(--text3);margin-bottom:18px;">Edit nama dan jabatan 8 anggota tim. Ganti sesuai kebutuhan.</p>
+            <p style="font-size:13px;color:var(--text3);margin-bottom:18px;">Edit nama dan jabatan 8 anggota tim.</p>
             <div class="settings-grid" id="settingsGrid"></div>
         </div>
         <div class="modal-footer">
@@ -944,29 +541,30 @@
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-// =============================================
-// CONFIG
-// =============================================
-const API = window.location.origin.includes('localhost')
-    ? 'http://localhost:3000/api'
-    : '/api';
+// ─────────────────────────────────────────────────────
+// CONFIG: deteksi API URL otomatis
+// ─────────────────────────────────────────────────────
+const API = window.location.origin;  // pakai origin yang sama, server Express yang serve
 
-// =============================================
-// STATE - 8 ANGGOTA TIM (edit nama/role di Pengaturan)
-// =============================================
+// ─────────────────────────────────────────────────────
+// DEFAULT DATA
+// ─────────────────────────────────────────────────────
 const DEFAULT_TEAM = [
-    { name: 'Ahmad Fauzi',    role: 'Teknisi AC' },
-    { name: 'Budi Santoso',   role: 'Teknisi Listrik' },
-    { name: 'Citra Dewi',     role: 'Admin Lapangan' },
-    { name: 'Dian Pratama',   role: 'Supervisor' },
-    { name: 'Eka Prasetya',   role: 'Teknisi Pendingin' },
-    { name: 'Fitri Yulia',    role: 'Teknisi Jaringan' },
-    { name: 'Gilang Haryanto',role: 'Teknisi AC' },
-    { name: 'Hana Salsabila', role: 'Koordinator Lapangan' }
+    { name: 'Ahmad Fauzi',     role: 'Teknisi AC' },
+    { name: 'Budi Santoso',    role: 'Teknisi Listrik' },
+    { name: 'Citra Dewi',      role: 'Admin Lapangan' },
+    { name: 'Dian Pratama',    role: 'Supervisor' },
+    { name: 'Eka Prasetya',    role: 'Teknisi Pendingin' },
+    { name: 'Fitri Yulia',     role: 'Teknisi Jaringan' },
+    { name: 'Gilang Haryanto', role: 'Teknisi AC' },
+    { name: 'Hana Salsabila',  role: 'Koordinator Lapangan' }
 ];
 
-let team    = loadLocal('teamData', DEFAULT_TEAM);
-let reports = loadLocal('reportsData', []);
+// ─────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────
+let team          = loadLocal('teamData', DEFAULT_TEAM);
+let reports       = loadLocal('reportsData', []);
 let currentMember = 0;
 let currentImg    = '';
 let activeFilter  = 'all';
@@ -975,20 +573,21 @@ let endDate       = todayStr();
 let isOnline      = navigator.onLine;
 let isSyncing     = false;
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // UTILS
-// =============================================
+// ─────────────────────────────────────────────────────
 function loadLocal(key, fallback) {
-    try { return JSON.parse(localStorage.getItem(key)) || fallback; }
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
     catch { return fallback; }
 }
-
-function saveLocal(key, val) {
-    localStorage.setItem(key, JSON.stringify(val));
-}
-
-function todayStr() {
-    return new Date().toISOString().split('T')[0];
+function saveLocal(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+function initials(name) { return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(); }
+function statusClass(s) {
+    if (s === 'Dalam Proses') return 's-proses';
+    if (s === 'Selesai')      return 's-selesai';
+    if (s === 'Menunggu')     return 's-menunggu';
+    return '';
 }
 
 function toast(msg, type = 'info') {
@@ -997,155 +596,177 @@ function toast(msg, type = 'info') {
     t.className = `toast ${type}`;
     t.textContent = msg;
     w.appendChild(t);
-    setTimeout(() => t.remove(), 3000);
+    setTimeout(() => t.remove(), 3200);
 }
 
-function initials(name) {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-}
-
-function statusClass(s) {
-    if (s === 'Dalam Proses') return 's-proses';
-    if (s === 'Selesai')      return 's-selesai';
-    if (s === 'Menunggu')     return 's-menunggu';
-    return '';
-}
-
-// =============================================
+// ─────────────────────────────────────────────────────
 // SYNC STATUS UI
-// =============================================
-function setSyncUI(state) {
-    const dot   = document.getElementById('syncDot');
-    const label = document.getElementById('syncLabel');
+// ─────────────────────────────────────────────────────
+function setSyncUI(state, label) {
+    const dot = document.getElementById('syncDot');
+    const lbl = document.getElementById('syncLabel');
     dot.className = 'sync-dot ' + state;
-    label.textContent = state === 'online'   ? 'Online' :
-                        state === 'syncing'  ? 'Sinkronisasi...' :
-                        state === 'offline'  ? 'Offline' : 'Mengecek...';
+    lbl.textContent = label || (
+        state === 'online'  ? 'Online' :
+        state === 'syncing' ? 'Sinkronisasi...' :
+        state === 'offline' ? 'Offline' : 'Mengecek...'
+    );
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // NETWORK EVENTS
-// =============================================
-window.addEventListener('online',  () => { isOnline = true;  setSyncUI('online');  syncAll(); });
+// ─────────────────────────────────────────────────────
+window.addEventListener('online',  () => { isOnline = true;  toast('🟢 Kembali online!', 'ok'); syncAll(); });
 window.addEventListener('offline', () => { isOnline = false; setSyncUI('offline'); toast('🔴 Offline – data tersimpan lokal', 'info'); });
 
-// =============================================
-// API SYNC
-// =============================================
+// ─────────────────────────────────────────────────────
+// API HELPER
+// ─────────────────────────────────────────────────────
+async function apiFetch(path, options = {}) {
+    const res = await fetch(API + path, {
+        headers: { 'Content-Type': 'application/json', ...options.headers },
+        ...options
+    });
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    return res.json();
+}
+
+// ─────────────────────────────────────────────────────
+// SYNC: PULL ALL DATA FROM SERVER
+// ─────────────────────────────────────────────────────
 async function syncAll() {
-    if (!isOnline || isSyncing) return;
+    if (isSyncing) return;
     isSyncing = true;
     setSyncUI('syncing');
 
     try {
-        const hRes = await fetch(`${API}/health`);
-        if (!hRes.ok) throw new Error('Server tidak tersedia');
+        // Cek server dulu
+        await apiFetch('/api/health');
 
+        // Push team data ke server
         await pushTeams();
-        await pullAll();
+
+        // Pull semua data
+        const data = await apiFetch('/api/sync');
+
+        // Update team dari server (jika ada 8 anggota)
+        if (Array.isArray(data.teams) && data.teams.length > 0) {
+            // Merge: isi slot yang ada dari server, sisanya dari default
+            const merged = [...DEFAULT_TEAM].map((def, i) => {
+                const srv = data.teams.find(t => t.member_index === i);
+                return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : def;
+            });
+            team = merged;
+            saveLocal('teamData', team);
+        }
+
+        // Update reports dari server
+        if (Array.isArray(data.reports)) {
+            reports = data.reports.map(r => ({
+                id:          Number(r.id),
+                memberIndex: r.member_index,
+                task:        r.task,
+                location:    r.location,
+                status:      r.status || '',
+                notes:       r.notes  || '',
+                image:       r.image  || '',
+                date:        r.created_at
+            }));
+            saveLocal('reportsData', reports);
+        }
+
         setSyncUI('online');
+        refreshAll();
     } catch (e) {
         console.warn('Sync error:', e.message);
-        setSyncUI('offline');
+        setSyncUI('offline', 'Tidak terhubung');
+        isOnline = false;
     } finally {
         isSyncing = false;
     }
 }
 
+// ─────────────────────────────────────────────────────
+// PUSH: kirim semua team ke server
+// ─────────────────────────────────────────────────────
 async function pushTeams() {
     for (let i = 0; i < team.length; i++) {
-        await fetch(`${API}/teams`, {
+        await apiFetch('/api/teams', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ member_index: i, name: team[i].name, role: team[i].role, image: team[i].image || null })
-        }).catch(() => {});
+        }).catch(() => {});  // silent fail per member
     }
 }
 
-async function pullAll() {
-    const res = await fetch(`${API}/sync`);
-    if (!res.ok) throw new Error('Gagal ambil data');
-
-    const data = await res.json();
-
-    // Update teams dari server — SELALU pakai data server jika ada
-    if (Array.isArray(data.teams) && data.teams.length === 8) {
-        team = data.teams.map(t => ({ name: t.name, role: t.role, image: t.image || '' }));
-        saveLocal('teamData', team);
-    }
-
-    // Update reports
-    if (Array.isArray(data.reports)) {
-        reports = data.reports.map(r => ({
-            id:          r.id,
-            memberIndex: r.member_index,
-            task:        r.task,
-            location:    r.location,
-            status:      r.status,
-            notes:       r.notes,
-            image:       r.image,
-            date:        r.created_at
-        }));
-        saveLocal('reportsData', reports);
-    }
-
-    refreshAll();
-}
-
+// ─────────────────────────────────────────────────────
+// PUSH: kirim 1 laporan ke server
+// ─────────────────────────────────────────────────────
 async function pushReport(report) {
-    if (!isOnline) return;
-    await fetch(`${API}/reports`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            id:           report.id,
-            member_index: report.memberIndex,
-            task:         report.task,
-            location:     report.location,
-            status:       report.status,
-            notes:        report.notes,
-            image:        report.image,
-            date:         report.date
-        })
-    }).catch(e => console.warn('Push report gagal:', e.message));
+    try {
+        await apiFetch('/api/reports', {
+            method: 'POST',
+            body: JSON.stringify({
+                id:           report.id,
+                member_index: report.memberIndex,
+                task:         report.task,
+                location:     report.location,
+                status:       report.status,
+                notes:        report.notes,
+                image:        report.image || null,
+                date:         report.date
+            })
+        });
+    } catch (e) {
+        console.warn('Push report gagal:', e.message);
+    }
 }
 
+// ─────────────────────────────────────────────────────
+// DELETE: hapus laporan dari server
+// ─────────────────────────────────────────────────────
 async function deleteReportServer(id) {
-    if (!isOnline) return;
-    await fetch(`${API}/reports/${id}`, { method: 'DELETE' })
-        .catch(e => console.warn('Delete report gagal:', e.message));
+    try {
+        await apiFetch(`/api/reports/${id}`, { method: 'DELETE' });
+    } catch (e) {
+        console.warn('Delete report server gagal:', e.message);
+    }
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // INIT
-// =============================================
+// ─────────────────────────────────────────────────────
 function init() {
-    // Set date display
+    // Tanggal header
     document.getElementById('dateDisplay').textContent =
-        new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+        new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    // Set export date inputs
+    // Set input tanggal
     document.getElementById('startDate').value = startDate;
     document.getElementById('endDate').value   = endDate;
 
-    // Pastikan team selalu 8
+    // Pastikan team 8 slot
     if (!team || team.length !== 8) {
-        team = [...DEFAULT_TEAM];
+        team = DEFAULT_TEAM.map(d => ({ ...d }));
         saveLocal('teamData', team);
     }
 
     setupUpload();
     refreshAll();
 
-    // Initial sync
-    if (isOnline) {
+    // Sync awal
+    if (navigator.onLine) {
         syncAll();
     } else {
         setSyncUI('offline');
     }
 
     // Periodic sync setiap 30 detik
-    setInterval(() => { if (isOnline && !isSyncing) syncAll(); }, 30000);
+    setInterval(() => {
+        if (!isSyncing && navigator.onLine) syncAll();
+    }, 30000);
 }
 
 function refreshAll() {
@@ -1155,14 +776,12 @@ function refreshAll() {
     updateStats();
 }
 
-// =============================================
-// RENDER TEAM (selalu 8 kartu)
-// =============================================
+// ─────────────────────────────────────────────────────
+// RENDER TEAM
+// ─────────────────────────────────────────────────────
 function renderTeam() {
     const todayStr2 = new Date().toDateString();
     const grid = document.getElementById('teamGrid');
-
-    // Pastikan team array = 8 slot, isi DEFAULT jika ada yang kosong
     while (team.length < 8) team.push({ ...DEFAULT_TEAM[team.length] });
     document.getElementById('teamCount').textContent = `${team.length} orang`;
 
@@ -1170,17 +789,12 @@ function renderTeam() {
         const count = reports.filter(r =>
             r.memberIndex === i && new Date(r.date).toDateString() === todayStr2
         ).length;
-
         const ava = m.image
             ? `<img src="${m.image}" alt="${m.name}">`
             : initials(m.name);
-
         return `
         <div class="team-card" onclick="openInputModal(${i})">
-            <div class="team-avatar av${i + 1}">
-                ${ava}
-                <div class="online-dot"></div>
-            </div>
+            <div class="team-avatar av${i + 1}">${ava}<div class="online-dot"></div></div>
             <div class="team-name">${m.name}</div>
             <div class="team-role">${m.role}</div>
             <div class="team-badge">📋 ${count} laporan hari ini</div>
@@ -1188,9 +802,9 @@ function renderTeam() {
     }).join('');
 }
 
-// =============================================
-// MODAL INPUT
-// =============================================
+// ─────────────────────────────────────────────────────
+// MODAL INPUT LAPORAN
+// ─────────────────────────────────────────────────────
 function openInputModal(idx) {
     currentMember = idx;
     document.getElementById('modalTitle').textContent = `📝 ${team[idx].name}`;
@@ -1200,15 +814,17 @@ function openInputModal(idx) {
     document.getElementById('uploadPreview').style.display = 'none';
     document.getElementById('uploadBox').style.display = 'block';
     document.getElementById('fileInput').value = '';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = '🚀 Kirim Laporan';
     openModal('inputModal');
 }
 
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // SETTINGS MODAL
-// =============================================
+// ─────────────────────────────────────────────────────
 function openSettings() {
     const grid = document.getElementById('settingsGrid');
     grid.innerHTML = team.map((m, i) => `
@@ -1221,24 +837,32 @@ function openSettings() {
     openModal('settingsModal');
 }
 
-function saveSettings() {
+async function saveSettings() {
     team.forEach((m, i) => {
-        m.name = document.getElementById(`sName${i}`).value.trim() || m.name;
-        m.role = document.getElementById(`sRole${i}`).value.trim() || m.role;
+        const n = document.getElementById(`sName${i}`).value.trim();
+        const r = document.getElementById(`sRole${i}`).value.trim();
+        if (n) m.name = n;
+        if (r) m.role = r;
     });
     saveLocal('teamData', team);
-
-    // Push ke server
-    if (isOnline) pushTeams().then(() => toast('✅ Pengaturan tersimpan & sinkronisasi!', 'ok'));
-    else toast('✅ Pengaturan tersimpan (offline)', 'ok');
-
     closeModal('settingsModal');
     refreshAll();
+
+    if (navigator.onLine) {
+        try {
+            await pushTeams();
+            toast('✅ Pengaturan tersimpan & sinkronisasi!', 'ok');
+        } catch {
+            toast('✅ Pengaturan tersimpan (sync gagal)', 'info');
+        }
+    } else {
+        toast('✅ Pengaturan tersimpan (offline)', 'ok');
+    }
 }
 
-// =============================================
-// UPLOAD
-// =============================================
+// ─────────────────────────────────────────────────────
+// UPLOAD FOTO
+// ─────────────────────────────────────────────────────
 function setupUpload() {
     const box   = document.getElementById('uploadBox');
     const input = document.getElementById('fileInput');
@@ -1250,14 +874,12 @@ function setupUpload() {
         box.classList.remove('drag');
         if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
     });
-
     input.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 }
 
 function handleFile(file) {
     if (!file.type.startsWith('image/')) { toast('❌ File harus berupa gambar!', 'err'); return; }
     if (file.size > 5 * 1024 * 1024)    { toast('❌ File terlalu besar! Maks 5MB', 'err'); return; }
-
     const reader = new FileReader();
     reader.onload = e => {
         currentImg = e.target.result;
@@ -1276,10 +898,10 @@ function removeImg(ev) {
     document.getElementById('fileInput').value = '';
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // SUBMIT LAPORAN
-// =============================================
-function submitReport() {
+// ─────────────────────────────────────────────────────
+async function submitReport() {
     const task     = document.getElementById('fTask').value.trim();
     const location = document.getElementById('fLocation').value.trim();
     const status   = document.getElementById('fStatus').value;
@@ -1289,6 +911,10 @@ function submitReport() {
     if (!location) { toast('❌ Lokasi harus diisi!', 'err'); return; }
     if (!status)   { toast('❌ Status harus dipilih!', 'err'); return; }
 
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Mengirim...';
+
     const report = {
         id:          Date.now(),
         memberIndex: currentMember,
@@ -1297,32 +923,39 @@ function submitReport() {
         date:        new Date().toISOString()
     };
 
+    // Simpan lokal dulu (instant)
     reports.unshift(report);
     saveLocal('reportsData', reports);
-
     closeModal('inputModal');
     refreshAll();
     toast('🎉 Laporan berhasil dikirim!', 'ok');
 
-    // Async push ke server
-    pushReport(report);
+    // Push ke server async
+    if (navigator.onLine) {
+        try {
+            await pushReport(report);
+            // Silent ok
+        } catch {
+            toast('⚠️ Laporan tersimpan lokal, sync akan dicoba nanti', 'info');
+        }
+    }
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // DELETE LAPORAN
-// =============================================
-function deleteReport(id) {
+// ─────────────────────────────────────────────────────
+async function deleteReport(id) {
     if (!confirm('Yakin hapus laporan ini?')) return;
     reports = reports.filter(r => r.id !== id);
     saveLocal('reportsData', reports);
     refreshAll();
     toast('🗑️ Laporan dihapus', 'info');
-    deleteReportServer(id);
+    if (navigator.onLine) deleteReportServer(id);
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // FILTER
-// =============================================
+// ─────────────────────────────────────────────────────
 function renderFilters() {
     const wrap = document.getElementById('filterWrap');
     wrap.innerHTML = '';
@@ -1349,9 +982,6 @@ function setFilter(val, btn) {
     renderReports();
 }
 
-// =============================================
-// RENDER REPORTS
-// =============================================
 function applyFilter() {
     startDate = document.getElementById('startDate').value || todayStr();
     endDate   = document.getElementById('endDate').value   || todayStr();
@@ -1359,19 +989,33 @@ function applyFilter() {
     updateStats();
 }
 
+function setToday() {
+    startDate = todayStr();
+    endDate   = todayStr();
+    document.getElementById('startDate').value = startDate;
+    document.getElementById('endDate').value   = endDate;
+    renderReports();
+    updateStats();
+}
+
+// ─────────────────────────────────────────────────────
+// RENDER REPORTS
+// ─────────────────────────────────────────────────────
 function renderReports() {
     const container = document.getElementById('reportList');
-    const sd = new Date(startDate);
-    const ed = new Date(endDate);
+    const sd = new Date(startDate + 'T00:00:00');
+    const ed = new Date(endDate   + 'T23:59:59');
 
     let filtered = reports.filter(r => {
-        const d = new Date(new Date(r.date).toDateString());
+        const d = new Date(r.date);
         return d >= sd && d <= ed;
     });
 
     if (activeFilter !== 'all') {
         filtered = filtered.filter(r => r.memberIndex === parseInt(activeFilter));
     }
+
+    document.getElementById('reportCount').textContent = `${filtered.length} laporan`;
 
     if (!filtered.length) {
         container.innerHTML = `
@@ -1389,8 +1033,8 @@ function renderReports() {
 function buildReportCard(r) {
     const m    = team[r.memberIndex] || { name: 'Unknown', role: '-', image: '' };
     const idx  = r.memberIndex;
-    const time = new Date(r.date).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
-    const date = new Date(r.date).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+    const time = new Date(r.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    const date = new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 
     const ava = m.image
         ? `<img src="${m.image}" alt="${m.name}">`
@@ -1399,14 +1043,14 @@ function buildReportCard(r) {
     const imgHtml = r.image ? `
         <div class="rpt-img-wrap">
             <img class="rpt-img" src="${r.image}" onclick="viewImg('${r.image}')" alt="Bukti">
-            <button class="btn btn-ghost btn-sm" onclick="downloadImg('${r.image}','${m.name}_${date}')">📥</button>
+            <button class="btn btn-ghost btn-sm" onclick="downloadImg('${r.image}','${m.name}_${date}')">📥 Foto</button>
         </div>` : '';
 
     const sc = r.status ? statusClass(r.status) : '';
 
     return `
     <div class="report-card" data-id="${r.id}">
-        <div class="rpt-avatar av${idx + 1}">${ava}</div>
+        <div class="rpt-avatar av${(idx % 8) + 1}">${ava}</div>
         <div class="rpt-body">
             <div class="rpt-top">
                 <div>
@@ -1431,33 +1075,30 @@ function buildReportCard(r) {
     </div>`;
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // STATS
-// =============================================
+// ─────────────────────────────────────────────────────
 function updateStats() {
     const todayStr2 = new Date().toDateString();
     const todayRpts = reports.filter(r => new Date(r.date).toDateString() === todayStr2);
-
-    document.getElementById('statToday').textContent = todayRpts.length;
-
+    document.getElementById('statToday').textContent  = todayRpts.length;
     const activeSet = new Set(todayRpts.map(r => r.memberIndex));
     document.getElementById('statActive').textContent = `${activeSet.size}/${team.length}`;
-
     document.getElementById('statImages').textContent = reports.filter(r => r.image).length;
     document.getElementById('statTotal').textContent  = reports.length;
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // EXPORT EXCEL (CSV)
-// =============================================
+// ─────────────────────────────────────────────────────
 function downloadExcel() {
-    const sd = new Date(startDate);
-    const ed = new Date(endDate);
+    const sd = new Date(startDate + 'T00:00:00');
+    const ed = new Date(endDate   + 'T23:59:59');
 
     if (ed < sd) { toast('❌ Rentang tanggal tidak valid!', 'err'); return; }
 
     const data = reports.filter(r => {
-        const d = new Date(new Date(r.date).toDateString());
+        const d = new Date(r.date);
         return d >= sd && d <= ed;
     });
 
@@ -1468,8 +1109,10 @@ function downloadExcel() {
         const dt   = new Date(r.date);
         const m    = team[r.memberIndex] || { name: 'Unknown', role: '-' };
         const date = dt.toLocaleDateString('id-ID');
-        const time = dt.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
-        csv += `${i+1},"${date}","${time}","${m.name}","${m.role}","${r.status||'-'}","${r.task}","${r.location}","${r.notes||'-'}"\n`;
+        const time = dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        // Escape tanda petik ganda dalam nilai
+        const esc  = v => String(v || '-').replace(/"/g, '""');
+        csv += `${i+1},"${date}","${time}","${esc(m.name)}","${esc(m.role)}","${esc(r.status)}","${esc(r.task)}","${esc(r.location)}","${esc(r.notes)}"\n`;
     });
 
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
@@ -1481,29 +1124,28 @@ function downloadExcel() {
     toast('📥 File berhasil didownload!', 'ok');
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // IMAGE VIEWER
-// =============================================
+// ─────────────────────────────────────────────────────
 function viewImg(src) {
     document.getElementById('viewerImg').src = src;
     document.getElementById('imgViewer').classList.add('open');
 }
-
 function closeImgViewer() {
     document.getElementById('imgViewer').classList.remove('open');
+    document.getElementById('viewerImg').src = '';
 }
-
 function downloadImg(src, name) {
     const a    = document.createElement('a');
     a.href     = src;
-    a.download = name.replace(/\s/g, '_') + '.png';
+    a.download = name.replace(/[\s,/]/g, '_') + '.png';
     a.click();
     toast('📥 Foto berhasil didownload!', 'ok');
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // TABS
-// =============================================
+// ─────────────────────────────────────────────────────
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-btn').forEach(b  => b.classList.remove('on'));
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
@@ -1512,9 +1154,9 @@ function switchTab(name, btn) {
     if (name === 'reports') renderReports();
 }
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // KEYBOARD
-// =============================================
+// ─────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         closeModal('inputModal');
@@ -1523,9 +1165,9 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// =============================================
+// ─────────────────────────────────────────────────────
 // START
-// =============================================
+// ─────────────────────────────────────────────────────
 init();
 </script>
 </body>
