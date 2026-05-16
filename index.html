@@ -542,9 +542,9 @@
 
 <script>
 // ─────────────────────────────────────────────────────
-// CONFIG: deteksi API URL otomatis
+// CONFIG
 // ─────────────────────────────────────────────────────
-const API = window.location.origin;  // pakai origin yang sama, server Express yang serve
+const API = window.location.origin;
 
 // ─────────────────────────────────────────────────────
 // DEFAULT DATA
@@ -581,7 +581,24 @@ function loadLocal(key, fallback) {
     catch { return fallback; }
 }
 function saveLocal(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+// PENTING: pakai local timezone, bukan UTC
+function todayStr() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dd}`;
+}
+
+// Ambil tanggal lokal dari Date object (bukan UTC)
+function localDateStr(dateVal) {
+    const d = new Date(dateVal);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dd}`;
+}
 function initials(name) { return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(); }
 function statusClass(s) {
     if (s === 'Dalam Proses') return 's-proses';
@@ -643,18 +660,19 @@ async function syncAll() {
     setSyncUI('syncing');
 
     try {
-        // Cek server dulu
         await apiFetch('/api/health');
 
-        // Push team data ke server
+        // 1. Push laporan lokal yang belum ada di server dulu
+        await pushPendingReports();
+
+        // 2. Push team
         await pushTeams();
 
-        // Pull semua data
+        // 3. Pull semua dari server
         const data = await apiFetch('/api/sync');
 
-        // Update team dari server (jika ada 8 anggota)
+        // Update team
         if (Array.isArray(data.teams) && data.teams.length > 0) {
-            // Merge: isi slot yang ada dari server, sisanya dari default
             const merged = [...DEFAULT_TEAM].map((def, i) => {
                 const srv = data.teams.find(t => t.member_index === i);
                 return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : def;
@@ -663,11 +681,11 @@ async function syncAll() {
             saveLocal('teamData', team);
         }
 
-        // Update reports dari server
+        // MERGE reports: gabung server + lokal, server jadi acuan utama
         if (Array.isArray(data.reports)) {
-            reports = data.reports.map(r => ({
+            const serverReports = data.reports.map(r => ({
                 id:          Number(r.id),
-                memberIndex: r.member_index,
+                memberIndex: Number(r.member_index),
                 task:        r.task,
                 location:    r.location,
                 status:      r.status || '',
@@ -675,6 +693,15 @@ async function syncAll() {
                 image:       r.image  || '',
                 date:        r.created_at
             }));
+
+            // Tambah laporan lokal yang belum ada di server (belum ter-push)
+            const serverIds = new Set(serverReports.map(r => r.id));
+            const localOnly = reports.filter(r => !serverIds.has(Number(r.id)));
+
+            // Gabung: server + lokal yang belum di-push
+            reports = [...localOnly, ...serverReports]
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+
             saveLocal('reportsData', reports);
         }
 
@@ -690,8 +717,15 @@ async function syncAll() {
 }
 
 // ─────────────────────────────────────────────────────
-// PUSH: kirim semua team ke server
+// PUSH: laporan lokal yang belum ada di server
 // ─────────────────────────────────────────────────────
+async function pushPendingReports() {
+    if (reports.length === 0) return;
+    // Push semua laporan lokal (server pakai ON CONFLICT DO NOTHING, aman)
+    for (const report of reports) {
+        await pushReport(report).catch(() => {});
+    }
+}
 async function pushTeams() {
     for (let i = 0; i < team.length; i++) {
         await apiFetch('/api/teams', {
@@ -780,14 +814,14 @@ function refreshAll() {
 // RENDER TEAM
 // ─────────────────────────────────────────────────────
 function renderTeam() {
-    const todayStr2 = new Date().toDateString();
+    const todayS = todayStr();
     const grid = document.getElementById('teamGrid');
     while (team.length < 8) team.push({ ...DEFAULT_TEAM[team.length] });
     document.getElementById('teamCount').textContent = `${team.length} orang`;
 
     grid.innerHTML = team.map((m, i) => {
         const count = reports.filter(r =>
-            r.memberIndex === i && new Date(r.date).toDateString() === todayStr2
+            r.memberIndex === i && localDateStr(r.date) === todayS
         ).length;
         const ava = m.image
             ? `<img src="${m.image}" alt="${m.name}">`
@@ -923,21 +957,21 @@ async function submitReport() {
         date:        new Date().toISOString()
     };
 
-    // Simpan lokal dulu (instant)
+    // 1. Simpan lokal DULU — ini yang langsung tampil
     reports.unshift(report);
     saveLocal('reportsData', reports);
+
+    // 2. Tutup modal & refresh UI — laporan HARUS sudah muncul
     closeModal('inputModal');
     refreshAll();
     toast('🎉 Laporan berhasil dikirim!', 'ok');
 
-    // Push ke server async
+    // 3. Push ke server di background — TANPA sinkronisasi balik
+    //    (sinkronisasi balik hanya dilakukan oleh periodic sync setiap 30 detik)
     if (navigator.onLine) {
-        try {
-            await pushReport(report);
-            // Silent ok
-        } catch {
-            toast('⚠️ Laporan tersimpan lokal, sync akan dicoba nanti', 'info');
-        }
+        pushReport(report).catch(() => {
+            toast('⚠️ Laporan tersimpan lokal, akan sync saat online', 'info');
+        });
     }
 }
 
@@ -1003,12 +1037,11 @@ function setToday() {
 // ─────────────────────────────────────────────────────
 function renderReports() {
     const container = document.getElementById('reportList');
-    const sd = new Date(startDate + 'T00:00:00');
-    const ed = new Date(endDate   + 'T23:59:59');
 
+    // Filter berdasarkan tanggal LOKAL (bukan UTC)
     let filtered = reports.filter(r => {
-        const d = new Date(r.date);
-        return d >= sd && d <= ed;
+        const d = localDateStr(r.date);  // konversi ke tanggal lokal
+        return d >= startDate && d <= endDate;
     });
 
     if (activeFilter !== 'all') {
@@ -1079,8 +1112,8 @@ function buildReportCard(r) {
 // STATS
 // ─────────────────────────────────────────────────────
 function updateStats() {
-    const todayStr2 = new Date().toDateString();
-    const todayRpts = reports.filter(r => new Date(r.date).toDateString() === todayStr2);
+    const todayS = todayStr();  // tanggal lokal hari ini
+    const todayRpts = reports.filter(r => localDateStr(r.date) === todayS);
     document.getElementById('statToday').textContent  = todayRpts.length;
     const activeSet = new Set(todayRpts.map(r => r.memberIndex));
     document.getElementById('statActive').textContent = `${activeSet.size}/${team.length}`;
@@ -1092,14 +1125,9 @@ function updateStats() {
 // EXPORT EXCEL (CSV)
 // ─────────────────────────────────────────────────────
 function downloadExcel() {
-    const sd = new Date(startDate + 'T00:00:00');
-    const ed = new Date(endDate   + 'T23:59:59');
-
-    if (ed < sd) { toast('❌ Rentang tanggal tidak valid!', 'err'); return; }
-
     const data = reports.filter(r => {
-        const d = new Date(r.date);
-        return d >= sd && d <= ed;
+        const d = localDateStr(r.date);
+        return d >= startDate && d <= endDate;
     });
 
     if (!data.length) { toast('❌ Tidak ada data untuk rentang ini!', 'err'); return; }
@@ -1151,7 +1179,11 @@ function switchTab(name, btn) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
     btn.classList.add('on');
     document.getElementById('tab-' + name).classList.add('on');
-    if (name === 'reports') renderReports();
+    // Selalu render ulang saat pindah tab
+    if (name === 'reports') {
+        renderFilters();
+        renderReports();
+    }
 }
 
 // ─────────────────────────────────────────────────────
