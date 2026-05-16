@@ -182,15 +182,606 @@
 
         .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
 
-        /* Semua style lain tetap sama seperti file kamu */
-        /* (CSS lengkap dari file asli kamu tetap ada di sini) */
-        /* Saya tidak memotongnya */
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 30px;
+        }
 
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .stat-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+
+        .stat-icon {
+            font-size: 22px;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .stat-label { font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
+
+        .stat-value { font-size: 30px; font-weight: 800; letter-spacing: -1px; }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--accent); }
+        .stat-card:nth-child(2) .stat-value { color: var(--green); }
+        .stat-card:nth-child(3) .stat-value { color: var(--amber); }
+        .stat-card:nth-child(4) .stat-value { color: var(--purple); }
+
+        .stat-glow {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.08;
+            top: -10px;
+            right: -10px;
+            pointer-events: none;
+        }
+
+        /* ===== SECTION ===== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+
+        .section-badge {
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text3);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 40px;
+        }
+
+        /* ===== TEAM GRID ===== */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .team-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 26px 20px 22px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.22s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent);
+            background: var(--card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(45,123,244,0.15);
+        }
+
+        .team-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(45,123,244,0.04), transparent);
+            opacity: 0;
+            transition: opacity 0.22s;
+        }
+
+        .team-card:hover::after { opacity: 1; }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--green));
+            opacity: 0;
+            transition: opacity 0.22s;
+        }
+
+        .team-card:hover::before { opacity: 1; }
+
+        .team-avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            border: 3px solid var(--border);
+            transition: border-color 0.22s;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .team-card:hover .team-avatar { border-color: var(--accent); }
+
+        .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .online-dot {
+            position: absolute;
+            bottom: 3px; right: 3px;
+            width: 13px; height: 13px;
+            background: var(--green);
+            border-radius: 50%;
+            border: 2px solid var(--card);
+            box-shadow: 0 0 6px rgba(16,216,138,0.5);
+        }
+
+        .team-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+        .team-role { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+
+        .team-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(45,123,244,0.1);
+            color: #6fa8f8;
+            border: 1px solid rgba(45,123,244,0.2);
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* avatar colors */
+        .av1 { background: linear-gradient(135deg, #2d7bf4, #1a5fd4); }
+        .av2 { background: linear-gradient(135deg, #10d88a, #0aaa6e); }
+        .av3 { background: linear-gradient(135deg, #f5a623, #d4841a); }
+        .av4 { background: linear-gradient(135deg, #9b6eff, #7c4aee); }
+        .av5 { background: linear-gradient(135deg, #f04590, #c4306c); }
+        .av6 { background: linear-gradient(135deg, #14d8d8, #0fb5b5); }
+        .av7 { background: linear-gradient(135deg, #f97316, #c25810); }
+        .av8 { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+
+        /* ===== MODAL ===== */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.18s ease;
+        }
+
+        .overlay.open { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 26px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 { font-size: 18px; font-weight: 700; }
+
+        .modal-close {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text2);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.18s;
+        }
+
+        .modal-close:hover { background: var(--red); border-color: var(--red); color: white; }
+
+        .modal-body { padding: 24px 26px; }
+
+        .modal-footer {
+            padding: 18px 26px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* ===== FORM ===== */
+        .form-group { margin-bottom: 18px; }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 11px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.18s, box-shadow 0.18s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-input::placeholder { color: var(--text3); }
+
+        textarea.form-input { resize: vertical; min-height: 90px; }
+
+        select.form-input {
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a647d' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+        }
+
+        /* ===== UPLOAD ===== */
+        .upload-box {
+            border: 2px dashed var(--border);
+            border-radius: var(--r);
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-box:hover, .upload-box.drag { border-color: var(--accent); background: rgba(45,123,244,0.04); }
+
+        .upload-icon { font-size: 36px; margin-bottom: 8px; }
+        .upload-hint { font-size: 13px; color: var(--text3); }
+        .upload-hint strong { color: var(--accent); }
+
+        .upload-preview { display: none; margin-top: 14px; position: relative; }
+        .upload-preview img { max-width: 100%; max-height: 180px; border-radius: var(--r-sm); border: 1px solid var(--border); object-fit: cover; }
+        .remove-img {
+            position: absolute;
+            top: -8px; right: -8px;
+            width: 26px; height: 26px;
+            background: var(--red);
+            border: none; border-radius: 50%;
+            color: white; font-size: 13px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* ===== SETTINGS GRID ===== */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) { .settings-grid { grid-template-columns: 1fr; } }
+
+        .settings-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 14px;
+        }
+
+        .settings-item .member-label {
+            font-size: 11px;
+            color: var(--text3);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== IMAGE VIEWER ===== */
+        .img-viewer {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+        }
+
+        .img-viewer.open { display: flex; }
+        .img-viewer img { max-width: 90%; max-height: 90vh; border-radius: var(--r); }
+
+        /* ===== TOAST ===== */
+        .toast-wrap {
+            position: fixed;
+            top: 20px; right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards;
+            min-width: 260px;
+            max-width: 360px;
+        }
+
+        .toast.ok { border-left: 4px solid var(--green); }
+        .toast.err { border-left: 4px solid var(--red); }
+        .toast.info { border-left: 4px solid var(--accent); }
+
+        @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
+
+        /* ===== EMPTY STATE ===== */
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text3);
+        }
+
+        .empty-icon { font-size: 56px; margin-bottom: 14px; }
+        .empty h3 { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
+        .empty p { font-size: 13px; }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .wrap { padding: 16px 14px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .team-grid { grid-template-columns: 1fr 1fr; }
+            .modal-body { padding: 18px; }
+            .modal-header { padding: 18px; }
+            .modal-footer { padding: 14px 18px; }
+        }
+
+        @media (max-width: 420px) {
+            .team-grid { grid-template-columns: 1fr; }
+            .stats-grid { gap: 10px; }
+            .header-left h1 { font-size: 21px; }
+        }
+
+        /* ===== EXPORT SECTION ===== */
+        .export-bar {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .export-bar label { font-size: 12px; color: var(--text3); font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+
+        .export-bar .form-input { width: auto; padding: 8px 12px; font-size: 13px; }
+
+        .divider { width: 1px; height: 30px; background: var(--border); }
+
+        /* ===== REPORT CARDS ===== */
+        .reports-list { display: flex; flex-direction: column; gap: 12px; }
+
+        .report-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 20px;
+            display: flex;
+            gap: 16px;
+            transition: border-color 0.18s, background 0.18s;
+            align-items: flex-start;
+        }
+
+        .report-card:hover { border-color: var(--border-light); background: var(--card-hover); }
+
+        .rpt-avatar {
+            width: 46px; height: 46px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 800; color: white;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .rpt-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .rpt-body { flex: 1; min-width: 0; }
+
+        .rpt-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .rpt-name { font-size: 14px; font-weight: 700; }
+        .rpt-role { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+        .rpt-time {
+            font-size: 11px;
+            color: var(--text3);
+            background: var(--bg);
+            padding: 4px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .rpt-task { font-size: 14px; color: var(--text2); margin-bottom: 8px; }
+        .rpt-task strong { color: var(--text); }
+
+        .rpt-meta {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .rpt-meta-item { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+
+        .rpt-notes {
+            font-size: 12px;
+            color: var(--text3);
+            background: var(--bg);
+            padding: 9px 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .rpt-img {
+            max-width: 110px; max-height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: transform 0.18s, box-shadow 0.18s;
+            object-fit: cover;
+        }
+
+        .rpt-img:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+
+        .rpt-img-wrap { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+
+        .status-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .s-proses { background: rgba(45,123,244,0.12); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.2); }
+        .s-selesai { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,216,138,0.2); }
+        .s-menunggu { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+
+        .rpt-actions { flex-shrink: 0; }
+
+        .delete-btn { opacity: 0; transition: opacity 0.18s; }
+        .report-card:hover .delete-btn { opacity: 1; }
+
+        /* filter pills */
+        .filter-wrap { display: flex; gap: 7px; flex-wrap: wrap; }
+
+        .filter-pill {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            background: transparent;
+            color: var(--text2);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+
+        .filter-pill.on, .filter-pill:hover { background: var(--accent); border-color: var(--accent); color: white; }
+
+        /* tab nav */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            padding: 5px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 9px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text3);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 7px;
+            transition: all 0.18s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.on { background: var(--accent); color: white; }
+        .tab-btn:hover:not(.on) { color: var(--text); background: var(--bg); }
+
+        .tab-pane { display: none; }
+        .tab-pane.on { display: block; }
     </style>
 </head>
 <body>
 
-<!-- SEMUA HTML BODY TETAP SAMA PERSIS SEPERTI FILE ASLI KAMU -->
 <div class="wrap">
 
     <!-- HEADER -->
@@ -210,32 +801,159 @@
         </div>
     </header>
 
-    <!-- STATS, TABS, TEAM GRID, REPORTS - SEMUA TETAP SAMA -->
-    <!-- (Saya tidak ubah bagian ini) -->
-
+    <!-- STATS -->
     <div class="stats-grid">
         <div class="stat-card">
+            <div class="stat-glow" style="background:var(--accent)"></div>
             <span class="stat-icon">📋</span>
             <div class="stat-label">Laporan Hari Ini</div>
             <div class="stat-value" id="statToday">0</div>
         </div>
-        <!-- ... (semua stat-card lain tetap) ... -->
+        <div class="stat-card">
+            <div class="stat-glow" style="background:var(--green)"></div>
+            <span class="stat-icon">👥</span>
+            <div class="stat-label">Anggota Aktif</div>
+            <div class="stat-value" id="statActive">0/8</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-glow" style="background:var(--amber)"></div>
+            <span class="stat-icon">📸</span>
+            <div class="stat-label">Bukti Foto</div>
+            <div class="stat-value" id="statImages">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-glow" style="background:var(--purple)"></div>
+            <span class="stat-icon">📊</span>
+            <div class="stat-label">Total Laporan</div>
+            <div class="stat-value" id="statTotal">0</div>
+        </div>
     </div>
 
-    <!-- Tab Nav, Tab Content, Modals, Image Viewer, Toast - SEMUA TETAP -->
+    <!-- TABS -->
+    <div class="tab-nav">
+        <button class="tab-btn on" onclick="switchTab('team', this)">👥 Tim</button>
+        <button class="tab-btn" onclick="switchTab('reports', this)">📋 Laporan</button>
+    </div>
+
+    <!-- TAB: TIM -->
+    <div class="tab-pane on" id="tab-team">
+        <div class="section-header">
+            <div class="section-title">
+                👥 Anggota Tim
+                <span class="section-badge" id="teamCount">8 orang</span>
+            </div>
+            <small style="font-size:12px;color:var(--text3)">Klik kartu untuk input laporan</small>
+        </div>
+        <div class="team-grid" id="teamGrid"></div>
+    </div>
+
+    <!-- TAB: LAPORAN -->
+    <div class="tab-pane" id="tab-reports">
+        <!-- Export Bar -->
+        <div class="export-bar">
+            <label>Dari</label>
+            <input type="date" class="form-input" id="startDate">
+            <label>Sampai</label>
+            <input type="date" class="form-input" id="endDate">
+            <div class="divider"></div>
+            <button class="btn btn-ghost btn-sm" onclick="applyFilter()">🔍 Filter</button>
+        </div>
+
+        <div class="section-header">
+            <div class="section-title">📋 Riwayat Laporan</div>
+            <div class="filter-wrap" id="filterWrap"></div>
+        </div>
+        <div class="reports-list" id="reportList"></div>
+    </div>
 
 </div>
 
-<!-- MODAL INPUT, SETTINGS, IMAGE VIEWER, TOAST TETAP SAMA -->
+<!-- ===== MODAL INPUT LAPORAN ===== -->
+<div class="overlay" id="inputModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="modalTitle">📝 Input Laporan</h2>
+            <button class="modal-close" onclick="closeModal('inputModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">🔧 Pekerjaan / Aktivitas</label>
+                <input type="text" class="form-input" id="fTask" placeholder="Contoh: Servis AC lantai 3...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">📍 Lokasi Pengerjaan</label>
+                <input type="text" class="form-input" id="fLocation" placeholder="Contoh: Gedung B, Lantai 3...">
+            </div>
+            <div class="form-group">
+                <label class="form-label">📌 Status Pekerjaan</label>
+                <select class="form-input" id="fStatus">
+                    <option value="" disabled selected>Pilih status...</option>
+                    <option value="Dalam Proses">Dalam Proses</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Menunggu">Menunggu</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">💬 Catatan Tambahan</label>
+                <textarea class="form-input" id="fNotes" placeholder="Opsional..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">📸 Bukti Foto (opsional)</label>
+                <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-hint"><strong>Klik atau drag & drop</strong> foto di sini<br><small>JPG / PNG · Maks. 5MB</small></div>
+                    <input type="file" id="fileInput" accept="image/*" hidden>
+                    <div class="upload-preview" id="uploadPreview">
+                        <img id="previewImg" src="" alt="Preview">
+                        <button class="remove-img" onclick="removeImg(event)">✕</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('inputModal')">Batal</button>
+            <button class="btn btn-primary" onclick="submitReport()">🚀 Kirim Laporan</button>
+        </div>
+    </div>
+</div>
 
-<!-- ===== SCRIPT YANG SUDAH DIPERBAIKI ===== -->
+<!-- ===== MODAL SETTINGS ===== -->
+<div class="overlay" id="settingsModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>⚙️ Pengaturan Anggota Tim</h2>
+            <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:13px;color:var(--text3);margin-bottom:18px;">Edit nama dan jabatan 8 anggota tim. Ganti sesuai kebutuhan.</p>
+            <div class="settings-grid" id="settingsGrid"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeModal('settingsModal')">Batal</button>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan Perubahan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== IMAGE VIEWER ===== -->
+<div class="img-viewer" id="imgViewer" onclick="closeImgViewer()">
+    <img id="viewerImg" src="" alt="">
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast-wrap" id="toastWrap"></div>
+
 <script>
 // =============================================
-// CONFIG VERCEL (INI YANG DIPERBAIKI)
+// CONFIG
 // =============================================
-const API_BASE = '/api';
+const API = window.location.origin.includes('localhost')
+    ? 'http://localhost:3000/api'
+    : '/api';
 
-// STATE (tetap sama)
+// =============================================
+// STATE - 8 ANGGOTA TIM (edit nama/role di Pengaturan)
+// =============================================
 const DEFAULT_TEAM = [
     { name: 'Ahmad Fauzi',    role: 'Teknisi AC' },
     { name: 'Budi Santoso',   role: 'Teknisi Listrik' },
@@ -257,13 +975,21 @@ let endDate       = todayStr();
 let isOnline      = navigator.onLine;
 let isSyncing     = false;
 
-// UTILS (tetap sama)
+// =============================================
+// UTILS
+// =============================================
 function loadLocal(key, fallback) {
     try { return JSON.parse(localStorage.getItem(key)) || fallback; }
     catch { return fallback; }
 }
-function saveLocal(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+function saveLocal(key, val) {
+    localStorage.setItem(key, JSON.stringify(val));
+}
+
+function todayStr() {
+    return new Date().toISOString().split('T')[0];
+}
 
 function toast(msg, type = 'info') {
     const w = document.getElementById('toastWrap');
@@ -285,25 +1011,41 @@ function statusClass(s) {
     return '';
 }
 
+// =============================================
+// SYNC STATUS UI
+// =============================================
 function setSyncUI(state) {
     const dot   = document.getElementById('syncDot');
     const label = document.getElementById('syncLabel');
     dot.className = 'sync-dot ' + state;
-    label.textContent = state === 'online' ? 'Online' : state === 'syncing' ? 'Sinkronisasi...' : 'Offline';
+    label.textContent = state === 'online'   ? 'Online' :
+                        state === 'syncing'  ? 'Sinkronisasi...' :
+                        state === 'offline'  ? 'Offline' : 'Mengecek...';
 }
 
-// API SYNC (yang diperbaiki)
+// =============================================
+// NETWORK EVENTS
+// =============================================
+window.addEventListener('online',  () => { isOnline = true;  setSyncUI('online');  syncAll(); });
+window.addEventListener('offline', () => { isOnline = false; setSyncUI('offline'); toast('🔴 Offline – data tersimpan lokal', 'info'); });
+
+// =============================================
+// API SYNC
+// =============================================
 async function syncAll() {
     if (!isOnline || isSyncing) return;
     isSyncing = true;
     setSyncUI('syncing');
 
     try {
+        const hRes = await fetch(`${API}/health`);
+        if (!hRes.ok) throw new Error('Server tidak tersedia');
+
         await pushTeams();
         await pullAll();
         setSyncUI('online');
     } catch (e) {
-        console.warn('Sync error:', e);
+        console.warn('Sync error:', e.message);
         setSyncUI('offline');
     } finally {
         isSyncing = false;
@@ -312,7 +1054,7 @@ async function syncAll() {
 
 async function pushTeams() {
     for (let i = 0; i < team.length; i++) {
-        await fetch(`${API_BASE}/teams`, {
+        await fetch(`${API}/teams`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ member_index: i, name: team[i].name, role: team[i].role, image: team[i].image || null })
@@ -321,26 +1063,28 @@ async function pushTeams() {
 }
 
 async function pullAll() {
-    const res = await fetch(`${API_BASE}/sync`);
+    const res = await fetch(`${API}/sync`);
     if (!res.ok) throw new Error('Gagal ambil data');
 
     const data = await res.json();
 
-    if (Array.isArray(data.teams)) {
+    // Update teams dari server — SELALU pakai data server jika ada
+    if (Array.isArray(data.teams) && data.teams.length === 8) {
         team = data.teams.map(t => ({ name: t.name, role: t.role, image: t.image || '' }));
         saveLocal('teamData', team);
     }
 
+    // Update reports
     if (Array.isArray(data.reports)) {
         reports = data.reports.map(r => ({
-            id: r.id,
+            id:          r.id,
             memberIndex: r.member_index,
-            task: r.task,
-            location: r.location,
-            status: r.status,
-            notes: r.notes,
-            image: r.image,
-            date: r.created_at
+            task:        r.task,
+            location:    r.location,
+            status:      r.status,
+            notes:       r.notes,
+            image:       r.image,
+            date:        r.created_at
         }));
         saveLocal('reportsData', reports);
     }
@@ -349,34 +1093,42 @@ async function pullAll() {
 }
 
 async function pushReport(report) {
-    await fetch(`${API_BASE}/reports`, {
+    if (!isOnline) return;
+    await fetch(`${API}/reports`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            id: report.id,
+            id:           report.id,
             member_index: report.memberIndex,
-            task: report.task,
-            location: report.location,
-            status: report.status,
-            notes: report.notes,
-            image: report.image,
-            date: report.date
+            task:         report.task,
+            location:     report.location,
+            status:       report.status,
+            notes:        report.notes,
+            image:        report.image,
+            date:         report.date
         })
-    }).catch(() => {});
+    }).catch(e => console.warn('Push report gagal:', e.message));
 }
 
 async function deleteReportServer(id) {
-    await fetch(`\( {API_BASE}/reports?id= \){id}`, { method: 'DELETE' }).catch(() => {});
+    if (!isOnline) return;
+    await fetch(`${API}/reports/${id}`, { method: 'DELETE' })
+        .catch(e => console.warn('Delete report gagal:', e.message));
 }
 
-// Semua fungsi lain tetap sama seperti file asli kamu
-// (renderTeam, openInputModal, submitReport, deleteReport, dll)
-
+// =============================================
+// INIT
+// =============================================
 function init() {
-    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    document.getElementById('startDate').value = startDate;
-    document.getElementById('endDate').value = endDate;
+    // Set date display
+    document.getElementById('dateDisplay').textContent =
+        new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
+    // Set export date inputs
+    document.getElementById('startDate').value = startDate;
+    document.getElementById('endDate').value   = endDate;
+
+    // Pastikan team selalu 8
     if (!team || team.length !== 8) {
         team = [...DEFAULT_TEAM];
         saveLocal('teamData', team);
@@ -385,11 +1137,17 @@ function init() {
     setupUpload();
     refreshAll();
 
-    if (isOnline) syncAll();
-    else setSyncUI('offline');
+    // Initial sync
+    if (isOnline) {
+        syncAll();
+    } else {
+        setSyncUI('offline');
+    }
 
+    // Periodic sync setiap 30 detik
     setInterval(() => { if (isOnline && !isSyncing) syncAll(); }, 30000);
 }
+
 function refreshAll() {
     renderTeam();
     renderFilters();
@@ -767,11 +1525,8 @@ document.addEventListener('keydown', e => {
 
 // =============================================
 // START
-// ============================================
-// Paste semua fungsi renderTeam, openInputModal, submitReport, dll dari file lama kamu di bawah ini
-// (Karena panjang, kamu bisa copy dari baris ini ke bawah dari file asli kamu)
-
-window.onload = init;
+// =============================================
+init();
 </script>
 </body>
 </html>
