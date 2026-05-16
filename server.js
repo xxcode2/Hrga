@@ -1,258 +1,89 @@
+// server.js
 const express = require('express');
-const cors = require('cors');
 const path = require('path');
-require('dotenv').config();
-
 const { pool, initializeDatabase } = require('./db');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-app.use(express.static(__dirname));
+app.use(express.json({ limit: '10mb' }));        // penting untuk base64 foto
+app.use(express.static(path.join(__dirname)));   // serve index.html
 
-// ==================== DATABASE INITIALIZATION ====================
-async function startServer() {
-  try {
-    await initializeDatabase();
-    console.log('✅ Database ready!');
-  } catch (error) {
-    console.error('❌ Failed to initialize database:', error);
-    process.exit(1);
-  }
-}
+// Inisialisasi database
+initializeDatabase().then(() => {
+  console.log('✅ Database siap');
+}).catch(err => console.error('❌ DB error:', err));
 
-startServer();
+// ======================= API ROUTES =======================
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-// ==================== TEAMS ENDPOINTS ====================
-
-// Default teams data
-const defaultTeam = [
-  { name: 'Ahmad Fauzi', role: 'Teknisi AC', image: '' },
-  { name: 'Budi Santoso', role: 'Teknisi Listrik', image: '' },
-  { name: 'Citra Dewi', role: 'Admin Lapangan', image: '' },
-  { name: 'Dian Pratama', role: 'Supervisor', image: '' },
-  { name: 'Eka Prasetya', role: 'Teknisi Pendingin', image: '' },
-  { name: 'Fitri Yulia', role: 'Teknisi Jaringan', image: '' },
-  { name: 'Gilang Haryanto', role: 'Teknisi AC', image: '' },
-  { name: 'Hana Salsabila', role: 'Koordinator Lapangan', image: '' }
-];
-
-// Initialize default teams if empty
-async function initializeDefaultTeams() {
-  try {
-    const result = await pool.query('SELECT COUNT(*) FROM teams');
-    const count = parseInt(result.rows[0].count);
-    
-    if (count === 0) {
-      console.log('📝 Initializing default teams...');
-      for (let i = 0; i < defaultTeam.length; i++) {
-        const team = defaultTeam[i];
-        await pool.query(
-          `INSERT INTO teams (member_index, name, role, image)
-           VALUES ($1, $2, $3, $4)
-           ON CONFLICT (member_index) DO NOTHING`,
-          [i, team.name, team.role, team.image || null]
-        );
-      }
-      console.log('✅ Default teams initialized');
-    }
-  } catch (error) {
-    console.error('Error initializing default teams:', error);
-  }
-}
-
-// Initialize default teams on startup
-setInterval(initializeDefaultTeams, 60000); // Check every minute
-initializeDefaultTeams(); // Also check on startup
-
-// GET all teams
-app.get('/api/teams', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM teams ORDER BY member_index ASC');
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching teams:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// POST/UPDATE team member
+// Simpan / update tim (8 anggota)
 app.post('/api/teams', async (req, res) => {
   const { member_index, name, role, image } = req.body;
-  
-  if (member_index === undefined || !name) {
-    return res.status(400).json({ error: 'member_index and name are required' });
-  }
-
   try {
-    const result = await pool.query(
-      `INSERT INTO teams (member_index, name, role, image) 
-       VALUES ($1, $2, $3, $4)
-       ON CONFLICT (member_index) 
-       DO UPDATE SET name = $2, role = $3, image = $4, updated_at = CURRENT_TIMESTAMP
-       RETURNING *`,
-      [member_index, name, role, image || null]
-    );
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error saving team:', error);
-    res.status(500).json({ error: error.message });
+    await pool.query(`
+      INSERT INTO teams (member_index, name, role, image)
+      VALUES ($1, $2, $3, $4)
+      ON CONFLICT (member_index) DO UPDATE SET
+        name = EXCLUDED.name,
+        role = EXCLUDED.role,
+        image = EXCLUDED.image,
+        updated_at = CURRENT_TIMESTAMP
+    `, [member_index, name, role, image || null]);
+    res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
   }
 });
 
-// ==================== REPORTS ENDPOINTS ====================
-
-// GET reports with optional date range filter
-app.get('/api/reports', async (req, res) => {
-  try {
-    const { startDate, endDate } = req.query;
-    
-    let query = 'SELECT * FROM reports';
-    let params = [];
-
-    if (startDate && endDate) {
-      query += ' WHERE created_at::date BETWEEN $1::date AND $2::date';
-      params = [startDate, endDate];
-    }
-
-    query += ' ORDER BY created_at DESC';
-
-    const result = await pool.query(query, params);
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching reports:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// POST new report
-app.post('/api/reports', async (req, res) => {
-  const { id, member_index, task, location, status, notes, image } = req.body;
-
-  if (!id || member_index === undefined || !task || !location) {
-    return res.status(400).json({ 
-      error: 'id, member_index, task, and location are required' 
-    });
-  }
-
-  try {
-    const createdAt = new Date(id).toISOString(); // Convert timestamp to ISO string
-    
-    const result = await pool.query(
-      `INSERT INTO reports (id, member_index, task, location, status, notes, image, created_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       ON CONFLICT (id) DO UPDATE SET 
-         task = $3, location = $4, status = $5, notes = $6, image = $7
-       RETURNING *`,
-      [id, member_index, task, location, status || null, notes || null, image || null, createdAt]
-    );
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error creating report:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// DELETE report
-app.delete('/api/reports/:id', async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const result = await pool.query(
-      'DELETE FROM reports WHERE id = $1 RETURNING id',
-      [id]
-    );
-    
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Report not found' });
-    }
-
-    res.json({ success: true, id });
-  } catch (error) {
-    console.error('Error deleting report:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ==================== SYNC ENDPOINT ====================
-
-// GET all data (teams + reports) for full sync
+// Ambil semua data (sync)
 app.get('/api/sync', async (req, res) => {
   try {
-    const teamsResult = await pool.query('SELECT * FROM teams ORDER BY member_index ASC');
-    const reportsResult = await pool.query('SELECT * FROM reports ORDER BY created_at DESC');
+    const teamsRes = await pool.query('SELECT * FROM teams ORDER BY member_index');
+    const reportsRes = await pool.query('SELECT * FROM reports ORDER BY created_at DESC');
 
     res.json({
-      teams: teamsResult.rows,
-      reports: reportsResult.rows
+      teams: teamsRes.rows,
+      reports: reportsRes.rows
     });
-  } catch (error) {
-    console.error('Error syncing data:', error);
-    res.status(500).json({ error: error.message });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
   }
 });
 
-// POST bulk sync (update multiple records)
-app.post('/api/sync', async (req, res) => {
-  const { teams, reports } = req.body;
-
+// Kirim laporan
+app.post('/api/reports', async (req, res) => {
+  const { id, member_index, task, location, status, notes, image, date } = req.body;
   try {
-    // Insert/update teams
-    for (const team of teams || []) {
-      await pool.query(
-        `INSERT INTO teams (member_index, name, role, image)
-         VALUES ($1, $2, $3, $4)
-         ON CONFLICT (member_index)
-         DO UPDATE SET name = $2, role = $3, image = $4, updated_at = CURRENT_TIMESTAMP`,
-        [team.member_index, team.name, team.role, team.image || null]
-      );
-    }
-
-    // Insert/update reports
-    for (const report of reports || []) {
-      const createdAt = new Date(report.date || report.created_at).toISOString();
-      await pool.query(
-        `INSERT INTO reports (id, member_index, task, location, status, notes, image, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         ON CONFLICT (id) DO UPDATE SET 
-           task = $3, location = $4, status = $5, notes = $6, image = $7`,
-        [
-          report.id,
-          report.member_index,
-          report.task,
-          report.location,
-          report.status || null,
-          report.notes || null,
-          report.image || null,
-          createdAt
-        ]
-      );
-    }
-
-    res.json({ success: true, message: 'Sync completed' });
-  } catch (error) {
-    console.error('Error during sync:', error);
-    res.status(500).json({ error: error.message });
+    await pool.query(`
+      INSERT INTO reports (id, member_index, task, location, status, notes, image, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      ON CONFLICT (id) DO NOTHING
+    `, [id, member_index, task, location, status, notes, image || null, date || new Date()]);
+    res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
   }
 });
 
-// ==================== HEALTH CHECK ====================
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Server is running' });
+// Hapus laporan
+app.delete('/api/reports/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM reports WHERE id = $1', [req.params.id]);
+    res.json({ success: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
+  }
 });
 
-// ==================== SERVE FRONTEND ====================
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// ==================== START SERVER ====================
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Dashboard: http://localhost:${PORT}`);
-  console.log(`📡 API: http://localhost:${PORT}/api\n`);
+// ======================= START SERVER =======================
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server jalan di http://localhost:${PORT}`);
+  console.log(`📱 Untuk HP gunakan: http://IP-LAPTOP-KAMU:${PORT}`);
 });
