@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Work Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-card-hover: #273549;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #334155;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(59,130,246,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(16,185,129,0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .header-left p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .date-display {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px var(--accent-glow);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent-light);
+            background: rgba(59,130,246,0.1);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 30px rgba(59,130,246,0.15);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            filter: blur(30px);
+            opacity: 0.15;
+        }
+
+        .stat-card:nth-child(1)::after { background: var(--accent); }
+        .stat-card:nth-child(2)::after { background: var(--success); }
+        .stat-card:nth-child(3)::after { background: var(--warning); }
+        .stat-card:nth-child(4)::after { background: #8b5cf6; }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card:nth-child(1) .stat-icon { background: rgba(59,130,246,0.15); }
+        .stat-card:nth-child(2) .stat-icon { background: rgba(16,185,129,0.15); }
+        .stat-card:nth-child(3) .stat-icon { background: rgba(245,158,11,0.15); }
+        .stat-card:nth-child(4) .stat-icon { background: rgba(139,92,246,0.15); }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .stat-card:nth-child(1) .stat-value { color: var(--accent-light); }
+        .stat-card:nth-child(2) .stat-value { color: var(--success); }
+        .stat-card:nth-child(3) .stat-value { color: var(--warning); }
+        .stat-card:nth-child(4) .stat-value { color: #a78bfa; }
+
+        /* Team Members Grid */
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title span {
+            font-size: 20px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .team-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 12px 40px rgba(59,130,246,0.2);
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .team-card:hover::before {
+            opacity: 1;
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid var(--border);
+            transition: border-color 0.3s;
+        }
+
+        .team-card:hover .team-avatar {
+            border-color: var(--accent);
+        }
+
+        .team-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .online-dot {
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 14px;
+            height: 14px;
+            background: var(--success);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+        }
+
+        .team-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .team-role {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .task-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(59,130,246,0.1);
+            color: var(--accent-light);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(59,130,246,0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent);
+            background: rgba(59,130,246,0.1);
+        }
+
+        .upload-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .upload-text strong {
+            color: var(--accent-light);
+        }
+
+        .upload-preview {
+            display: none;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .upload-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .upload-preview .remove-img {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 28px;
+            height: 28px;
+            background: var(--danger);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-footer {
+            padding: 20px 28px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Reports Table */
+        .reports-section {
+            margin-top: 10px;
+        }
+
+        .reports-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .reports-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .report-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+
+        .report-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+        }
+
+        .report-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .report-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .report-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .report-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .report-name {
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .report-date {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .report-task {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .report-task strong {
+            color: var(--text-primary);
+        }
+
+        .report-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .report-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .report-meta-item span {
+            font-size: 14px;
+        }
+
+        .report-notes {
+            font-size: 13px;
+            color: var(--text-muted);
+            background: var(--bg-primary);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .report-image {
+            max-width: 120px;
+            max-height: 90px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+            object-fit: cover;
+        }
+
+        .report-image:hover {
+            transform: scale(1.05);
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .report-image-container {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* Image Viewer Modal */
+        .image-viewer {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-viewer.active {
+            display: flex;
+        }
+
+        .image-viewer img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 12px;
+            box-shadow: 0 0 60px rgba(0,0,0,0.5);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            font-size: 14px;
+            min-width: 280px;
+        }
+
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.info { border-left: 4px solid var(--accent); }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(100%); }
+        }
+
+        /* Setup Modal */
+        .setup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .setup-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+        }
+
+        .setup-item label {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 12px;
+            }
+
+            .header-left h1 {
+                font-size: 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .report-card {
+                flex-direction: column;
+            }
+
+            .report-actions {
+                justify-content: flex-end;
+            }
+
+            .modal {
+                max-height: 95vh;
+                border-radius: 16px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .setup-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 10px 0;
+            }
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-blue { background: rgba(59,130,246,0.15); color: var(--accent-light); }
+        .badge-green { background: rgba(16,185,129,0.15); color: var(--success); }
+        .badge-yellow { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 5px;
+            background: var(--bg-primary);
+            padding: 5px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .delete-btn {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .report-card:hover .delete-btn {
+            opacity: 1;
+        }
+
+        /* Avatar colors */
+        .avatar-1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .avatar-2 { background: linear-gradient(135deg, #10b981, #059669); }
+        .avatar-3 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .avatar-4 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1>⚡ Team Dashboard</h1>
+                <p>Kelola laporan kerja tim kamu dengan mudah</p>
+            </div>
+            <div class="header-right">
+                <div class="date-display">
+                    📅 <span id="currentDate"></span>
+                </div>
+                <button class="btn btn-outline" onclick="openSettings()">⚙️</button>
+                <button class="btn btn-success" onclick="downloadExcel()">📥 Excel</button>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-label">Total Laporan Hari Ini</div>
+                <div class="stat-value" id="statToday">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Anggota Aktif</div>
+                <div class="stat-value" id="statActive">0/4</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📸</div>
+                <div class="stat-label">Bukti Upload</div>
+                <div class="stat-value" id="statImages">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Total Semua Laporan</div>
+                <div class="stat-value" id="statTotal">0</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('team')">👥 Tim</button>
+            <button class="tab-btn" onclick="switchTab('reports')">📋 Laporan</button>
+            <button class="tab-btn" onclick="switchTab('history')">📜 Riwayat</button>
+        </div>
+
+        <!-- Tab: Team -->
+        <div class="tab-content active" id="tab-team">
+            <div class="section-title">
+                <span>👥</span> Anggota Tim — klik untuk input laporan
+            </div>
+            <div class="team-grid" id="teamGrid"></div>
+        </div>
+
+        <!-- Tab: Reports (Today) -->
+        <div class="tab-content" id="tab-reports">
+            <div class="reports-header">
+                <div class="section-title" style="margin-bottom:0">
+                    <span>📋</span> Laporan Hari Ini
+                </div>
+                <div class="filter-group">
+                    <button class="filter-btn active" onclick="filterReports('all', this)">Semua</button>
+                    <button class="filter-btn" onclick="filterReports('0', this)">Tim 1</button>
+                    <button class="filter-btn" onclick="filterReports('1', this)">Tim 2</button>
+                    <button class="filter-btn" onclick="filterReports('2', this)">Tim 3</button>
+                    <button class="filter-btn" onclick="filterReports('3', this)">Tim 4</button>
+                </div>
+            </div>
+            <div class="reports-list" id="todayReports"></div>
+        </div>
+
+        <!-- Tab: History -->
+        <div class="tab-content" id="tab-history">
+            <div class="reports-header">
+                <div class="section-title" style="margin-bottom:0">
+                    <span>📜</span> Riwayat Semua Laporan
+                </div>
+                <button class="btn btn-danger btn-sm" onclick="clearAllData()">🗑️ Hapus Semua</button>
+            </div>
+            <div class="reports-list" id="historyReports"></div>
+        </div>
+    </div>
+
+    <!-- Input Modal -->
+    <div class="modal-overlay" id="inputModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">📝 Input Laporan</h2>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>🔧 Pekerjaan / Aktivitas Hari Ini</label>
+                    <input type="text" class="form-control" id="inputTask" placeholder="Contoh: Benerin AC di lantai 2...">
+                </div>
+                <div class="form-group">
+                    <label>📍 Lokasi Pengerjaan</label>
+                    <input type="text" class="form-control" id="inputLocation" placeholder="Contoh: Gedung A, Lantai 2...">
+                </div>
+                <div class="form-group">
+                    <label>📝 Catatan Tambahan</label>
+                    <textarea class="form-control" id="inputNotes" placeholder="Tambahkan catatan jika perlu..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>📸 Upload Bukti Foto</label>
+                    <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                        <div class="upload-icon">📤</div>
+                        <div class="upload-text">
+                            <strong>Klik atau drag & drop</strong> foto di sini<br>
+                            <small>JPG, PNG, max 5MB</small>
+                        </div>
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        <div class="upload-preview" id="uploadPreview">
+                            <img id="previewImg" src="" alt="Preview">
+                            <button class="remove-img" onclick="removeImage()">✕</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="submitReport()">🚀 Kirim Laporan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>⚙️ Pengaturan Tim</h2>
+                <button class="modal-close" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Atur nama dan foto profil anggota tim kamu</p>
+                <div class="setup-grid" id="settingsGrid"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeSettings()">Tutup</button>
+                <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer -->
+    <div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
+        <img id="viewerImg" src="" alt="Full Image">
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ==================== DATA ====================
+        const defaultTeam = [
+            { name: 'Ahmad Fauzi', role: 'Teknisi AC', image: '' },
+            { name: 'Budi Santoso', role: 'Teknisi Listrik', image: '' },
+            { name: 'Citra Dewi', role: 'Admin Lapangan', image: '' },
+            { name: 'Dian Pratama', role: 'Supervisor', image: '' }
+        ];
+
+        let team = JSON.parse(localStorage.getItem('teamData')) || [...defaultTeam];
+        let reports = JSON.parse(localStorage.getItem('reportsData')) || [];
+        let currentMemberIndex = 0;
+        let currentImage = '';
+        let currentFilter = 'all';
+
+        // ==================== INIT ====================
+        function init() {
+            setCurrentDate();
+            renderTeamGrid();
+            renderReports();
+            renderHistory();
+            updateStats();
+            setupUploadArea();
+        }
+
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', options);
+        }
+
+        // ==================== TEAM GRID ====================
+        function renderTeamGrid() {
+            const grid = document.getElementById('teamGrid');
+            const todayStr = new Date().toDateString();
+            const todayCount = reports.filter(r => new Date(r.date).toDateString() === todayStr);
+
+            grid.innerHTML = team.map((member, i) => {
+                const count = todayCount.filter(r => r.memberIndex === i).length;
+                const initials = member.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+                const hasImage = member.image ? `<img src="${member.image}" alt="${member.name}">` : initials;
+
+                return `
+                    <div class="team-card" onclick="openInputModal(${i})">
+                        <div class="team-avatar avatar-${i + 1}">
+                            ${hasImage}
+                            <div class="online-dot"></div>
+                        </div>
+                        <div class="team-name">${member.name}</div>
+                        <div class="team-role">${member.role}</div>
+                        <div class="task-count">📋 ${count} laporan hari ini</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== MODAL ====================
+        function openInputModal(index) {
+            currentMemberIndex = index;
+            document.getElementById('modalTitle').innerHTML = `📝 ${team[index].name}`;
+            document.getElementById('inputTask').value = '';
+            document.getElementById('inputLocation').value = '';
+            document.getElementById('inputNotes').value = '';
+            currentImage = '';
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('uploadArea').style.display = 'block';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('inputModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('inputModal').classList.remove('active');
+        }
+
+        function openSettings() {
+            const grid = document.getElementById('settingsGrid');
+            grid.innerHTML = team.map((member, i) => `
+                <div class="setup-item">
+                    <label>Anggota ${i + 1}</label>
+                    <input type="text" class="form-control" id="setupName${i}" value="${member.name}" placeholder="Nama" style="margin-bottom:8px">
+                    <input type="text" class="form-control" id="setupRole${i}" value="${member.role}" placeholder="Role/Jabatan" style="margin-bottom:8px">
+                    <label>Foto Profil</label>
+                    <input type="file" class="form-control" id="setupPhoto${i}" accept="image/*" onchange="previewSetupPhoto(${i})" style="padding:8px">
+                    ${member.image ? `<img src="${member.image}" style="width:40px;height:40px;border-radius:50%;margin-top:8px;object-fit:cover">` : ''}
+                </div>
+            `).join('');
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        async function previewSetupPhoto(index) {
+            const file = document.getElementById(`setupPhoto${index}`).files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    team[index].image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveSettings() {
+            team.forEach((member, i) => {
+                member.name = document.getElementById(`setupName${i}`).value || member.name;
+                member.role = document.getElementById(`setupRole${i}`).value || member.role;
+            });
+            localStorage.setItem('teamData', JSON.stringify(team));
+            closeSettings();
+            renderTeamGrid();
+            renderReports();
+            renderHistory();
+            showToast('✅ Pengaturan berhasil disimpan!', 'success');
+        }
+
+        // ==================== UPLOAD ====================
+        function setupUploadArea() {
+            const area = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('fileInput');
+
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+
+            area.addEventListener('dragleave', () => {
+                area.classList.remove('dragover');
+            });
+
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showToast('❌ File harus berupa gambar!', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('❌ File terlalu besar! Max 5MB', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentImage = e.target.result;
+                document.getElementById('previewImg').src = currentImage;
+                document.getElementById('uploadPreview').style.display = 'block';
+                document.getElementById('uploadArea').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage() {
+            currentImage = '';
+            document.getElementById('uploadPreview').style.display = 'none';
+            document.getElementById('uploadArea').style.display = 'block';
+            document.getElementById('fileInput').value = '';
+        }
+
+        // ==================== SUBMIT ====================
+        function submitReport() {
+            const task = document.getElementById('inputTask').value.trim();
+            const location = document.getElementById('inputLocation').value.trim();
+            const notes = document.getElementById('inputNotes').value.trim();
+
+            if (!task) {
+                showToast('❌ Pekerjaan harus diisi!', 'error');
+                return;
+            }
+
+            if (!location) {
+                showToast('❌ Lokasi harus diisi!', 'error');
+                return;
+            }
+
+            const report = {
+                id: Date.now(),
+                memberIndex: currentMemberIndex,
+                task,
+                location,
+                notes,
+                image: currentImage,
+                date: new Date().toISOString()
+            };
+
+            reports.unshift(report);
+            localStorage.setItem('reportsData', JSON.stringify(reports));
+
+            closeModal();
+            renderTeamGrid();
+            renderReports();
+            renderHistory();
+            updateStats();
+            showToast('🎉 Laporan berhasil dikirim!', 'success');
+        }
+
+        // ==================== RENDER REPORTS ====================
+        function renderReports(filter = 'all') {
+            const container = document.getElementById('todayReports');
+            const todayStr = new Date().toDateString();
+            let filtered = reports.filter(r => new Date(r.date).toDateString() === todayStr);
+
+            if (filter !== 'all') {
+                filtered = filtered.filter(r => r.memberIndex === parseInt(filter));
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <h3>Belum ada laporan hari ini</h3>
+                        <p>Klik anggota tim di tab "Tim" untuk input laporan</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(r => createReportCard(r)).join('');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyReports');
+
+            if (reports.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📜</div>
+                        <h3>Belum ada riwayat</h3>
+                        <p>Semua laporan akan muncul di sini</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by date
+            const grouped = {};
+            reports.forEach(r => {
+                const dateStr = new Date(r.date).toLocaleDateString('id-ID', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+                if (!grouped[dateStr]) grouped[dateStr] = [];
+                grouped[dateStr].push(r);
+            });
+
+            let html = '';
+            for (const [date, items] of Object.entries(grouped)) {
+                html += `<div class="section-title" style="margin-top:20px"><span>📅</span> ${date}</div>`;
+                html += items.map(r => createReportCard(r)).join('');
+            }
+
+            container.innerHTML = html;
+        }
+
+        function createReportCard(r) {
+            const member = team[r.memberIndex] || { name: 'Unknown', role: '', image: '' };
+            const initials = member.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+            const time = new Date(r.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const dateShort = new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+            const avatarContent = member.image
+                ? `<img src="${member.image}" alt="${member.name}">`
+                : initials;
+
+            let imageHtml = '';
+            if (r.image) {
+                imageHtml = `
+                    <div class="report-image-container">
+                        <img class="report-image" src="${r.image}" onclick="viewImage('${r.image}')" alt="Bukti">
+                        <button class="btn btn-outline btn-sm" onclick="downloadImage('${r.image}', '${member.name}_${dateShort}')">📥</button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="report-card" data-member="${r.memberIndex}">
+                    <div class="report-avatar avatar-${r.memberIndex + 1}">${avatarContent}</div>
+                    <div class="report-content">
+                        <div class="report-top">
+                            <div>
+                                <div class="report-name">${member.name}</div>
+                                <span class="badge badge-blue">${member.role}</span>
+                            </div>
+                            <div class="report-date">🕐 ${time} • ${dateShort}</div>
+                        </div>
+                        <div class="report-task">🔧 <strong>${r.task}</strong></div>
+                        <div class="report-meta">
+                            <div class="report-meta-item"><span>📍</span> ${r.location}</div>
+                        </div>
+                        ${r.notes ? `<div class="report-notes">💬 ${r.notes}</div>` : ''}
+                        ${imageHtml}
+                    </div>
+                    <div class="report-actions">
+                        <button class="btn btn-danger btn-sm delete-btn" onclick="deleteReport(${r.id})" title="Hapus">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function deleteReport(id) {
+            if (confirm('Yakin hapus laporan ini?')) {
+                reports = reports.filter(r => r.id !== id);
+                localStorage.setItem('reportsData', JSON.stringify(reports));
+                renderReports(currentFilter);
+                renderHistory();
+                renderTeamGrid();
+                updateStats();
+                showToast('🗑️ Laporan dihapus', 'info');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ Yakin hapus SEMUA laporan? Data tidak bisa dikembalikan!')) {
+                reports = [];
+                localStorage.setItem('reportsData', JSON.stringify(reports));
+                renderReports();
+                renderHistory();
+                renderTeamGrid();
+                updateStats();
+                showToast('🗑️ Semua data dihapus', 'info');
+            }
+        }
+
+        // ==================== FILTER ====================
+        function filterReports(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderReports(filter);
+        }
+
+        // ==================== TABS ====================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            if (tab === 'reports') renderReports(currentFilter);
+            if (tab === 'history') renderHistory();
+        }
+
+        // ==================== STATS ====================
+        function updateStats() {
+            const todayStr = new Date().toDateString();
+            const todayReports = reports.filter(r => new Date(r.date).toDateString() === todayStr);
+
+            document.getElementById('statToday').textContent = todayReports.length;
+
+            const activeMembers = new Set(todayReports.map(r => r.memberIndex));
+            document.getElementById('statActive').textContent = `${activeMembers.size}/4`;
+
+            const withImages = reports.filter(r => r.image).length;
+            document.getElementById('statImages').textContent = withImages;
+
+            document.getElementById('statTotal').textContent = reports.length;
+        }
+
+        // ==================== EXPORT EXCEL ====================
+        function downloadExcel() {
+            if (reports.length === 0) {
+                showToast('❌ Belum ada data untuk di-export!', 'error');
+                return;
+            }
+
+            // CSV Header
+            let csv = 'No,Tanggal,Jam,Nama,Jabatan,Pekerjaan,Lokasi,Catatan\n';
+
+            reports.forEach((r, i) => {
+                const date = new Date(r.date);
+                const dateStr = date.toLocaleDateString('id-ID');
+                const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const member = team[r.memberIndex] || { name: 'Unknown', role: '' };
+
+                csv += `${i + 1},"${dateStr}","${timeStr}","${member.name}","${member.role}","${r.task}","${r.location}","${r.notes || '-'}"\n`;
+            });
+
+            // Download CSV
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Laporan_Tim_${new Date().toLocaleDateString('id-ID')}.csv`;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            showToast('📥 File Excel berhasil didownload!', 'success');
+        }
+
+        // ==================== IMAGE VIEWER ====================
+        function viewImage(src) {
+            document.getElementById('viewerImg').src = src;
+            document.getElementById('imageViewer').classList.add('active');
+        }
+
+        function closeImageViewer() {
+            document.getElementById('imageViewer').classList.remove('active');
+        }
+
+        // ==================== DOWNLOAD IMAGE ====================
+        function downloadImage(src, filename) {
+            const link = document.createElement('a');
+            link.href = src;
+            link.download = `${filename.replace(/\s/g, '_')}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('📥 Foto berhasil didownload!', 'success');
+        }
+
+        // ==================== TOAST ====================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = message;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 3000);
+        }
+
+        // ==================== KEYBOARD ====================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeSettings();
+                closeImageViewer();
+            }
+        });
+
+        // ==================== START ====================
+        init();
+    </script>
+</body>
+</html>
