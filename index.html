@@ -1014,6 +1014,63 @@
         .avatar-2 { background: linear-gradient(135deg, #10b981, #059669); }
         .avatar-3 { background: linear-gradient(135deg, #f59e0b, #d97706); }
         .avatar-4 { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .avatar-5 { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .avatar-6 { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+        .avatar-7 { background: linear-gradient(135deg, #f97316, #c2410c); }
+        .avatar-8 { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+
+        .reports-header {
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .reports-header .header-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .report-meta {
+            gap: 12px;
+        }
+
+        .report-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .report-status.status-dalam { background: rgba(59,130,246,0.15); color: var(--accent-light); }
+        .report-status.status-selesai { background: rgba(16,185,129,0.15); color: var(--success); }
+        .report-status.status-menunggu { background: rgba(245,158,11,0.15); color: var(--warning); }
+
+        .report-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            display: flex;
+            gap: 18px;
+            transition: all 0.2s;
+            align-items: flex-start;
+        }
+
+        .report-card:hover {
+            border-color: var(--accent);
+            background: var(--bg-card-hover);
+        }
     </style>
 </head>
 <body>
@@ -1029,7 +1086,7 @@
                     📅 <span id="currentDate"></span>
                 </div>
                 <button class="btn btn-outline" onclick="openSettings()">⚙️</button>
-                <button class="btn btn-success" onclick="downloadExcel()">📥 Excel</button>
+                <button class="btn btn-success" onclick="downloadWeeklyExcel()">📥 Excel Mingguan</button>
             </div>
         </header>
 
@@ -1037,13 +1094,13 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">📋</div>
-                <div class="stat-label">Total Laporan Hari Ini</div>
+                <div class="stat-label">Total Laporan</div>
                 <div class="stat-value" id="statToday">0</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">👥</div>
                 <div class="stat-label">Anggota Aktif</div>
-                <div class="stat-value" id="statActive">0/4</div>
+                <div class="stat-value" id="statActive">0/0</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">📸</div>
@@ -1075,12 +1132,17 @@
         <!-- Tab: Reports (Today) -->
         <div class="tab-content" id="tab-reports">
             <div class="reports-header">
-                <div class="section-title" style="margin-bottom:0">
-                    <span>📋</span> Laporan Hari Ini
+                <div class="header-group">
+                    <div class="section-title" style="margin-bottom:0">
+                        <span>📋</span> Laporan Per Tanggal
+                    </div>
+                    <div class="date-filter">
+                        <button class="btn btn-outline btn-sm" onclick="changeReportDateOffset(-1)">← Kemarin</button>
+                        <input type="date" class="form-control" id="reportDatePicker" onchange="changeReportDate(this.value)">
+                        <button class="btn btn-outline btn-sm" onclick="changeReportDateOffset(1)">Besok →</button>
+                    </div>
                 </div>
-                <div class="filter-group">
-                        <div class="filter-group" id="reportFilterGroup"></div>
-                </div>
+                <div class="filter-group" id="reportFilterGroup"></div>
             </div>
             <div class="reports-list" id="todayReports"></div>
         </div>
@@ -1114,7 +1176,7 @@
                     <input type="text" class="form-control" id="inputLocation" placeholder="Contoh: Gedung A, Lantai 2...">
                 </div>
                 <div class="form-group">
-                    <label>� Status Pekerjaan</label>
+                    <label>📌 Status Pekerjaan</label>
                     <select class="form-control" id="inputStatus">
                         <option value="" disabled selected>Pilih status pekerjaan</option>
                         <option value="Dalam Proses">Dalam Proses</option>
@@ -1123,7 +1185,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>�📝 Catatan Tambahan</label>
+                    <label>📝 Catatan Tambahan</label>
                     <textarea class="form-control" id="inputNotes" placeholder="Tambahkan catatan jika perlu..."></textarea>
                 </div>
                 <div class="form-group">
@@ -1181,7 +1243,11 @@
             { name: 'Ahmad Fauzi', role: 'Teknisi AC', image: '' },
             { name: 'Budi Santoso', role: 'Teknisi Listrik', image: '' },
             { name: 'Citra Dewi', role: 'Admin Lapangan', image: '' },
-            { name: 'Dian Pratama', role: 'Supervisor', image: '' }
+            { name: 'Dian Pratama', role: 'Supervisor', image: '' },
+            { name: 'Eka Prasetya', role: 'Teknisi Pendingin', image: '' },
+            { name: 'Fitri Yulia', role: 'Teknisi Jaringan', image: '' },
+            { name: 'Gilang Haryanto', role: 'Teknisi AC', image: '' },
+            { name: 'Hana Salsabila', role: 'Koordinator Lapangan', image: '' }
         ];
 
         let team = JSON.parse(localStorage.getItem('teamData')) || [...defaultTeam];
@@ -1189,10 +1255,12 @@
         let currentMemberIndex = 0;
         let currentImage = '';
         let currentFilter = 'all';
+        let selectedReportDate = new Date().toISOString().split('T')[0];
 
         // ==================== INIT ====================
         function init() {
             setCurrentDate();
+            document.getElementById('reportDatePicker').value = selectedReportDate;
             renderTeamGrid();
             renderReportFilters();
             renderReports();
@@ -1418,8 +1486,9 @@
         // ==================== RENDER REPORTS ====================
         function renderReports(filter = 'all') {
             const container = document.getElementById('todayReports');
-            const todayStr = new Date().toDateString();
-            let filtered = reports.filter(r => new Date(r.date).toDateString() === todayStr);
+            const selectedDate = new Date(selectedReportDate);
+            const selectedDateStr = selectedDate.toDateString();
+            let filtered = reports.filter(r => new Date(r.date).toDateString() === selectedDateStr);
 
             if (filter !== 'all') {
                 filtered = filtered.filter(r => r.memberIndex === parseInt(filter));
@@ -1429,8 +1498,8 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📭</div>
-                        <h3>Belum ada laporan hari ini</h3>
-                        <p>Klik anggota tim di tab "Tim" untuk input laporan</p>
+                        <h3>Belum ada laporan untuk tanggal ini</h3>
+                        <p>Pilih tanggal di atas untuk melihat laporan kemarin atau sebelumnya.</p>
                     </div>
                 `;
                 return;
@@ -1481,7 +1550,7 @@
                 ? `<img src="${member.image}" alt="${member.name}">`
                 : initials;
 
-            const statusBadge = r.status ? `<span class="badge badge-green">${r.status}</span>` : '';
+            const statusClass = r.status ? getStatusClass(r.status) : '';
             let imageHtml = '';
             if (r.image) {
                 imageHtml = `
@@ -1501,14 +1570,14 @@
                                 <div class="report-name">${member.name}</div>
                                 <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px;">
                                     <span class="badge badge-blue">${member.role}</span>
-                                    ${statusBadge}
                                 </div>
                             </div>
                             <div class="report-date">🕐 ${time} • ${dateShort}</div>
                         </div>
                         <div class="report-task">🔧 <strong>${r.task}</strong></div>
                         <div class="report-meta">
-                            <div class="report-meta-item"><span>📍</span> ${r.location}</div>
+                                        <div class="report-meta-item"><span>📍</span> ${r.location}</div>
+                            <div class="report-meta-item report-status ${statusClass}">⏱️ ${r.status}</div>
                         </div>
                         ${r.notes ? `<div class="report-notes">💬 ${r.notes}</div>` : ''}
                         ${imageHtml}
@@ -1548,8 +1617,17 @@
         function filterReports(filter, btn) {
             currentFilter = filter;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            if (btn) btn.classList.add('active');
             renderReports(filter);
+        }
+
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Dalam Proses': return 'status-dalam';
+                case 'Selesai': return 'status-selesai';
+                case 'Menunggu': return 'status-menunggu';
+                default: return '';
+            }
         }
 
         // ==================== TABS ====================
@@ -1564,15 +1642,33 @@
             if (tab === 'history') renderHistory();
         }
 
+        function changeReportDate(dateValue) {
+            if (!dateValue) return;
+            selectedReportDate = dateValue;
+            document.getElementById('reportDatePicker').value = selectedReportDate;
+            renderReports(currentFilter);
+            updateStats();
+        }
+
+        function changeReportDateOffset(offset) {
+            const current = new Date(selectedReportDate);
+            current.setDate(current.getDate() + offset);
+            selectedReportDate = current.toISOString().split('T')[0];
+            document.getElementById('reportDatePicker').value = selectedReportDate;
+            renderReports(currentFilter);
+            updateStats();
+        }
+
         // ==================== STATS ====================
         function updateStats() {
-            const todayStr = new Date().toDateString();
-            const todayReports = reports.filter(r => new Date(r.date).toDateString() === todayStr);
+            const selectedDate = new Date(selectedReportDate);
+            const selectedDateStr = selectedDate.toDateString();
+            const selectedDateReports = reports.filter(r => new Date(r.date).toDateString() === selectedDateStr);
 
-            document.getElementById('statToday').textContent = todayReports.length;
+            document.getElementById('statToday').textContent = selectedDateReports.length;
 
-            const activeMembers = new Set(todayReports.map(r => r.memberIndex));
-            document.getElementById('statActive').textContent = `${activeMembers.size}/4`;
+            const activeMembers = new Set(selectedDateReports.map(r => r.memberIndex));
+            document.getElementById('statActive').textContent = `${activeMembers.size}/${team.length}`;
 
             const withImages = reports.filter(r => r.image).length;
             document.getElementById('statImages').textContent = withImages;
@@ -1581,16 +1677,24 @@
         }
 
         // ==================== EXPORT EXCEL ====================
-        function downloadExcel() {
-            if (reports.length === 0) {
-                showToast('❌ Belum ada data untuk di-export!', 'error');
+        function downloadWeeklyExcel() {
+            const endDate = new Date(selectedReportDate);
+            const startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - 6);
+
+            const weeklyData = reports.filter(r => {
+                const reportDate = new Date(r.date);
+                return reportDate >= startDate && reportDate <= endDate;
+            });
+
+            if (weeklyData.length === 0) {
+                showToast('❌ Belum ada data untuk minggu ini!', 'error');
                 return;
             }
 
-            // CSV Header
             let csv = 'No,Tanggal,Jam,Nama,Jabatan,Status,Pekerjaan,Lokasi,Catatan\n';
 
-            reports.forEach((r, i) => {
+            weeklyData.forEach((r, i) => {
                 const date = new Date(r.date);
                 const dateStr = date.toLocaleDateString('id-ID');
                 const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -1600,17 +1704,16 @@
                        `"${r.task}","${r.location}","${r.notes || '-'}"\n`;
             });
 
-            // Download CSV
             const BOM = '\uFEFF';
             const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Laporan_Tim_${new Date().toLocaleDateString('id-ID')}.csv`;
+            link.download = `Laporan_Mingguan_${startDate.toLocaleDateString('id-ID')}_sampai_${endDate.toLocaleDateString('id-ID')}.csv`;
             link.click();
             URL.revokeObjectURL(url);
 
-            showToast('📥 File Excel berhasil didownload!', 'success');
+            showToast('📥 File Excel mingguan berhasil didownload!', 'success');
         }
 
         // ==================== IMAGE VIEWER ====================
