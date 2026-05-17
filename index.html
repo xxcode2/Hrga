@@ -387,9 +387,9 @@
         </div>
         <div class="header-right">
             <div class="date-chip">📅 <span id="dateDisplay"></span></div>
-            <div class="sync-indicator" onclick="syncAll()" title="Klik untuk sync manual">
+            <div class="sync-indicator" onclick="loadAll()" title="Klik untuk refresh manual">
                 <div class="sync-dot" id="syncDot"></div>
-                <span id="syncLabel">Mengecek...</span>
+                <span id="syncLabel">Memuat...</span>
             </div>
             <button class="btn btn-ghost" onclick="openSettings()">⚙️ Pengaturan</button>
             <button class="btn btn-green" onclick="downloadExcel()">📥 Export Excel</button>
@@ -542,12 +542,7 @@
 
 <script>
 // ─────────────────────────────────────────────────────
-// CONFIG
-// ─────────────────────────────────────────────────────
-const API = window.location.origin;
-
-// ─────────────────────────────────────────────────────
-// DEFAULT DATA
+// CONFIG & CONSTANTS
 // ─────────────────────────────────────────────────────
 const DEFAULT_TEAM = [
     { name: 'Ahmad Fauzi',     role: 'Teknisi AC' },
@@ -561,25 +556,21 @@ const DEFAULT_TEAM = [
 ];
 
 // ─────────────────────────────────────────────────────
-// STATE
+// STATE — hanya UI state, BUKAN data cache
 // ─────────────────────────────────────────────────────
-let team          = [...DEFAULT_TEAM];
-let reports       = [];
-let pendingReports = [];
+let team         = DEFAULT_TEAM.map(d => ({ ...d }));
+let reports      = [];   // selalu dari server, tidak pernah dimodifikasi lokal
 let currentMember = 0;
-let currentImg    = '';
-let activeFilter  = 'all';
-let startDate     = todayStr();
-let endDate       = todayStr();
-let isOnline      = navigator.onLine;
-let isSyncing     = false;
+let currentImg   = '';
+let activeFilter = 'all';
+let startDate    = todayStr();
+let endDate      = todayStr();
+let isLoading    = false;
+let autoRefreshTimer = null;
 
 // ─────────────────────────────────────────────────────
 // UTILS
 // ─────────────────────────────────────────────────────
-function noOp() {}
-
-// PENTING: pakai local timezone, bukan UTC
 function todayStr() {
     const d = new Date();
     const y = d.getFullYear();
@@ -588,7 +579,6 @@ function todayStr() {
     return `${y}-${m}-${dd}`;
 }
 
-// Ambil tanggal lokal dari Date object (bukan UTC)
 function localDateStr(dateVal) {
     const d = new Date(dateVal);
     const y = d.getFullYear();
@@ -596,7 +586,11 @@ function localDateStr(dateVal) {
     const dd = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${dd}`;
 }
-function initials(name) { return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(); }
+
+function initials(name) {
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+}
+
 function statusClass(s) {
     if (s === 'Dalam Proses') return 's-proses';
     if (s === 'Selesai')      return 's-selesai';
@@ -613,31 +607,22 @@ function toast(msg, type = 'info') {
     setTimeout(() => t.remove(), 3200);
 }
 
-// ─────────────────────────────────────────────────────
-// SYNC STATUS UI
-// ─────────────────────────────────────────────────────
 function setSyncUI(state, label) {
     const dot = document.getElementById('syncDot');
     const lbl = document.getElementById('syncLabel');
     dot.className = 'sync-dot ' + state;
     lbl.textContent = label || (
         state === 'online'  ? 'Online' :
-        state === 'syncing' ? 'Sinkronisasi...' :
+        state === 'syncing' ? 'Memuat...' :
         state === 'offline' ? 'Offline' : 'Mengecek...'
     );
 }
 
 // ─────────────────────────────────────────────────────
-// NETWORK EVENTS
-// ─────────────────────────────────────────────────────
-window.addEventListener('online',  () => { isOnline = true;  toast('🟢 Kembali online!', 'ok'); syncAll(); });
-window.addEventListener('offline', () => { isOnline = false; setSyncUI('offline'); toast('🔴 Offline – data akan disinkronkan saat online', 'info'); });
-
-// ─────────────────────────────────────────────────────
-// API HELPER
+// API HELPER — semua request ke server
 // ─────────────────────────────────────────────────────
 async function apiFetch(path, options = {}) {
-    const res = await fetch(API + path, {
+    const res = await fetch(window.location.origin + path, {
         headers: { 'Content-Type': 'application/json', ...options.headers },
         ...options
     });
@@ -649,164 +634,69 @@ async function apiFetch(path, options = {}) {
 }
 
 // ─────────────────────────────────────────────────────
-// SYNC: PULL ALL DATA FROM SERVER
+// LOAD ALL — tarik semua data dari server (ganti syncAll)
+// Tidak ada merge dengan lokal. Server = sumber kebenaran.
 // ─────────────────────────────────────────────────────
-async function syncAll() {
-    if (isSyncing) return;
-    isSyncing = true;
+async function loadAll() {
+    if (isLoading) return;
+    isLoading = true;
     setSyncUI('syncing');
-    console.log('🔄 Sync started...', { currentReports: reports.length, pendingReports: pendingReports.length });
-
-    const reportsBefore = reports.length;
 
     try {
-        await apiFetch('/api/health');
-        console.log('✅ Server responsive');
-
-        await pushPendingReports();
-        console.log('✅ Pending reports processed');
-
-        await pushTeams();
-        console.log('✅ Team data pushed');
-
         const data = await apiFetch('/api/sync');
-        console.log('✅ Data pulled from server:', {
-            teamsCount: data.teams?.length || 0,
-            reportsCount: data.reports?.length || 0
-        });
 
+        // Update team dari server
         if (Array.isArray(data.teams) && data.teams.length > 0) {
-            const merged = [...DEFAULT_TEAM].map((def, i) => {
+            team = DEFAULT_TEAM.map((def, i) => {
                 const srv = data.teams.find(t => t.member_index === i);
-                return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : def;
+                return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : { ...def };
             });
-            team = merged;
-            console.log('✅ Team updated from server');
         } else {
+            // Jika server belum punya data tim, push default
             team = DEFAULT_TEAM.map(d => ({ ...d }));
-            await pushTeams().catch(noOp);
+            pushTeamsToServer().catch(() => {});
         }
 
+        // Laporan dari server — langsung pakai, tidak ada merge
         if (Array.isArray(data.reports)) {
-            const serverReports = data.reports.map(r => ({
+            reports = data.reports.map(r => ({
                 id:          Number(r.id),
                 memberIndex: Number(r.member_index),
                 task:        r.task,
                 location:    r.location,
-                status:      r.status || '',
-                notes:       r.notes  || '',
-                image:       r.image  || '',
+                status:      r.status  || '',
+                notes:       r.notes   || '',
+                image:       r.image   || '',
                 date:        r.created_at
-            }));
-
-            const serverIds = new Set(serverReports.map(r => r.id));
-            const localNotOnServer = reports.filter(r => {
-                const isOnServer = serverIds.has(Number(r.id));
-                if (!isOnServer) console.log(`📌 Local report not on server yet: ${r.id} (task: ${r.task})`);
-                return !isOnServer;
-            });
-            
-            // IMPORTANT: Start with unconfirmed local reports first
-            // So they don't get lost if server data arrives first
-            const mergedReports = [...localNotOnServer, ...pendingReports, ...serverReports]
-                .filter((r, index, self) => index === self.findIndex(item => Number(item.id) === Number(r.id)))
-                .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            console.log(`📊 Merge details:
-                Before: ${reports.length} local
-                Local not on server: ${localNotOnServer.length}
-                Pending: ${pendingReports.length}
-                From server: ${serverReports.length}
-                After merge: ${mergedReports.length}
-            `);
-
-            reports = mergedReports;
-            console.log(`✅ Merged ${reports.length} reports`);
-        } else {
-            console.warn('⚠️ No reports data from server');
+            })).sort((a, b) => new Date(b.date) - new Date(a.date));
         }
 
         setSyncUI('online');
-        console.log(`📊 Final report count: ${reports.length}`);
-        if (reports.length < reportsBefore) {
-            console.warn(`⚠️ REPORT COUNT DECREASED: ${reportsBefore} → ${reports.length}`);
-            console.warn('Lost reports:', reports.length < reportsBefore ? 'Data loss detected!' : 'OK');
-        }
-        refreshAll();
-        console.log('✅ Sync complete');
+        refreshUI();
     } catch (e) {
-        console.error('❌ Sync error:', e.message, e);
-        setSyncUI('offline', 'Koneksi gagal');
-        isOnline = false;
-        refreshAll();
+        console.error('loadAll error:', e.message);
+        setSyncUI('offline', 'Gagal terhubung');
+        // Tetap render UI dengan data yang ada (mungkin masih kosong)
+        refreshUI();
     } finally {
-        isSyncing = false;
+        isLoading = false;
     }
 }
 
 // ─────────────────────────────────────────────────────
-// PUSH: laporan lokal yang belum ada di server
+// PUSH TEAMS
 // ─────────────────────────────────────────────────────
-async function pushPendingReports() {
-    if (pendingReports.length === 0) return;
-
-    const stillPending = [];
-    for (const report of pendingReports) {
-        try {
-            await pushReport(report);
-            console.log('✅ Pending report pushed:', report.id);
-        } catch (e) {
-            console.warn('❌ Still pending:', report.id, e.message);
-            stillPending.push(report);
-        }
-    }
-    const pushed = pendingReports.length - stillPending.length;
-    if (pushed > 0) {
-        console.log(`📤 Pushed ${pushed} pending reports`);
-    }
-    pendingReports = stillPending;
-}
-async function pushTeams() {
+async function pushTeamsToServer() {
     for (let i = 0; i < team.length; i++) {
         await apiFetch('/api/teams', {
             method: 'POST',
-            body: JSON.stringify({ member_index: i, name: team[i].name, role: team[i].role, image: team[i].image || null })
-        }).catch(() => {});  // silent fail per member
-    }
-}
-
-// ─────────────────────────────────────────────────────
-// PUSH: kirim 1 laporan ke server
-// ─────────────────────────────────────────────────────
-async function pushReport(report) {
-    try {
-        await apiFetch('/api/reports', {
-            method: 'POST',
             body: JSON.stringify({
-                id:           report.id,
-                member_index: report.memberIndex,
-                task:         report.task,
-                location:     report.location,
-                status:       report.status,
-                notes:        report.notes,
-                image:        report.image || null,
-                date:         report.date
+                member_index: i,
+                name:  team[i].name,
+                role:  team[i].role,
+                image: team[i].image || null
             })
-        });
-    } catch (e) {
-        console.warn('Push report gagal:', e.message);
-        throw e;
-    }
-}
-
-// ─────────────────────────────────────────────────────
-// DELETE: hapus laporan dari server
-// ─────────────────────────────────────────────────────
-async function deleteReportServer(id) {
-    try {
-        await apiFetch(`/api/reports/${id}`, { method: 'DELETE' });
-    } catch (e) {
-        console.warn('Delete report server gagal:', e.message);
+        }).catch(() => {});
     }
 }
 
@@ -820,28 +710,18 @@ async function init() {
     document.getElementById('startDate').value = startDate;
     document.getElementById('endDate').value   = endDate;
 
-    if (!team || team.length !== 8) {
-        team = DEFAULT_TEAM.map(d => ({ ...d }));
-    }
-
     setupUpload();
-    
-    // Tampilkan loading state
-    setSyncUI('syncing', 'Memuat data...');
 
-    if (navigator.onLine) {
-        await syncAll();
-    } else {
-        setSyncUI('offline');
-        refreshAll();
-    }
+    // Load data dari server
+    await loadAll();
 
-    setInterval(() => {
-        if (!isSyncing && navigator.onLine) syncAll();
+    // Auto-refresh setiap 30 detik (hanya tarik dari server)
+    autoRefreshTimer = setInterval(() => {
+        if (!isLoading) loadAll();
     }, 30000);
 }
 
-function refreshAll() {
+function refreshUI() {
     renderTeam();
     renderFilters();
     renderReports();
@@ -854,7 +734,6 @@ function refreshAll() {
 function renderTeam() {
     const todayS = todayStr();
     const grid = document.getElementById('teamGrid');
-    while (team.length < 8) team.push({ ...DEFAULT_TEAM[team.length] });
     document.getElementById('teamCount').textContent = `${team.length} orang`;
 
     grid.innerHTML = team.map((m, i) => {
@@ -886,8 +765,9 @@ function openInputModal(idx) {
     document.getElementById('uploadPreview').style.display = 'none';
     document.getElementById('uploadBox').style.display = 'block';
     document.getElementById('fileInput').value = '';
-    document.getElementById('submitBtn').disabled = false;
-    document.getElementById('submitBtn').textContent = '🚀 Kirim Laporan';
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = false;
+    btn.textContent = '🚀 Kirim Laporan';
     openModal('inputModal');
 }
 
@@ -895,7 +775,7 @@ function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 // ─────────────────────────────────────────────────────
-// SETTINGS MODAL
+// SETTINGS
 // ─────────────────────────────────────────────────────
 function openSettings() {
     const grid = document.getElementById('settingsGrid');
@@ -917,17 +797,14 @@ async function saveSettings() {
         if (r) m.role = r;
     });
     closeModal('settingsModal');
-    refreshAll();
 
-    if (navigator.onLine) {
-        try {
-            await pushTeams();
-            toast('✅ Pengaturan tersimpan & sinkronisasi!', 'ok');
-        } catch {
-            toast('✅ Pengaturan tersimpan (sync gagal)', 'info');
-        }
-    } else {
-        toast('✅ Pengaturan tersimpan (offline, belum sync)', 'info');
+    try {
+        await pushTeamsToServer();
+        toast('✅ Pengaturan tersimpan!', 'ok');
+        await loadAll();  // reload dari server agar data fresh
+    } catch {
+        toast('⚠️ Gagal menyimpan ke server', 'err');
+        refreshUI();
     }
 }
 
@@ -970,7 +847,7 @@ function removeImg(ev) {
 }
 
 // ─────────────────────────────────────────────────────
-// SUBMIT LAPORAN
+// SUBMIT LAPORAN — kirim ke server dulu, baru tampilkan
 // ─────────────────────────────────────────────────────
 async function submitReport() {
     const task     = document.getElementById('fTask').value.trim();
@@ -984,48 +861,84 @@ async function submitReport() {
 
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
-    btn.textContent = '⏳ Mengirim...';
+    btn.textContent = '⏳ Menyimpan...';
 
-    const report = {
-        id:          Date.now(),
-        memberIndex: currentMember,
-        task, location, status, notes,
-        image:       currentImg,
-        date:        new Date().toISOString()
-    };
+    const reportId = Date.now();
+    const reportDate = new Date().toISOString();
 
-    // Selalu simpan lokal dulu
-    reports.unshift(report);
-    closeModal('inputModal');
-    refreshAll();
-    toast('🎉 Laporan tersimpan!', 'ok');
+    try {
+        // Kirim ke server dulu — BARU tampilkan ke UI
+        await apiFetch('/api/reports', {
+            method: 'POST',
+            body: JSON.stringify({
+                id:           reportId,
+                member_index: currentMember,
+                task,
+                location,
+                status,
+                notes,
+                image:        currentImg || null,
+                date:         reportDate
+            })
+        });
 
-    // Coba push ke server
-    if (navigator.onLine) {
-        try {
-            await pushReport(report);
-            toast('✅ Sinkronisasi ke server berhasil!', 'ok');
-        } catch (e) {
-            console.error('Push report error:', e);
-            pendingReports.push(report);
-            toast('⚠️ Akan disinkronkan saat online', 'info');
-        }
-    } else {
-        pendingReports.push(report);
-        toast('📱 Offline - akan sync saat online', 'info');
+        // Tutup modal
+        closeModal('inputModal');
+        toast('✅ Laporan berhasil disimpan!', 'ok');
+
+        // Tambahkan ke array lokal langsung (tanpa menunggu loadAll)
+        // agar tampilan update SEKETIKA tanpa delay
+        reports.unshift({
+            id:          reportId,
+            memberIndex: currentMember,
+            task,
+            location,
+            status,
+            notes,
+            image:       currentImg || '',
+            date:        reportDate
+        });
+
+        // Render ulang UI
+        refreshUI();
+
+        // Background reload dari server untuk konfirmasi
+        // Delay sedikit agar server sudah commit
+        setTimeout(() => {
+            loadAll().catch(() => {});
+        }, 1500);
+
+    } catch (e) {
+        console.error('Submit error:', e);
+        btn.disabled = false;
+        btn.textContent = '🚀 Kirim Laporan';
+        toast('❌ Gagal menyimpan: ' + e.message, 'err');
     }
 }
 
 // ─────────────────────────────────────────────────────
-// DELETE LAPORAN
+// DELETE — hapus dari server dulu, baru update UI
 // ─────────────────────────────────────────────────────
 async function deleteReport(id) {
     if (!confirm('Yakin hapus laporan ini?')) return;
-    reports = reports.filter(r => r.id !== id);
-    pendingReports = pendingReports.filter(r => r.id !== id);
-    refreshAll();
-    toast('🗑️ Laporan dihapus', 'info');
-    if (navigator.onLine) deleteReportServer(id);
+
+    try {
+        await apiFetch(`/api/reports/${id}`, { method: 'DELETE' });
+        // Hapus dari array lokal
+        reports = reports.filter(r => r.id !== id);
+        refreshUI();
+        toast('🗑️ Laporan dihapus', 'info');
+    } catch (e) {
+        // Jika endpoint /:id tidak ada, coba dengan query string
+        try {
+            await apiFetch(`/api/reports?id=${id}`, { method: 'DELETE' });
+            reports = reports.filter(r => r.id !== id);
+            refreshUI();
+            toast('🗑️ Laporan dihapus', 'info');
+        } catch (e2) {
+            toast('❌ Gagal menghapus: ' + e2.message, 'err');
+        }
+    }
 }
 
 // ─────────────────────────────────────────────────────
@@ -1079,9 +992,8 @@ function setToday() {
 function renderReports() {
     const container = document.getElementById('reportList');
 
-    // Filter berdasarkan tanggal LOKAL (bukan UTC)
     let filtered = reports.filter(r => {
-        const d = localDateStr(r.date);  // konversi ke tanggal lokal
+        const d = localDateStr(r.date);
         return d >= startDate && d <= endDate;
     });
 
@@ -1153,7 +1065,7 @@ function buildReportCard(r) {
 // STATS
 // ─────────────────────────────────────────────────────
 function updateStats() {
-    const todayS = todayStr();  // tanggal lokal hari ini
+    const todayS   = todayStr();
     const todayRpts = reports.filter(r => localDateStr(r.date) === todayS);
     document.getElementById('statToday').textContent  = todayRpts.length;
     const activeSet = new Set(todayRpts.map(r => r.memberIndex));
@@ -1179,7 +1091,6 @@ function downloadExcel() {
         const m    = team[r.memberIndex] || { name: 'Unknown', role: '-' };
         const date = dt.toLocaleDateString('id-ID');
         const time = dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        // Escape tanda petik ganda dalam nilai
         const esc  = v => String(v || '-').replace(/"/g, '""');
         csv += `${i+1},"${date}","${time}","${esc(m.name)}","${esc(m.role)}","${esc(r.status)}","${esc(r.task)}","${esc(r.location)}","${esc(r.notes)}"\n`;
     });
@@ -1220,7 +1131,6 @@ function switchTab(name, btn) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
     btn.classList.add('on');
     document.getElementById('tab-' + name).classList.add('on');
-    // Selalu render ulang saat pindah tab
     if (name === 'reports') {
         renderFilters();
         renderReports();
@@ -1243,8 +1153,8 @@ document.addEventListener('keydown', e => {
 // ─────────────────────────────────────────────────────
 init().catch(e => {
     console.error('Init error:', e);
-    refreshAll();
-    toast('⚠️ Gagal load data, gunakan yang tersedia', 'info');
+    setSyncUI('offline', 'Error');
+    toast('⚠️ Gagal load data dari server', 'err');
 });
 </script>
 </body>
