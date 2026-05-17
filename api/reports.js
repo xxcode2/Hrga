@@ -36,6 +36,13 @@ module.exports = async function handler(req, res) {
     if (!id || member_index === undefined || !task || !location) {
       return res.status(400).json({ error: 'id, member_index, task, location wajib diisi' });
     }
+    if (image && typeof image === 'string') {
+      const maxImageBytes = 5 * 1024 * 1024;
+      const imageSize = Buffer.byteLength(image, 'utf8');
+      if (imageSize > maxImageBytes) {
+        return res.status(413).json({ error: 'Image terlalu besar; maksimal 5MB.' });
+      }
+    }
     try {
       await pool.query(`
         INSERT INTO reports (id, member_index, task, location, status, notes, image, created_at)

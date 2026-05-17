@@ -26,6 +26,13 @@ module.exports = async function handler(req, res) {
     if (member_index === undefined || !name) {
       return res.status(400).json({ error: 'member_index dan name wajib diisi' });
     }
+    if (image && typeof image === 'string') {
+      const maxImageBytes = 5 * 1024 * 1024;
+      const imageSize = Buffer.byteLength(image, 'utf8');
+      if (imageSize > maxImageBytes) {
+        return res.status(413).json({ error: 'Image terlalu besar; maksimal 5MB.' });
+      }
+    }
     try {
       await pool.query(`
         INSERT INTO teams (member_index, name, role, image, updated_at)

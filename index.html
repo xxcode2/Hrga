@@ -498,7 +498,7 @@
                 <label class="form-label">📸 Bukti Foto (opsional)</label>
                 <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">📤</div>
-                    <div class="upload-hint"><strong>Klik atau drag & drop</strong> foto di sini<br><small>JPG / PNG · Maks. 5MB</small></div>
+                    <div class="upload-hint"><strong>Klik atau drag & drop</strong> foto di sini<br><small>JPG / PNG · Maks. 5MB (akan dikompres jika perlu)</small></div>
                     <input type="file" id="fileInput" accept="image/*" hidden>
                     <div class="upload-preview" id="uploadPreview">
                         <img id="previewImg" src="" alt="Preview">
@@ -545,14 +545,14 @@
 // CONFIG & CONSTANTS
 // ─────────────────────────────────────────────────────
 const DEFAULT_TEAM = [
-    { name: 'Ahmad Fauzi',     role: 'Teknisi AC' },
-    { name: 'Budi Santoso',    role: 'Teknisi Listrik' },
-    { name: 'Citra Dewi',      role: 'Admin Lapangan' },
-    { name: 'Dian Pratama',    role: 'Supervisor' },
-    { name: 'Eka Prasetya',    role: 'Teknisi Pendingin' },
-    { name: 'Fitri Yulia',     role: 'Teknisi Jaringan' },
-    { name: 'Gilang Haryanto', role: 'Teknisi AC' },
-    { name: 'Hana Salsabila',  role: 'Koordinator Lapangan' }
+    { name: 'fajar gumilar',          role: 'staff utility' },
+    { name: 'deri agustin',          role: 'staff ts' },
+    { name: 'candra warisman',       role: 'staff cs' },
+    { name: 'ajeng kusumaningtias',  role: 'admin GA' },
+    { name: 'muhamad rieza pratama', role: 'staff NRM' },
+    { name: 'ibnu fadilah',          role: 'NRM' },
+    { name: 'muhamad rizal',         role: 'teknisi utility' },
+    { name: 'dadi heryana',          role: 'teknisi utility' }
 ];
 
 // ─────────────────────────────────────────────────────
@@ -825,17 +825,108 @@ function setupUpload() {
     input.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 }
 
+const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_IMAGE_DATAURL_BYTES = 5 * 1024 * 1024;
+
 function handleFile(file) {
     if (!file.type.startsWith('image/')) { toast('❌ File harus berupa gambar!', 'err'); return; }
-    if (file.size > 5 * 1024 * 1024)    { toast('❌ File terlalu besar! Maks 5MB', 'err'); return; }
-    const reader = new FileReader();
-    reader.onload = e => {
-        currentImg = e.target.result;
-        document.getElementById('previewImg').src = currentImg;
-        document.getElementById('uploadPreview').style.display = 'block';
-        document.getElementById('uploadBox').style.display = 'none';
-    };
-    reader.readAsDataURL(file);
+    if (file.size > MAX_IMAGE_FILE_SIZE) { toast('❌ File terlalu besar! Maks 5MB', 'err'); return; }
+
+    processImageFile(file).catch(err => {
+        console.error('Gagal memproses gambar:', err);
+        toast('❌ Tidak bisa memproses gambar. Gunakan file yang lebih kecil atau potong gambar.', 'err');
+    });
+}
+
+async function processImageFile(file) {
+    const originalDataUrl = await readFileAsDataURL(file);
+    let dataUrl = originalDataUrl;
+
+    if (getDataUrlSize(dataUrl) > MAX_IMAGE_DATAURL_BYTES) {
+        const compressed = await compressImageFile(file, MAX_IMAGE_DATAURL_BYTES);
+        if (!compressed) {
+            toast('❌ File terlalu besar! Pilih file lebih kecil dari 5MB.', 'err');
+            return;
+        }
+        dataUrl = compressed;
+        toast('ℹ️ Gambar dikompres otomatis agar bisa diupload.', 'info');
+    }
+
+    currentImg = dataUrl;
+    document.getElementById('previewImg').src = currentImg;
+    document.getElementById('uploadPreview').style.display = 'block';
+    document.getElementById('uploadBox').style.display = 'none';
+}
+
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function getDataUrlSize(dataUrl) {
+    return new Blob([dataUrl]).size;
+}
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
+
+async function compressImageFile(file, maxBytes) {
+    const dataUrl = await readFileAsDataURL(file);
+    const img = await loadImage(dataUrl);
+    const canvas = document.createElement('canvas');
+    let width = img.width;
+    let height = img.height;
+    const maxSide = 1280;
+
+    if (width > maxSide || height > maxSide) {
+        if (width > height) {
+            height = Math.round(height * maxSide / width);
+            width = maxSide;
+        } else {
+            width = Math.round(width * maxSide / height);
+            height = maxSide;
+        }
+    }
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    ctx.drawImage(img, 0, 0, width, height);
+
+    let quality = 0.92;
+    let compressed = canvas.toDataURL('image/jpeg', quality);
+
+    while (getDataUrlSize(compressed) > maxBytes && quality > 0.35) {
+        quality -= 0.08;
+        compressed = canvas.toDataURL('image/jpeg', quality);
+    }
+
+    while (getDataUrlSize(compressed) > maxBytes && (width > 640 || height > 640)) {
+        width = Math.max(640, Math.round(width * 0.85));
+        height = Math.max(640, Math.round(height * 0.85));
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+        quality = 0.92;
+        compressed = canvas.toDataURL('image/jpeg', quality);
+
+        while (getDataUrlSize(compressed) > maxBytes && quality > 0.35) {
+            quality -= 0.08;
+            compressed = canvas.toDataURL('image/jpeg', quality);
+        }
+    }
+
+    return getDataUrlSize(compressed) <= maxBytes ? compressed : null;
 }
 
 function removeImg(ev) {
