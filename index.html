@@ -655,7 +655,9 @@ async function syncAll() {
     if (isSyncing) return;
     isSyncing = true;
     setSyncUI('syncing');
-    console.log('🔄 Sync started...');
+    console.log('🔄 Sync started...', { currentReports: reports.length, pendingReports: pendingReports.length });
+
+    const reportsBefore = reports.length;
 
     try {
         await apiFetch('/api/health');
@@ -697,15 +699,39 @@ async function syncAll() {
                 date:        r.created_at
             }));
 
-            const mergedReports = [...pendingReports, ...serverReports]
-                .filter((r, index, self) => index === self.findIndex(item => item.id === r.id))
+            const serverIds = new Set(serverReports.map(r => r.id));
+            const localNotOnServer = reports.filter(r => {
+                const isOnServer = serverIds.has(Number(r.id));
+                if (!isOnServer) console.log(`📌 Local report not on server yet: ${r.id} (task: ${r.task})`);
+                return !isOnServer;
+            });
+            
+            // IMPORTANT: Start with unconfirmed local reports first
+            // So they don't get lost if server data arrives first
+            const mergedReports = [...localNotOnServer, ...pendingReports, ...serverReports]
+                .filter((r, index, self) => index === self.findIndex(item => Number(item.id) === Number(r.id)))
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            console.log(`📊 Merge details:
+                Before: ${reports.length} local
+                Local not on server: ${localNotOnServer.length}
+                Pending: ${pendingReports.length}
+                From server: ${serverReports.length}
+                After merge: ${mergedReports.length}
+            `);
 
             reports = mergedReports;
             console.log(`✅ Merged ${reports.length} reports`);
+        } else {
+            console.warn('⚠️ No reports data from server');
         }
 
         setSyncUI('online');
+        console.log(`📊 Final report count: ${reports.length}`);
+        if (reports.length < reportsBefore) {
+            console.warn(`⚠️ REPORT COUNT DECREASED: ${reportsBefore} → ${reports.length}`);
+            console.warn('Lost reports:', reports.length < reportsBefore ? 'Data loss detected!' : 'OK');
+        }
         refreshAll();
         console.log('✅ Sync complete');
     } catch (e) {
