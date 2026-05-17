@@ -1,4 +1,6 @@
-// api/health.js - Vercel serverless function
+// api/health.js
 module.exports = function handler(req, res) {
-  res.status(200).json({ status: 'ok', message: 'Server is running', time: new Date() });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  res.status(200).json({ status: 'ok', time: new Date() });
 };

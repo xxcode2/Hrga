@@ -1,4 +1,4 @@
-// api/teams.js - Vercel serverless: GET semua team / POST simpan team
+// api/teams.js
 const { pool, initDb } = require('./_db');
 
 module.exports = async function handler(req, res) {
@@ -7,13 +7,10 @@ module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  try {
-    await initDb();
-  } catch (e) {
-    return res.status(500).json({ error: 'DB init gagal: ' + e.message });
-  }
+  try { await initDb(); }
+  catch (e) { return res.status(500).json({ error: 'DB init gagal: ' + e.message }); }
 
-  // ── GET: ambil semua anggota ─────────────────────────
+  // GET semua anggota tim
   if (req.method === 'GET') {
     try {
       const result = await pool.query('SELECT * FROM teams ORDER BY member_index');
@@ -23,7 +20,7 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  // ── POST: simpan / update satu anggota ───────────────
+  // POST simpan / update satu anggota
   if (req.method === 'POST') {
     const { member_index, name, role, image } = req.body;
     if (member_index === undefined || !name) {
@@ -45,5 +42,5 @@ module.exports = async function handler(req, res) {
     }
   }
 
-  res.status(405).json({ error: 'Method not allowed' });
+  return res.status(405).json({ error: 'Method not allowed' });
 };
