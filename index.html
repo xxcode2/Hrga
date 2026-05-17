@@ -266,14 +266,18 @@
         select.form-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a647d' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
         /* UPLOAD */
+        .upload-wrap { position: relative; }
         .upload-box { border: 2px dashed var(--border); border-radius: var(--r); padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; }
         .upload-box:hover, .upload-box.drag { border-color: var(--accent); background: rgba(45,123,244,0.04); }
         .upload-icon { font-size: 36px; margin-bottom: 8px; }
         .upload-hint { font-size: 13px; color: var(--text3); }
         .upload-hint strong { color: var(--accent); }
-        .upload-preview { display: none; margin-top: 14px; position: relative; }
-        .upload-preview img { max-width: 100%; max-height: 180px; border-radius: var(--r-sm); border: 1px solid var(--border); object-fit: cover; }
-        .remove-img { position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; background: var(--red); border: none; border-radius: 50%; color: white; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .upload-preview { display: none; position: relative; border: 1px solid var(--border); border-radius: var(--r); padding: 10px; background: var(--bg); }
+        .upload-preview img { display: block; width: 100%; max-height: 240px; border-radius: var(--r-sm); object-fit: cover; }
+        .upload-preview-info { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 10px; font-size: 12px; color: var(--text3); }
+        .upload-preview-info .ok { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 700; }
+        .remove-img { position: absolute; top: -10px; right: -10px; width: 28px; height: 28px; background: var(--red); border: 2px solid var(--bg2); border-radius: 50%; color: white; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(240,69,69,0.4); transition: transform 0.15s; }
+        .remove-img:hover { transform: scale(1.1); }
 
         /* SETTINGS */
         .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -313,34 +317,196 @@
         .export-bar .form-input { width: auto; padding: 8px 12px; font-size: 13px; }
         .divider { width: 1px; height: 30px; background: var(--border); }
 
-        /* REPORT CARDS */
-        .reports-list { display: flex; flex-direction: column; gap: 12px; }
-        .report-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; display: flex; gap: 16px; transition: border-color 0.18s, background 0.18s; align-items: flex-start; }
-        .report-card:hover { border-color: var(--border-light); background: var(--card-hover); }
-        .rpt-avatar { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: white; flex-shrink: 0; overflow: hidden; }
+        /* REPORT CARDS — professional layout */
+        .reports-list { display: flex; flex-direction: column; gap: 14px; }
+        .report-card {
+            background: linear-gradient(180deg, var(--card) 0%, rgba(17,25,39,0.6) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--r);
+            padding: 0;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .report-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: var(--accent);
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .report-card.s-card-selesai::before  { background: var(--green); }
+        .report-card.s-card-proses::before   { background: var(--accent); }
+        .report-card.s-card-menunggu::before { background: var(--amber); }
+        .report-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+        }
+        .report-card:hover::before { opacity: 1; width: 4px; }
+
+        .rpt-head {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.015);
+        }
+        .rpt-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 800; color: white;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 2px solid var(--border-light);
+            background: var(--bg);
+        }
         .rpt-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .rpt-body { flex: 1; min-width: 0; }
-        .rpt-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
-        .rpt-name { font-size: 14px; font-weight: 700; }
-        .rpt-role { font-size: 11px; color: var(--text3); margin-top: 2px; }
-        .rpt-time { font-size: 11px; color: var(--text3); background: var(--bg); padding: 4px 10px; border-radius: 6px; white-space: nowrap; }
-        .rpt-task { font-size: 14px; color: var(--text2); margin-bottom: 8px; }
-        .rpt-task strong { color: var(--text); }
-        .rpt-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
-        .rpt-meta-item { font-size: 12px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
-        .rpt-notes { font-size: 12px; color: var(--text3); background: var(--bg); padding: 9px 12px; border-radius: 8px; border-left: 3px solid var(--accent); margin-bottom: 10px; }
-        .rpt-img { max-width: 110px; max-height: 80px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border); transition: transform 0.18s, box-shadow 0.18s; object-fit: cover; }
-        .rpt-img:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-        .rpt-img-wrap { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-        .rpt-actions { flex-shrink: 0; }
-        .delete-btn { opacity: 0; transition: opacity 0.18s; }
-        .report-card:hover .delete-btn { opacity: 1; }
+        .rpt-head-info { flex: 1; min-width: 0; }
+        .rpt-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .rpt-name .role-pill {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text3);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 40px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .rpt-head-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 4px;
+            font-size: 11px;
+            color: var(--text3);
+            flex-wrap: wrap;
+        }
+        .rpt-head-meta .dot { width: 3px; height: 3px; background: var(--text3); border-radius: 50%; }
+        .rpt-head-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+        .delete-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text3);
+            width: 32px; height: 32px;
+            padding: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.18s;
+        }
+        .delete-btn:hover { background: var(--red-dim); border-color: rgba(240,69,69,0.2); color: var(--red); }
+
+        .rpt-body { padding: 16px 18px; }
+        .rpt-task-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .rpt-task {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.4;
+            flex: 1;
+            min-width: 0;
+        }
+        .rpt-task .icon { color: var(--accent); margin-right: 6px; }
+
+        .rpt-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 520px) { .rpt-info-grid { grid-template-columns: 1fr; } }
+        .rpt-info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            min-width: 0;
+        }
+        .rpt-info-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .rpt-info-icon.loc { background: rgba(45,123,244,0.12); color: #6fa8f8; }
+        .rpt-info-icon.tim { background: rgba(155,110,255,0.12); color: var(--purple); }
+        .rpt-info-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+        .rpt-info-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        .rpt-info-value { font-size: 13px; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .rpt-notes {
+            font-size: 13px;
+            color: var(--text2);
+            background: var(--bg);
+            padding: 12px 14px;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .rpt-notes-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px; display: block; }
+
+        .rpt-photo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .rpt-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            object-fit: cover;
+            border: 1px solid var(--border);
+            transition: transform 0.18s, box-shadow 0.18s;
+            flex-shrink: 0;
+        }
+        .rpt-img:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+        .rpt-photo-info { flex: 1; min-width: 0; }
+        .rpt-photo-info .label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px; }
+        .rpt-photo-info .hint { font-size: 12px; color: var(--text2); }
+        .rpt-photo-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
         /* STATUS CHIPS */
-        .status-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 40px; font-size: 11px; font-weight: 700; }
-        .s-proses   { background: rgba(45,123,244,0.12); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.2); }
-        .s-selesai  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,216,138,0.2); }
-        .s-menunggu { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.2); }
+        .status-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 40px; font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
+        .status-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+        .s-proses   { background: rgba(45,123,244,0.12); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.25); }
+        .s-proses::before   { background: #6fa8f8; box-shadow: 0 0 6px #6fa8f8; }
+        .s-selesai  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,216,138,0.25); }
+        .s-selesai::before  { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .s-menunggu { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.25); }
+        .s-menunggu::before { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation: pulse 1.5s infinite; }
 
         /* FILTER PILLS */
         .filter-wrap { display: flex; gap: 7px; flex-wrap: wrap; }
@@ -495,13 +661,19 @@
             </div>
             <div class="form-group">
                 <label class="form-label">📸 Bukti Foto (opsional)</label>
-                <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
-                    <div class="upload-icon">📤</div>
-                    <div class="upload-hint"><strong>Klik atau drag & drop</strong> foto di sini<br><small>JPG / PNG · Maks. 5MB (akan dikompres jika perlu)</small></div>
+                <div class="upload-wrap">
+                    <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
+                        <div class="upload-icon">📤</div>
+                        <div class="upload-hint"><strong>Klik atau drag & drop</strong> foto di sini<br><small>JPG / PNG · Maks. 5MB (akan dikompres jika perlu)</small></div>
+                    </div>
                     <input type="file" id="fileInput" accept="image/*" hidden>
                     <div class="upload-preview" id="uploadPreview">
                         <img id="previewImg" src="" alt="Preview">
-                        <button class="remove-img" onclick="removeImg(event)">✕</button>
+                        <button type="button" class="remove-img" onclick="removeImg(event)" title="Hapus foto">✕</button>
+                        <div class="upload-preview-info">
+                            <span class="ok">✓ Foto siap diunggah</span>
+                            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('fileInput').click()">🔄 Ganti</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -570,6 +742,19 @@ function localDateStr(dateVal) {
 
 function initials(name) {
     return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+}
+
+// Avatar otomatis dari nama (DiceBear - "avataaars" style, gratis & no-auth)
+// Deterministic: nama yang sama = avatar yang sama.
+function autoAvatar(name) {
+    const seed = encodeURIComponent((name || 'user').toLowerCase().trim());
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear&radius=50`;
+}
+
+function avatarHtml(member) {
+    const src = (member && member.image) ? member.image : autoAvatar(member && member.name);
+    const safeName = (member && member.name) ? member.name.replace(/"/g, '&quot;') : '';
+    return `<img src="${src}" alt="${safeName}" onerror="this.onerror=null;this.src='${autoAvatar(member && member.name)}'">`;
 }
 
 function statusClass(s) {
@@ -721,9 +906,7 @@ function renderTeam() {
         const count = reports.filter(r =>
             r.memberIndex === i && localDateStr(r.date) === todayS
         ).length;
-        const ava = m.image
-            ? `<img src="${m.image}" alt="${m.name}">`
-            : initials(m.name);
+        const ava = avatarHtml(m);
         return `
         <div class="team-card" onclick="openInputModal(${i})">
             <div class="team-avatar av${i + 1}">${ava}<div class="online-dot"></div></div>
@@ -1060,41 +1243,65 @@ function buildReportCard(r) {
     const time = new Date(r.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
     const date = new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 
-    const ava = m.image
-        ? `<img src="${m.image}" alt="${m.name}">`
-        : initials(m.name);
+    const ava = avatarHtml(m);
+    const sc = r.status ? statusClass(r.status) : '';
+    const cardCls = r.status === 'Selesai' ? 's-card-selesai'
+                  : r.status === 'Dalam Proses' ? 's-card-proses'
+                  : r.status === 'Menunggu' ? 's-card-menunggu' : '';
 
-    const imgHtml = r.image ? `
-        <div class="rpt-img-wrap">
-            <img class="rpt-img" src="${r.image}" onclick="viewImg('${r.image}')" alt="Bukti">
-            <button class="btn btn-ghost btn-sm" onclick="downloadImg('${r.image}','${m.name}_${date}')">📥 Foto</button>
+    const escAttr = (s) => String(s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    const photoHtml = r.image ? `
+        <div class="rpt-photo">
+            <img class="rpt-img" src="${r.image}" onclick="viewImg('${escAttr(r.image)}')" alt="Bukti">
+            <div class="rpt-photo-info">
+                <div class="label">📸 Bukti Foto</div>
+                <div class="hint">Klik foto untuk memperbesar</div>
+            </div>
+            <div class="rpt-photo-actions">
+                <button class="btn btn-ghost btn-sm" onclick="downloadImg('${escAttr(r.image)}','${escAttr(m.name)}_${escAttr(date)}')">📥 Unduh</button>
+            </div>
         </div>` : '';
 
-    const sc = r.status ? statusClass(r.status) : '';
-
     return `
-    <div class="report-card" data-id="${r.id}">
-        <div class="rpt-avatar av${(idx % 8) + 1}">${ava}</div>
-        <div class="rpt-body">
-            <div class="rpt-top">
-                <div>
-                    <div class="rpt-name">${m.name}</div>
-                    <div class="rpt-role">${m.role}</div>
-                </div>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    ${r.status ? `<span class="status-chip ${sc}">${r.status}</span>` : ''}
-                    <span class="rpt-time">🕐 ${time} · ${date}</span>
+    <div class="report-card ${cardCls}" data-id="${r.id}">
+        <div class="rpt-head">
+            <div class="rpt-avatar av${(idx % 8) + 1}">${ava}</div>
+            <div class="rpt-head-info">
+                <div class="rpt-name">${m.name} <span class="role-pill">${m.role}</span></div>
+                <div class="rpt-head-meta">
+                    <span>🕐 ${time}</span>
+                    <span class="dot"></span>
+                    <span>📅 ${date}</span>
                 </div>
             </div>
-            <div class="rpt-task">🔧 <strong>${r.task}</strong></div>
-            <div class="rpt-meta">
-                <div class="rpt-meta-item">📍 ${r.location}</div>
+            <div class="rpt-head-actions">
+                ${r.status ? `<span class="status-chip ${sc}">${r.status}</span>` : ''}
+                <button class="delete-btn" onclick="deleteReport(${r.id})" title="Hapus laporan">🗑️</button>
             </div>
-            ${r.notes ? `<div class="rpt-notes">💬 ${r.notes}</div>` : ''}
-            ${imgHtml}
         </div>
-        <div class="rpt-actions">
-            <button class="btn btn-danger btn-sm delete-btn" onclick="deleteReport(${r.id})" title="Hapus">🗑️</button>
+        <div class="rpt-body">
+            <div class="rpt-task-row">
+                <div class="rpt-task"><span class="icon">🔧</span>${r.task}</div>
+            </div>
+            <div class="rpt-info-grid">
+                <div class="rpt-info-item">
+                    <div class="rpt-info-icon loc">📍</div>
+                    <div class="rpt-info-text">
+                        <div class="rpt-info-label">Lokasi</div>
+                        <div class="rpt-info-value" title="${m.name}">${r.location}</div>
+                    </div>
+                </div>
+                <div class="rpt-info-item">
+                    <div class="rpt-info-icon tim">👤</div>
+                    <div class="rpt-info-text">
+                        <div class="rpt-info-label">Petugas</div>
+                        <div class="rpt-info-value">${m.name}</div>
+                    </div>
+                </div>
+            </div>
+            ${r.notes ? `<div class="rpt-notes"><span class="rpt-notes-label">💬 Catatan</span>${r.notes}</div>` : ''}
+            ${photoHtml}
         </div>
     </div>`;
 }
