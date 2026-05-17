@@ -69,7 +69,7 @@ Alasan: localStorage itu LOCAL per device/browser
 
 **Sesudah:**
 ```
-PC: Input data → localStorage + API → PostgreSQL Database
+PC: Input data → API → PostgreSQL Database
 HP: Buka app → API → PostgreSQL → Data muncul!
 = Data ter-sync otomatis setiap 30 detik ✅
 

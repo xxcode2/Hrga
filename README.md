@@ -116,25 +116,25 @@ Server akan berjalan di `http://localhost:3000`
 
 ### Saat Aplikasi Dimulai
 ```
-1. Frontend load data dari localStorage
+1. Frontend mengambil data dari API server
 2. Cek koneksi internet
 3. Jika online:
-   - Push data lokal ke server
+   - Push perubahan pending ke server
    - Pull data terbaru dari server
-   - Update localStorage
+   - Render UI dari data server
 4. Jika offline:
-   - Gunakan data lokal saja
-   - Queue perubahan untuk sync nanti
+   - Tampilkan data yang sudah dimuat di sesi ini
+   - Queue perubahan untuk sync nanti saat kembali online
 ```
 
 ### Saat Ada Perubahan (Input Laporan, Edit Settings)
 ```
-1. Simpan ke localStorage (instant, offline-safe)
+1. Simpan ke state memori aplikasi
 2. Jika online:
    - POST data ke API secara async
    - Show success notification
 3. Jika offline:
-   - Data tetap tersimpan lokal
+   - Tambahkan ke queue pending laporan
    - Akan sync saat online
 ```
 

@@ -563,8 +563,9 @@ const DEFAULT_TEAM = [
 // ─────────────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────────────
-let team          = loadLocal('teamData', DEFAULT_TEAM);
-let reports       = loadLocal('reportsData', []);
+let team          = [...DEFAULT_TEAM];
+let reports       = [];
+let pendingReports = [];
 let currentMember = 0;
 let currentImg    = '';
 let activeFilter  = 'all';
@@ -576,11 +577,7 @@ let isSyncing     = false;
 // ─────────────────────────────────────────────────────
 // UTILS
 // ─────────────────────────────────────────────────────
-function loadLocal(key, fallback) {
-    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-    catch { return fallback; }
-}
-function saveLocal(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function noOp() {}
 
 // PENTING: pakai local timezone, bukan UTC
 function todayStr() {
@@ -634,7 +631,7 @@ function setSyncUI(state, label) {
 // NETWORK EVENTS
 // ─────────────────────────────────────────────────────
 window.addEventListener('online',  () => { isOnline = true;  toast('🟢 Kembali online!', 'ok'); syncAll(); });
-window.addEventListener('offline', () => { isOnline = false; setSyncUI('offline'); toast('🔴 Offline – data tersimpan lokal', 'info'); });
+window.addEventListener('offline', () => { isOnline = false; setSyncUI('offline'); toast('🔴 Offline – data akan disinkronkan saat online', 'info'); });
 
 // ─────────────────────────────────────────────────────
 // API HELPER
@@ -662,26 +659,22 @@ async function syncAll() {
     try {
         await apiFetch('/api/health');
 
-        // 1. Push laporan lokal yang belum ada di server dulu
         await pushPendingReports();
-
-        // 2. Push team
         await pushTeams();
 
-        // 3. Pull semua dari server
         const data = await apiFetch('/api/sync');
 
-        // Update team
         if (Array.isArray(data.teams) && data.teams.length > 0) {
             const merged = [...DEFAULT_TEAM].map((def, i) => {
                 const srv = data.teams.find(t => t.member_index === i);
                 return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : def;
             });
             team = merged;
-            saveLocal('teamData', team);
+        } else {
+            team = DEFAULT_TEAM.map(d => ({ ...d }));
+            await pushTeams().catch(noOp);
         }
 
-        // MERGE reports: gabung server + lokal, server jadi acuan utama
         if (Array.isArray(data.reports)) {
             const serverReports = data.reports.map(r => ({
                 id:          Number(r.id),
@@ -694,15 +687,11 @@ async function syncAll() {
                 date:        r.created_at
             }));
 
-            // Tambah laporan lokal yang belum ada di server (belum ter-push)
-            const serverIds = new Set(serverReports.map(r => r.id));
-            const localOnly = reports.filter(r => !serverIds.has(Number(r.id)));
-
-            // Gabung: server + lokal yang belum di-push
-            reports = [...localOnly, ...serverReports]
+            const mergedReports = [...pendingReports, ...serverReports]
+                .filter((r, index, self) => index === self.findIndex(item => item.id === r.id))
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            saveLocal('reportsData', reports);
+            reports = mergedReports;
         }
 
         setSyncUI('online');
@@ -720,11 +709,17 @@ async function syncAll() {
 // PUSH: laporan lokal yang belum ada di server
 // ─────────────────────────────────────────────────────
 async function pushPendingReports() {
-    if (reports.length === 0) return;
-    // Push semua laporan lokal (server pakai ON CONFLICT DO NOTHING, aman)
-    for (const report of reports) {
-        await pushReport(report).catch(() => {});
+    if (pendingReports.length === 0) return;
+
+    const stillPending = [];
+    for (const report of pendingReports) {
+        try {
+            await pushReport(report);
+        } catch {
+            stillPending.push(report);
+        }
     }
+    pendingReports = stillPending;
 }
 async function pushTeams() {
     for (let i = 0; i < team.length; i++) {
@@ -755,6 +750,7 @@ async function pushReport(report) {
         });
     } catch (e) {
         console.warn('Push report gagal:', e.message);
+        throw e;
     }
 }
 
@@ -773,31 +769,25 @@ async function deleteReportServer(id) {
 // INIT
 // ─────────────────────────────────────────────────────
 function init() {
-    // Tanggal header
     document.getElementById('dateDisplay').textContent =
         new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-    // Set input tanggal
     document.getElementById('startDate').value = startDate;
     document.getElementById('endDate').value   = endDate;
 
-    // Pastikan team 8 slot
     if (!team || team.length !== 8) {
         team = DEFAULT_TEAM.map(d => ({ ...d }));
-        saveLocal('teamData', team);
     }
 
     setupUpload();
     refreshAll();
 
-    // Sync awal
     if (navigator.onLine) {
         syncAll();
     } else {
         setSyncUI('offline');
     }
 
-    // Periodic sync setiap 30 detik
     setInterval(() => {
         if (!isSyncing && navigator.onLine) syncAll();
     }, 30000);
@@ -878,7 +868,6 @@ async function saveSettings() {
         if (n) m.name = n;
         if (r) m.role = r;
     });
-    saveLocal('teamData', team);
     closeModal('settingsModal');
     refreshAll();
 
@@ -890,7 +879,7 @@ async function saveSettings() {
             toast('✅ Pengaturan tersimpan (sync gagal)', 'info');
         }
     } else {
-        toast('✅ Pengaturan tersimpan (offline)', 'ok');
+        toast('✅ Pengaturan tersimpan (offline, belum sync)', 'info');
     }
 }
 
@@ -957,21 +946,21 @@ async function submitReport() {
         date:        new Date().toISOString()
     };
 
-    // 1. Simpan lokal DULU — ini yang langsung tampil
     reports.unshift(report);
-    saveLocal('reportsData', reports);
-
-    // 2. Tutup modal & refresh UI — laporan HARUS sudah muncul
     closeModal('inputModal');
     refreshAll();
-    toast('🎉 Laporan berhasil dikirim!', 'ok');
 
-    // 3. Push ke server di background — TANPA sinkronisasi balik
-    //    (sinkronisasi balik hanya dilakukan oleh periodic sync setiap 30 detik)
     if (navigator.onLine) {
-        pushReport(report).catch(() => {
-            toast('⚠️ Laporan tersimpan lokal, akan sync saat online', 'info');
-        });
+        try {
+            await pushReport(report);
+            toast('🎉 Laporan berhasil dikirim!', 'ok');
+        } catch {
+            pendingReports.push(report);
+            toast('⚠️ Laporan offline, akan sync saat online', 'info');
+        }
+    } else {
+        pendingReports.push(report);
+        toast('⚠️ Offline - laporan akan sync saat online', 'info');
     }
 }
 
@@ -981,7 +970,7 @@ async function submitReport() {
 async function deleteReport(id) {
     if (!confirm('Yakin hapus laporan ini?')) return;
     reports = reports.filter(r => r.id !== id);
-    saveLocal('reportsData', reports);
+    pendingReports = pendingReports.filter(r => r.id !== id);
     refreshAll();
     toast('🗑️ Laporan dihapus', 'info');
     if (navigator.onLine) deleteReportServer(id);
