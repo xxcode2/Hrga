@@ -655,14 +655,23 @@ async function syncAll() {
     if (isSyncing) return;
     isSyncing = true;
     setSyncUI('syncing');
+    console.log('🔄 Sync started...');
 
     try {
         await apiFetch('/api/health');
+        console.log('✅ Server responsive');
 
         await pushPendingReports();
+        console.log('✅ Pending reports processed');
+
         await pushTeams();
+        console.log('✅ Team data pushed');
 
         const data = await apiFetch('/api/sync');
+        console.log('✅ Data pulled from server:', {
+            teamsCount: data.teams?.length || 0,
+            reportsCount: data.reports?.length || 0
+        });
 
         if (Array.isArray(data.teams) && data.teams.length > 0) {
             const merged = [...DEFAULT_TEAM].map((def, i) => {
@@ -670,6 +679,7 @@ async function syncAll() {
                 return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : def;
             });
             team = merged;
+            console.log('✅ Team updated from server');
         } else {
             team = DEFAULT_TEAM.map(d => ({ ...d }));
             await pushTeams().catch(noOp);
@@ -692,14 +702,17 @@ async function syncAll() {
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
 
             reports = mergedReports;
+            console.log(`✅ Merged ${reports.length} reports`);
         }
 
         setSyncUI('online');
         refreshAll();
+        console.log('✅ Sync complete');
     } catch (e) {
-        console.warn('Sync error:', e.message);
-        setSyncUI('offline', 'Tidak terhubung');
+        console.error('❌ Sync error:', e.message, e);
+        setSyncUI('offline', 'Koneksi gagal');
         isOnline = false;
+        refreshAll();
     } finally {
         isSyncing = false;
     }
@@ -715,9 +728,15 @@ async function pushPendingReports() {
     for (const report of pendingReports) {
         try {
             await pushReport(report);
-        } catch {
+            console.log('✅ Pending report pushed:', report.id);
+        } catch (e) {
+            console.warn('❌ Still pending:', report.id, e.message);
             stillPending.push(report);
         }
+    }
+    const pushed = pendingReports.length - stillPending.length;
+    if (pushed > 0) {
+        console.log(`📤 Pushed ${pushed} pending reports`);
     }
     pendingReports = stillPending;
 }
@@ -768,7 +787,7 @@ async function deleteReportServer(id) {
 // ─────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────
-function init() {
+async function init() {
     document.getElementById('dateDisplay').textContent =
         new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -780,12 +799,15 @@ function init() {
     }
 
     setupUpload();
-    refreshAll();
+    
+    // Tampilkan loading state
+    setSyncUI('syncing', 'Memuat data...');
 
     if (navigator.onLine) {
-        syncAll();
+        await syncAll();
     } else {
         setSyncUI('offline');
+        refreshAll();
     }
 
     setInterval(() => {
@@ -946,21 +968,25 @@ async function submitReport() {
         date:        new Date().toISOString()
     };
 
+    // Selalu simpan lokal dulu
     reports.unshift(report);
     closeModal('inputModal');
     refreshAll();
+    toast('🎉 Laporan tersimpan!', 'ok');
 
+    // Coba push ke server
     if (navigator.onLine) {
         try {
             await pushReport(report);
-            toast('🎉 Laporan berhasil dikirim!', 'ok');
-        } catch {
+            toast('✅ Sinkronisasi ke server berhasil!', 'ok');
+        } catch (e) {
+            console.error('Push report error:', e);
             pendingReports.push(report);
-            toast('⚠️ Laporan offline, akan sync saat online', 'info');
+            toast('⚠️ Akan disinkronkan saat online', 'info');
         }
     } else {
         pendingReports.push(report);
-        toast('⚠️ Offline - laporan akan sync saat online', 'info');
+        toast('📱 Offline - akan sync saat online', 'info');
     }
 }
 
@@ -1189,7 +1215,11 @@ document.addEventListener('keydown', e => {
 // ─────────────────────────────────────────────────────
 // START
 // ─────────────────────────────────────────────────────
-init();
+init().catch(e => {
+    console.error('Init error:', e);
+    refreshAll();
+    toast('⚠️ Gagal load data, gunakan yang tersedia', 'info');
+});
 </script>
 </body>
 </html>

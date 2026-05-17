@@ -1,5 +1,23 @@
 # 🚀 Setup Guide - Team Dashboard dengan Database Sync
 
+## ⚠️ PENTING - BACA DULU!
+
+```
+╔════════════════════════════════════════════════════════╗
+║  APLIKASI TIDAK AKAN BEKERJA TANPA SERVER BERJALAN    ║
+║                                                        ║
+║  ✅ Buka Terminal                                      ║
+║  ✅ Jalankan: npm start  atau  node server.js         ║
+║  ✅ Tunggu sampai muncul: "Server running on..."      ║
+║  ✅ Baru buka aplikasi di browser                     ║
+║                                                        ║
+║  Aplikasi memerlukan Backend API untuk sinkronisasi   ║
+║  data antara PC ↔ HP dan akses Database.              ║
+╚════════════════════════════════════════════════════════╝
+```
+
+---
+
 ## 📋 Ringkasan Perbaikan
 
 Anda mengatakan ada 3 masalah:
@@ -91,7 +109,52 @@ http://localhost:3000
 
 ---
 
-## 🧪 Testing Scenarios
+## 📱 Cara Akses dari HP (di jaringan WiFi yang sama)
+
+### Step 1: Cari IP Address Laptop
+
+**Windows (Command Prompt):**
+```bash
+ipconfig
+# Cari: IPv4 Address: 192.168.x.x atau 10.x.x.x
+```
+
+**macOS/Linux (Terminal):**
+```bash
+ifconfig
+# atau
+ip addr
+# Cari: inet 192.168.x.x atau inet 10.x.x.x
+```
+
+### Step 2: Di HP - Buka Browser dan Akses
+
+**Ganti `192.168.1.100` dengan IP laptop Anda:**
+```
+http://192.168.1.100:3000
+```
+
+### Step 3: Pastikan HP dan Laptop di WiFi yang SAMA
+
+- ✅ HP connect ke WiFi yang sama dengan Laptop
+- ✅ Coba ping: `ping 192.168.1.100` (dari HP)
+- ✅ Jika reply, berarti network OK
+
+### ⚠️ Jika HP tidak bisa akses:
+
+1. **Pastikan Server Running di Laptop**
+   - Check terminal: Harus ada "🚀 Server running on..."
+
+2. **Pastikan Firewall OK**
+   - Windows Firewall mungkin blok port 3000
+   - Tambah exception untuk port 3000 atau disable firewall sementara
+
+3. **Gunakan IP yang benar**
+   - Jangan pakai `localhost` dari HP (hanya untuk laptop)
+   - Gunakan IP address yang benar-benar terlihat
+
+---
+
 
 ### Test 1: Input Laporan di PC, Cek di HP
 
