@@ -382,7 +382,7 @@
     <!-- HEADER -->
     <header class="header">
         <div class="header-left">
-            <h1>⚡ Team Dashboard</h1>
+            <h1>📋 Report HRGA</h1>
             <p>Kelola laporan kerja tim dengan mudah</p>
         </div>
         <div class="header-right">
@@ -391,7 +391,6 @@
                 <div class="sync-dot" id="syncDot"></div>
                 <span id="syncLabel">Memuat...</span>
             </div>
-            <button class="btn btn-ghost" onclick="openSettings()">⚙️ Pengaturan</button>
             <button class="btn btn-green" onclick="downloadExcel()">📥 Export Excel</button>
         </div>
     </header>
@@ -510,24 +509,6 @@
         <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeModal('inputModal')">Batal</button>
             <button class="btn btn-primary" id="submitBtn" onclick="submitReport()">🚀 Kirim Laporan</button>
-        </div>
-    </div>
-</div>
-
-<!-- ===== MODAL SETTINGS ===== -->
-<div class="overlay" id="settingsModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h2>⚙️ Pengaturan Anggota Tim</h2>
-            <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
-        </div>
-        <div class="modal-body">
-            <p style="font-size:13px;color:var(--text3);margin-bottom:18px;">Edit nama dan jabatan 8 anggota tim.</p>
-            <div class="settings-grid" id="settingsGrid"></div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-ghost" onclick="closeModal('settingsModal')">Batal</button>
-            <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan Perubahan</button>
         </div>
     </div>
 </div>
@@ -773,40 +754,6 @@ function openInputModal(idx) {
 
 function openModal(id)  { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// ─────────────────────────────────────────────────────
-// SETTINGS
-// ─────────────────────────────────────────────────────
-function openSettings() {
-    const grid = document.getElementById('settingsGrid');
-    grid.innerHTML = team.map((m, i) => `
-        <div class="settings-item">
-            <div class="member-label">Anggota ${i + 1}</div>
-            <input type="text" class="form-input" id="sName${i}" value="${m.name}" placeholder="Nama" style="margin-bottom:8px">
-            <input type="text" class="form-input" id="sRole${i}" value="${m.role}" placeholder="Jabatan">
-        </div>
-    `).join('');
-    openModal('settingsModal');
-}
-
-async function saveSettings() {
-    team.forEach((m, i) => {
-        const n = document.getElementById(`sName${i}`).value.trim();
-        const r = document.getElementById(`sRole${i}`).value.trim();
-        if (n) m.name = n;
-        if (r) m.role = r;
-    });
-    closeModal('settingsModal');
-
-    try {
-        await pushTeamsToServer();
-        toast('✅ Pengaturan tersimpan!', 'ok');
-        await loadAll();  // reload dari server agar data fresh
-    } catch {
-        toast('⚠️ Gagal menyimpan ke server', 'err');
-        refreshUI();
-    }
-}
 
 // ─────────────────────────────────────────────────────
 // UPLOAD FOTO
@@ -1234,7 +1181,6 @@ function switchTab(name, btn) {
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
         closeModal('inputModal');
-        closeModal('settingsModal');
         closeImgViewer();
     }
 });
