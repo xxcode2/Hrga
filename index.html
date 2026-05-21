@@ -3,34 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Work Dashboard</title>
+    <title>Daily Activity Report GA</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --bg: #080d14;
-            --bg2: #0e1520;
-            --card: #111927;
-            --card-hover: #162030;
-            --border: #1e2d3d;
-            --border-light: #243548;
-            --accent: #2d7bf4;
-            --accent2: #1a5fd4;
-            --accent-glow: rgba(45,123,244,0.25);
-            --green: #10d88a;
-            --green-dim: rgba(16,216,138,0.12);
-            --amber: #f5a623;
-            --amber-dim: rgba(245,166,35,0.12);
-            --red: #f04545;
-            --red-dim: rgba(240,69,69,0.12);
-            --purple: #9b6eff;
-            --text: #e2eaf4;
-            --text2: #7d9ab5;
-            --text3: #4a647d;
-            --r: 14px;
-            --r-sm: 9px;
+            --bg: #0a0f1a;
+            --bg2: #0f1625;
+            --card: #131d2e;
+            --card-hover: #182438;
+            --border: #1e3050;
+            --border-light: #2a4060;
+            --accent: #2563eb;
+            --accent2: #1d4ed8;
+            --accent-glow: rgba(37,99,235,0.2);
+            --green: #10b981;
+            --green-dim: rgba(16,185,129,0.1);
+            --amber: #f59e0b;
+            --amber-dim: rgba(245,158,11,0.1);
+            --red: #ef4444;
+            --red-dim: rgba(239,68,68,0.1);
+            --purple: #8b5cf6;
+            --purple-dim: rgba(139,92,246,0.1);
+            --pink: #ec4899;
+            --pink-dim: rgba(236,72,153,0.1);
+            --cyan: #06b6d4;
+            --text: #e8edf5;
+            --text2: #8ba3c0;
+            --text3: #4b6584;
+            --r: 16px;
+            --r-sm: 10px;
         }
 
         body {
@@ -38,733 +41,351 @@
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            line-height: 1.5;
         }
-
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             background:
-                radial-gradient(ellipse 60% 40% at 15% 10%, rgba(45,123,244,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse 40% 50% at 85% 85%, rgba(16,216,138,0.05) 0%, transparent 55%);
+                radial-gradient(ellipse 50% 40% at 10% 0%, rgba(37,99,235,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 50% at 90% 90%, rgba(16,185,129,0.05) 0%, transparent 55%);
             pointer-events: none;
             z-index: 0;
         }
-
-        .wrap {
-            position: relative;
-            z-index: 1;
-            max-width: 1160px;
-            margin: 0 auto;
-            padding: 24px 20px;
-        }
+        .wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 24px 20px; }
 
         /* HEADER */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 32px;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .header-left h1 {
-            font-size: 26px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(120deg, #e2eaf4 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .header-left p { font-size: 13px; color: var(--text3); margin-top: 5px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+        .header-left {}
+        .header-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-glow); border: 1px solid rgba(37,99,235,0.3); color: var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .header-left h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .header-left p { font-size: 13px; color: var(--text3); margin-top: 4px; }
         .header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-        .date-chip {
-            background: var(--card);
-            border: 1px solid var(--border);
-            padding: 9px 16px;
-            border-radius: 40px;
-            font-size: 13px;
-            color: var(--text2);
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            white-space: nowrap;
-        }
-
-        .sync-indicator {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: var(--text3);
-            padding: 6px 12px;
-            border-radius: 40px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            cursor: pointer;
-        }
-        .sync-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: var(--text3);
-            flex-shrink: 0;
-        }
-        .sync-dot.online  { background: var(--green); box-shadow: 0 0 6px var(--green); }
-        .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
-        .sync-dot.offline { background: var(--red); }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: var(--r-sm);
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.18s;
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            white-space: nowrap;
-        }
-        .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 18px var(--accent-glow); }
+        .date-chip { background: var(--card); border: 1px solid var(--border); padding: 10px 16px; border-radius: 40px; font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 7px; }
+        .btn { padding: 10px 18px; border: none; border-radius: var(--r-sm); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.18s; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+        .btn-primary { background: var(--accent); color: white; box-shadow: 0 4px 16px var(--accent-glow); }
         .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
         .btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--text2); }
         .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
         .btn-green { background: linear-gradient(135deg, #0fb87a, #0da068); color: white; }
-        .btn-green:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,216,138,0.25); }
-        .btn-danger { background: var(--red-dim); border: 1px solid rgba(240,69,69,0.2); color: var(--red); }
-        .btn-danger:hover { background: var(--red); color: white; }
-        .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 7px; }
+        .btn-green:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.25); }
+        .btn-sm { padding: 7px 13px; font-size: 12px; }
 
-        /* STATS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 14px;
-            margin-bottom: 30px;
-        }
-        .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-        .stat-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
-        .stat-icon { font-size: 22px; margin-bottom: 14px; display: block; }
-        .stat-label { font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; }
-        .stat-value { font-size: 30px; font-weight: 800; letter-spacing: -1px; }
-        .stat-card:nth-child(1) .stat-value { color: var(--accent); }
-        .stat-card:nth-child(2) .stat-value { color: var(--green); }
-        .stat-card:nth-child(3) .stat-value { color: var(--amber); }
-        .stat-card:nth-child(4) .stat-value { color: var(--purple); }
-        .stat-glow {
-            position: absolute;
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            filter: blur(40px);
-            opacity: 0.08;
-            top: -10px; right: -10px;
-            pointer-events: none;
-        }
+        /* SUMMARY CARDS */
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+        .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; position: relative; overflow: hidden; transition: all 0.2s; }
+        .summary-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
+        .summary-card .glow { position: absolute; width: 80px; height: 80px; border-radius: 50%; filter: blur(35px); opacity: 0.1; top: -15px; right: -15px; pointer-events: none; }
+        .summary-card .label { font-size: 11px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
+        .summary-card .value { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        .summary-card .sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
 
-        /* SECTION */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .section-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: var(--text); }
-        .section-badge { background: var(--card); border: 1px solid var(--border); color: var(--text3); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 40px; }
+        /* DEPARTMENT TABS */
+        .dept-tabs { display: flex; gap: 6px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; }
+        .dept-tab { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border: 1px solid var(--border); border-radius: var(--r); background: var(--card); cursor: pointer; transition: all 0.2s; white-space: nowrap; min-width: fit-content; }
+        .dept-tab:hover { border-color: var(--border-light); background: var(--card-hover); }
+        .dept-tab.active { border-color: var(--accent); background: rgba(37,99,235,0.08); }
+        .dept-tab .icon { font-size: 18px; }
+        .dept-tab .name { font-size: 13px; font-weight: 600; color: var(--text2); }
+        .dept-tab.active .name { color: var(--text); }
+        .dept-tab .count { background: var(--bg); border: 1px solid var(--border); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; color: var(--text3); }
+        .dept-tab.active .count { background: var(--accent); border-color: var(--accent); color: white; }
 
-        /* TEAM GRID */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 16px;
-            margin-bottom: 36px;
-        }
-        .team-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 26px 20px 22px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.22s;
-            position: relative;
-            overflow: hidden;
-        }
-        .team-card:hover { border-color: var(--accent); background: var(--card-hover); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(45,123,244,0.15); }
-        .team-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(45,123,244,0.04), transparent); opacity: 0; transition: opacity 0.22s; }
-        .team-card:hover::after { opacity: 1; }
-        .team-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--green)); opacity: 0; transition: opacity 0.22s; }
-        .team-card:hover::before { opacity: 1; }
+        /* CATEGORY FILTERS */
+        .filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-pill { padding: 7px 16px; border: 1px solid var(--border); border-radius: 20px; background: transparent; color: var(--text2); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
+        .filter-pill:hover { border-color: var(--border-light); }
+        .filter-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .filter-pill.cat-reguler.active { background: var(--green); border-color: var(--green); }
+        .filter-pill.cat-additional.active { background: var(--amber); border-color: var(--amber); color: #000; }
+        .filter-pill.cat-project.active { background: var(--purple); border-color: var(--purple); }
+        .filter-sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
 
-        .team-avatar {
-            width: 76px; height: 76px;
-            border-radius: 50%;
-            margin: 0 auto 14px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 28px; font-weight: 800; color: white;
-            border: 3px solid var(--border);
-            transition: border-color 0.22s;
-            overflow: hidden;
-            position: relative;
-        }
-        .team-card:hover .team-avatar { border-color: var(--accent); }
-        .team-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .online-dot { position: absolute; bottom: 3px; right: 3px; width: 13px; height: 13px; background: var(--green); border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 6px rgba(16,216,138,0.5); }
+        /* ACTIVITY LIST */
+        .activity-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+        .activity-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; display: flex; align-items: center; gap: 14px; transition: all 0.2s; position: relative; }
+        .activity-card:hover { border-color: var(--border-light); transform: translateX(3px); }
+        .activity-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: var(--r) 0 0 var(--r); }
+        .activity-card.cat-reguler::before { background: var(--green); }
+        .activity-card.cat-additional::before { background: var(--amber); }
+        .activity-card.cat-project::before { background: var(--purple); }
+        .activity-card .dept-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--bg); border: 1px solid var(--border); flex-shrink: 0; }
+        .activity-card .info { flex: 1; min-width: 0; }
+        .activity-card .title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .activity-card .meta { display: flex; gap: 10px; align-items: center; font-size: 11px; color: var(--text3); flex-wrap: wrap; }
+        .activity-card .meta .dot { width: 3px; height: 3px; background: var(--text3); border-radius: 50%; }
+        .activity-card .badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
 
-        .team-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-        .team-role { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
-        .team-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(45,123,244,0.1); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.2); padding: 5px 12px; border-radius: 40px; font-size: 11px; font-weight: 700; }
+        /* STATUS & CATEGORY BADGES */
+        .badge { padding: 4px 10px; border-radius: 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 4px; }
+        .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+        .badge-open { background: var(--accent-glow); color: #60a5fa; border: 1px solid rgba(37,99,235,0.3); }
+        .badge-open::before { background: #60a5fa; box-shadow: 0 0 4px #60a5fa; }
+        .badge-close { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+        .badge-close::before { background: var(--green); box-shadow: 0 0 4px var(--green); }
+        .badge-pending { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+        .badge-pending::before { background: var(--amber); box-shadow: 0 0 4px var(--amber); animation: pulse 1.5s infinite; }
+        .badge-cat { padding: 3px 9px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+        .badge-reguler { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+        .badge-additional { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+        .badge-project { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(139,92,246,0.2); }
 
-        .av1 { background: linear-gradient(135deg, #2d7bf4, #1a5fd4); }
-        .av2 { background: linear-gradient(135deg, #10d88a, #0aaa6e); }
-        .av3 { background: linear-gradient(135deg, #f5a623, #d4841a); }
-        .av4 { background: linear-gradient(135deg, #9b6eff, #7c4aee); }
-        .av5 { background: linear-gradient(135deg, #f04590, #c4306c); }
-        .av6 { background: linear-gradient(135deg, #14d8d8, #0fb5b5); }
-        .av7 { background: linear-gradient(135deg, #f97316, #c25810); }
-        .av8 { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.85)} }
+
+        .activity-card .actions { display: flex; gap: 4px; }
+        .icon-btn { width: 30px; height: 30px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all 0.15s; }
+        .icon-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+        .icon-btn.del:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+
+        /* ANALYSIS SECTION */
+        .analysis-section { margin-top: 32px; }
+        .analysis-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 24px; margin-bottom: 16px; }
+        .analysis-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .analysis-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .analysis-item:last-child { border-bottom: none; }
+        .analysis-bullet { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 6px; flex-shrink: 0; }
+        .analysis-text { font-size: 13px; color: var(--text2); line-height: 1.6; }
+        .conclusion-box { background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(16,185,129,0.04)); border: 1px solid rgba(37,99,235,0.2); border-radius: var(--r); padding: 20px 24px; font-size: 14px; color: var(--text); line-height: 1.7; }
+
+        /* COMPOSITION CHART */
+        .composition-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        @media (max-width: 768px) { .composition-grid { grid-template-columns: 1fr; } }
+        .chart-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; }
+        .chart-card h4 { font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+        .bar-item { display: flex; align-items: center; gap: 12px; }
+        .bar-label { font-size: 12px; color: var(--text3); width: 80px; flex-shrink: 0; }
+        .bar-track { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .bar-value { font-size: 12px; font-weight: 700; color: var(--text); width: 30px; text-align: right; }
+
+        /* DONUT */
+        .donut-wrap { display: flex; align-items: center; gap: 20px; }
+        .donut-svg { width: 120px; height: 120px; }
+        .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
 
         /* MODAL */
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(10px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.18s ease; }
+        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .overlay.open { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s ease; box-shadow: 0 32px 80px rgba(0,0,0,0.5); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 22px 26px; border-bottom: 1px solid var(--border); }
-        .modal-header h2 { font-size: 18px; font-weight: 700; }
-        .modal-close { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+        .modal { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 32px 80px rgba(0,0,0,0.5); animation: slideUp 0.25s ease; }
+        @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .modal-header h2 { font-size: 17px; font-weight: 700; }
+        .modal-close { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text2); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
         .modal-close:hover { background: var(--red); border-color: var(--red); color: white; }
-        .modal-body { padding: 24px 26px; }
-        .modal-footer { padding: 18px 26px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
 
         /* FORM */
-        .form-group { margin-bottom: 18px; }
-        .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 8px; }
-        .form-input { width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: inherit; font-size: 14px; transition: border-color 0.18s, box-shadow 0.18s; }
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; }
+        .form-input { width: 100%; padding: 11px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--text); font-family: inherit; font-size: 14px; transition: all 0.18s; }
         .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
         .form-input::placeholder { color: var(--text3); }
-        textarea.form-input { resize: vertical; min-height: 90px; }
-        select.form-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a647d' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+        textarea.form-input { resize: vertical; min-height: 80px; }
+        select.form-input { appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234b6584' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 
-        /* UPLOAD */
-        .upload-wrap { position: relative; }
-        .upload-box { border: 2px dashed var(--border); border-radius: var(--r); padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; }
-        .upload-box:hover, .upload-box.drag { border-color: var(--accent); background: rgba(45,123,244,0.04); }
-        .upload-icon { font-size: 36px; margin-bottom: 8px; }
-        .upload-hint { font-size: 13px; color: var(--text3); }
-        .upload-hint strong { color: var(--accent); }
-        .upload-preview { display: none; position: relative; border: 1px solid var(--border); border-radius: var(--r); padding: 10px; background: var(--bg); }
-        .upload-preview img { display: block; width: 100%; max-height: 240px; border-radius: var(--r-sm); object-fit: cover; }
-        .upload-preview-info { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; gap: 10px; font-size: 12px; color: var(--text3); }
-        .upload-preview-info .ok { display: inline-flex; align-items: center; gap: 6px; color: var(--green); font-weight: 700; }
-        .remove-img { position: absolute; top: -10px; right: -10px; width: 28px; height: 28px; background: var(--red); border: 2px solid var(--bg2); border-radius: 50%; color: white; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(240,69,69,0.4); transition: transform 0.15s; }
-        .remove-img:hover { transform: scale(1.1); }
-
-        /* SETTINGS */
-        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        @media (max-width: 480px) { .settings-grid { grid-template-columns: 1fr; } }
-        .settings-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 14px; }
-        .settings-item .member-label { font-size: 11px; color: var(--text3); font-weight: 700; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-
-        /* IMAGE VIEWER */
-        .img-viewer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 2000; align-items: center; justify-content: center; cursor: zoom-out; }
-        .img-viewer.open { display: flex; }
-        .img-viewer img { max-width: 90%; max-height: 90vh; border-radius: var(--r); }
+        /* RADIO GROUP */
+        .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .radio-card { flex: 1; min-width: 100px; }
+        .radio-card input { display: none; }
+        .radio-card label { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--r-sm); cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); transition: all 0.18s; text-align: center; }
+        .radio-card input:checked + label { border-color: var(--accent); background: var(--accent-glow); color: var(--text); }
+        .radio-card.rc-reguler input:checked + label { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+        .radio-card.rc-additional input:checked + label { border-color: var(--amber); background: var(--amber-dim); color: var(--amber); }
+        .radio-card.rc-project input:checked + label { border-color: var(--purple); background: var(--purple-dim); color: var(--purple); }
+        .radio-card.rc-open input:checked + label { border-color: #60a5fa; background: rgba(96,165,250,0.1); color: #60a5fa; }
+        .radio-card.rc-close input:checked + label { border-color: var(--green); background: var(--green-dim); color: var(--green); }
+        .radio-card.rc-pending input:checked + label { border-color: var(--amber); background: var(--amber-dim); color: var(--amber); }
 
         /* TOAST */
         .toast-wrap { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-        .toast { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 18px; font-size: 13px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.4); animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards; min-width: 260px; max-width: 360px; }
-        .toast.ok  { border-left: 4px solid var(--green); }
+        .toast { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 12px 18px; font-size: 13px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.4); animation: toastIn 0.25s ease, toastOut 0.3s ease 2.7s forwards; min-width: 260px; }
+        .toast.ok { border-left: 4px solid var(--green); }
         .toast.err { border-left: 4px solid var(--red); }
         .toast.info { border-left: 4px solid var(--accent); }
-        @keyframes toastIn  { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes toastOut { to { transform: translateX(120%); opacity: 0; } }
+        @keyframes toastIn { from{transform:translateX(120%);opacity:0} to{transform:translateX(0);opacity:1} }
+        @keyframes toastOut { to{transform:translateX(120%);opacity:0} }
 
-        /* EMPTY STATE */
+        /* EMPTY */
         .empty { text-align: center; padding: 60px 20px; color: var(--text3); }
-        .empty-icon { font-size: 56px; margin-bottom: 14px; }
-        .empty h3 { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
+        .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty h3 { font-size: 15px; color: var(--text2); margin-bottom: 6px; }
         .empty p { font-size: 13px; }
 
         /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--border-light); }
-
-        /* EXPORT BAR */
-        .export-bar { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
-        .export-bar label { font-size: 12px; color: var(--text3); font-weight: 700; text-transform: uppercase; white-space: nowrap; }
-        .export-bar .form-input { width: auto; padding: 8px 12px; font-size: 13px; }
-        .divider { width: 1px; height: 30px; background: var(--border); }
-
-        /* REPORT CARDS — professional layout */
-        .reports-list { display: flex; flex-direction: column; gap: 14px; }
-        .report-card {
-            background: linear-gradient(180deg, var(--card) 0%, rgba(17,25,39,0.6) 100%);
-            border: 1px solid var(--border);
-            border-radius: var(--r);
-            padding: 0;
-            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        .report-card::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 3px;
-            background: var(--accent);
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-        .report-card.s-card-selesai::before  { background: var(--green); }
-        .report-card.s-card-proses::before   { background: var(--accent); }
-        .report-card.s-card-menunggu::before { background: var(--amber); }
-        .report-card:hover {
-            border-color: var(--border-light);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 32px rgba(0,0,0,0.35);
-        }
-        .report-card:hover::before { opacity: 1; width: 4px; }
-
-        .rpt-head {
-            display: flex;
-            gap: 14px;
-            align-items: center;
-            padding: 16px 18px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(255,255,255,0.015);
-        }
-        .rpt-avatar {
-            width: 44px; height: 44px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 16px; font-weight: 800; color: white;
-            flex-shrink: 0;
-            overflow: hidden;
-            border: 2px solid var(--border-light);
-            background: var(--bg);
-        }
-        .rpt-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .rpt-head-info { flex: 1; min-width: 0; }
-        .rpt-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .rpt-name .role-pill {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--text3);
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 2px 8px;
-            border-radius: 40px;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .rpt-head-meta {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: 4px;
-            font-size: 11px;
-            color: var(--text3);
-            flex-wrap: wrap;
-        }
-        .rpt-head-meta .dot { width: 3px; height: 3px; background: var(--text3); border-radius: 50%; }
-        .rpt-head-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-        .delete-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text3);
-            width: 32px; height: 32px;
-            padding: 0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.18s;
-        }
-        .delete-btn:hover { background: var(--red-dim); border-color: rgba(240,69,69,0.2); color: var(--red); }
-
-        .rpt-body { padding: 16px 18px; }
-        .rpt-task-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-        }
-        .rpt-task {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1.4;
-            flex: 1;
-            min-width: 0;
-        }
-        .rpt-task .icon { color: var(--accent); margin-right: 6px; }
-
-        .rpt-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        @media (max-width: 520px) { .rpt-info-grid { grid-template-columns: 1fr; } }
-        .rpt-info-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 12px;
-            min-width: 0;
-        }
-        .rpt-info-icon {
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px;
-            flex-shrink: 0;
-        }
-        .rpt-info-icon.loc { background: rgba(45,123,244,0.12); color: #6fa8f8; }
-        .rpt-info-icon.tim { background: rgba(155,110,255,0.12); color: var(--purple); }
-        .rpt-info-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
-        .rpt-info-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-        .rpt-info-value { font-size: 13px; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        .rpt-notes {
-            font-size: 13px;
-            color: var(--text2);
-            background: var(--bg);
-            padding: 12px 14px;
-            border-radius: 10px;
-            border-left: 3px solid var(--accent);
-            margin-bottom: 12px;
-            line-height: 1.5;
-        }
-        .rpt-notes-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px; display: block; }
-
-        .rpt-photo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px;
-        }
-        .rpt-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            cursor: pointer;
-            object-fit: cover;
-            border: 1px solid var(--border);
-            transition: transform 0.18s, box-shadow 0.18s;
-            flex-shrink: 0;
-        }
-        .rpt-img:hover { transform: scale(1.04); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
-        .rpt-photo-info { flex: 1; min-width: 0; }
-        .rpt-photo-info .label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 4px; }
-        .rpt-photo-info .hint { font-size: 12px; color: var(--text2); }
-        .rpt-photo-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-
-        /* STATUS CHIPS */
-        .status-chip { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 40px; font-size: 11px; font-weight: 700; letter-spacing: 0.2px; }
-        .status-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
-        .s-proses   { background: rgba(45,123,244,0.12); color: #6fa8f8; border: 1px solid rgba(45,123,244,0.25); }
-        .s-proses::before   { background: #6fa8f8; box-shadow: 0 0 6px #6fa8f8; }
-        .s-selesai  { background: var(--green-dim); color: var(--green); border: 1px solid rgba(16,216,138,0.25); }
-        .s-selesai::before  { background: var(--green); box-shadow: 0 0 6px var(--green); }
-        .s-menunggu { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,166,35,0.25); }
-        .s-menunggu::before { background: var(--amber); box-shadow: 0 0 6px var(--amber); animation: pulse 1.5s infinite; }
-
-        /* FILTER PILLS */
-        .filter-wrap { display: flex; gap: 7px; flex-wrap: wrap; }
-        .filter-pill { padding: 6px 14px; border: 1px solid var(--border); border-radius: 40px; background: transparent; color: var(--text2); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s; }
-        .filter-pill.on, .filter-pill:hover { background: var(--accent); border-color: var(--accent); color: white; }
-
-        /* TAB NAV */
-        .tab-nav { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 5px; margin-bottom: 24px; overflow-x: auto; }
-        .tab-btn { padding: 9px 20px; border: none; background: transparent; color: var(--text3); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; border-radius: 7px; transition: all 0.18s; white-space: nowrap; }
-        .tab-btn.on { background: var(--accent); color: white; }
-        .tab-btn:hover:not(.on) { color: var(--text); background: var(--bg); }
-        .tab-pane { display: none; }
-        .tab-pane.on { display: block; }
-
-        /* LOADING */
-        .loading { display: flex; align-items: center; justify-content: center; padding: 40px; gap: 10px; color: var(--text3); font-size: 14px; }
-        .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .wrap { padding: 16px 14px; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .team-grid { grid-template-columns: 1fr 1fr; }
-            .modal-body { padding: 18px; }
-            .modal-header { padding: 18px; }
-            .modal-footer { padding: 14px 18px; }
+            .wrap { padding: 16px 12px; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+            .header-left h1 { font-size: 22px; }
+            .composition-grid { grid-template-columns: 1fr; }
         }
-        @media (max-width: 420px) {
-            .team-grid { grid-template-columns: 1fr; }
-            .stats-grid { gap: 10px; }
-            .header-left h1 { font-size: 21px; }
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .dept-tabs { gap: 4px; }
+            .dept-tab { padding: 10px 14px; }
         }
     </style>
 </head>
 <body>
-
+</head>
+<body>
 <div class="wrap">
     <!-- HEADER -->
     <header class="header">
         <div class="header-left">
-            <h1>📋 Report HRGA</h1>
-            <p>Kelola laporan kerja tim dengan mudah</p>
+            <div class="header-badge">GENERAL AFFAIR</div>
+            <h1>Daily Activity Report GA</h1>
+            <p>Supporting Operational Excellence</p>
         </div>
         <div class="header-right">
             <div class="date-chip">📅 <span id="dateDisplay"></span></div>
-            <div class="sync-indicator" onclick="loadAll()" title="Klik untuk refresh manual">
-                <div class="sync-dot" id="syncDot"></div>
-                <span id="syncLabel">Memuat...</span>
-            </div>
-            <button class="btn btn-green" onclick="downloadExcel()">📥 Export Excel</button>
+            <button class="btn btn-primary" onclick="openAddModal()">+ Tambah Aktivitas</button>
+            <button class="btn btn-green" onclick="downloadExcel()">📥 Export</button>
         </div>
     </header>
 
-    <!-- STATS -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-glow" style="background:var(--accent)"></div>
-            <span class="stat-icon">📋</span>
-            <div class="stat-label">Laporan Hari Ini</div>
-            <div class="stat-value" id="statToday">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-glow" style="background:var(--green)"></div>
-            <span class="stat-icon">👥</span>
-            <div class="stat-label">Anggota Aktif</div>
-            <div class="stat-value" id="statActive">0/8</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-glow" style="background:var(--amber)"></div>
-            <span class="stat-icon">📸</span>
-            <div class="stat-label">Bukti Foto</div>
-            <div class="stat-value" id="statImages">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-glow" style="background:var(--purple)"></div>
-            <span class="stat-icon">📊</span>
-            <div class="stat-label">Total Laporan</div>
-            <div class="stat-value" id="statTotal">0</div>
-        </div>
+    <!-- SUMMARY CARDS -->
+    <div class="summary-grid" id="summaryGrid"></div>
+
+    <!-- DEPARTMENT TABS -->
+    <div class="dept-tabs" id="deptTabs"></div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <button class="filter-pill active" data-filter="all" onclick="setFilter('all', this)">Semua</button>
+        <div class="filter-sep"></div>
+        <button class="filter-pill cat-reguler" data-filter="reguler" onclick="setFilter('reguler', this)">Reguler</button>
+        <button class="filter-pill cat-additional" data-filter="additional" onclick="setFilter('additional', this)">Additional</button>
+        <button class="filter-pill cat-project" data-filter="project" onclick="setFilter('project', this)">Project</button>
+        <div class="filter-sep"></div>
+        <button class="filter-pill" data-filter="open" onclick="setFilter('open', this)">Open</button>
+        <button class="filter-pill" data-filter="close" onclick="setFilter('close', this)">Close</button>
+        <button class="filter-pill" data-filter="pending" onclick="setFilter('pending', this)">Pending</button>
     </div>
 
-    <!-- TABS -->
-    <div class="tab-nav">
-        <button class="tab-btn on" onclick="switchTab('team', this)">👥 Tim</button>
-        <button class="tab-btn" onclick="switchTab('reports', this)">📋 Laporan</button>
-    </div>
+    <!-- ACTIVITY LIST -->
+    <div class="activity-list" id="activityList"></div>
 
-    <!-- TAB: TIM -->
-    <div class="tab-pane on" id="tab-team">
-        <div class="section-header">
-            <div class="section-title">
-                👥 Anggota Tim
-                <span class="section-badge" id="teamCount">8 orang</span>
-            </div>
-            <small style="font-size:12px;color:var(--text3)">Klik kartu untuk input laporan</small>
-        </div>
-        <div class="team-grid" id="teamGrid"></div>
-    </div>
+    <!-- COMPOSITION CHARTS -->
+    <div class="composition-grid" id="compositionGrid"></div>
 
-    <!-- TAB: LAPORAN -->
-    <div class="tab-pane" id="tab-reports">
-        <div class="export-bar">
-            <label>Dari</label>
-            <input type="date" class="form-input" id="startDate">
-            <label>Sampai</label>
-            <input type="date" class="form-input" id="endDate">
-            <div class="divider"></div>
-            <button class="btn btn-ghost btn-sm" onclick="applyFilter()">🔍 Filter</button>
-            <button class="btn btn-ghost btn-sm" onclick="setToday()">📅 Hari Ini</button>
-        </div>
-
-        <div class="section-header">
-            <div class="section-title">
-                📋 Riwayat Laporan
-                <span class="section-badge" id="reportCount">0 laporan</span>
-            </div>
-            <div class="filter-wrap" id="filterWrap"></div>
-        </div>
-        <div class="reports-list" id="reportList"></div>
-    </div>
+    <!-- ANALYSIS & CONCLUSION -->
+    <div class="analysis-section" id="analysisSection"></div>
 </div>
 
-<!-- ===== MODAL INPUT LAPORAN ===== -->
-<div class="overlay" id="inputModal">
+<!-- MODAL ADD ACTIVITY -->
+<div class="overlay" id="addModal">
     <div class="modal">
         <div class="modal-header">
-            <h2 id="modalTitle">📝 Input Laporan</h2>
-            <button class="modal-close" onclick="closeModal('inputModal')">✕</button>
+            <h2>Tambah Aktivitas</h2>
+            <button class="modal-close" onclick="closeModal()">✕</button>
         </div>
         <div class="modal-body">
             <div class="form-group">
-                <label class="form-label">🔧 Pekerjaan / Aktivitas</label>
-                <input type="text" class="form-input" id="fTask" placeholder="Contoh: Servis AC lantai 3...">
-            </div>
-            <div class="form-group">
-                <label class="form-label">📍 Lokasi Pengerjaan</label>
-                <input type="text" class="form-input" id="fLocation" placeholder="Contoh: Gedung B, Lantai 3...">
-            </div>
-            <div class="form-group">
-                <label class="form-label">📌 Status Pekerjaan</label>
-                <select class="form-input" id="fStatus">
-                    <option value="" disabled selected>Pilih status...</option>
-                    <option value="Dalam Proses">Dalam Proses</option>
-                    <option value="Selesai">Selesai</option>
-                    <option value="Menunggu">Menunggu</option>
+                <label class="form-label">Departemen</label>
+                <select class="form-input" id="fDept">
+                    <option value="" disabled selected>Pilih departemen...</option>
+                    <option value="ts">Technical Support</option>
+                    <option value="utility">Utility</option>
+                    <option value="cleaning">Cleaning Service</option>
+                    <option value="nrm">NRM</option>
+                    <option value="ga_internal">GA Internal</option>
                 </select>
             </div>
             <div class="form-group">
-                <label class="form-label">💬 Catatan Tambahan</label>
-                <textarea class="form-input" id="fNotes" placeholder="Opsional..."></textarea>
+                <label class="form-label">Aktivitas / Pekerjaan</label>
+                <input type="text" class="form-input" id="fActivity" placeholder="Deskripsi aktivitas...">
             </div>
             <div class="form-group">
-                <label class="form-label">📸 Bukti Foto (opsional)</label>
-                <div class="upload-wrap">
-                    <div class="upload-box" id="uploadBox" onclick="document.getElementById('fileInput').click()">
-                        <div class="upload-icon">📤</div>
-                        <div class="upload-hint"><strong>Klik atau drag & drop</strong> foto di sini<br><small>JPG / PNG · Maks. 5MB (akan dikompres jika perlu)</small></div>
+                <label class="form-label">Kategori</label>
+                <div class="radio-group">
+                    <div class="radio-card rc-reguler">
+                        <input type="radio" name="category" id="catReguler" value="reguler">
+                        <label for="catReguler">Reguler</label>
                     </div>
-                    <input type="file" id="fileInput" accept="image/*" hidden>
-                    <div class="upload-preview" id="uploadPreview">
-                        <img id="previewImg" src="" alt="Preview">
-                        <button type="button" class="remove-img" onclick="removeImg(event)" title="Hapus foto">✕</button>
-                        <div class="upload-preview-info">
-                            <span class="ok">✓ Foto siap diunggah</span>
-                            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('fileInput').click()">🔄 Ganti</button>
-                        </div>
+                    <div class="radio-card rc-additional">
+                        <input type="radio" name="category" id="catAdditional" value="additional">
+                        <label for="catAdditional">Additional</label>
+                    </div>
+                    <div class="radio-card rc-project">
+                        <input type="radio" name="category" id="catProject" value="project">
+                        <label for="catProject">Project</label>
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <div class="radio-group">
+                    <div class="radio-card rc-open">
+                        <input type="radio" name="status" id="statOpen" value="open">
+                        <label for="statOpen">Open</label>
+                    </div>
+                    <div class="radio-card rc-close">
+                        <input type="radio" name="status" id="statClose" value="close">
+                        <label for="statClose">Close</label>
+                    </div>
+                    <div class="radio-card rc-pending">
+                        <input type="radio" name="status" id="statPending" value="pending">
+                        <label for="statPending">Pending</label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Catatan (opsional)</label>
+                <textarea class="form-input" id="fNotes" placeholder="Catatan tambahan..."></textarea>
+            </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-ghost" onclick="closeModal('inputModal')">Batal</button>
-            <button class="btn btn-primary" id="submitBtn" onclick="submitReport()">🚀 Kirim Laporan</button>
+            <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
+            <button class="btn btn-primary" id="submitBtn" onclick="submitActivity()">Simpan</button>
         </div>
     </div>
 </div>
 
-<!-- ===== IMAGE VIEWER ===== -->
-<div class="img-viewer" id="imgViewer" onclick="closeImgViewer()">
-    <img id="viewerImg" src="" alt="">
-</div>
-
-<!-- ===== TOAST ===== -->
+<!-- TOAST -->
 <div class="toast-wrap" id="toastWrap"></div>
 
 <script>
-// ─────────────────────────────────────────────────────
-// CONFIG & CONSTANTS
-// ─────────────────────────────────────────────────────
-const DEFAULT_TEAM = [
-    { name: 'Fajar Gumilar',          role: 'STAFF UTILITY' },
-    { name: 'Deri Agustin',          role: 'STAFF TS' },
-    { name: 'Candra Warisman',       role: 'STAFF CS' },
-    { name: 'Ajeng Kusumaningtias',  role: 'ADMIN GA' },
-    { name: 'Muhamad Rieza Pratama', role: 'STAFF NRM' },
-    { name: 'Ibnu Fadilah',          role: 'NRM' },
-    { name: 'Muhamad Rizal',         role: 'TEKNISI UTILITY' },
-    { name: 'Dadi Heryana',          role: 'TEKNISI UTILITY' }
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
+const DEPARTMENTS = [
+    { id: 'ts', name: 'Technical Support', icon: '🔧', color: '#2563eb' },
+    { id: 'utility', name: 'Utility', icon: '⚡', color: '#10b981' },
+    { id: 'cleaning', name: 'Cleaning Service', icon: '🧹', color: '#f59e0b' },
+    { id: 'nrm', name: 'NRM', icon: '📦', color: '#8b5cf6' },
+    { id: 'ga_internal', name: 'GA Internal', icon: '🏢', color: '#ec4899' }
 ];
 
-// ─────────────────────────────────────────────────────
-// STATE — hanya UI state, BUKAN data cache
-// ─────────────────────────────────────────────────────
-let team         = DEFAULT_TEAM.map(d => ({ ...d }));
-let reports      = [];   // selalu dari server, tidak pernah dimodifikasi lokal
-let currentMember = 0;
-let currentImg   = '';
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+let activities = [];
+let activeDept = 'all';
 let activeFilter = 'all';
-let startDate    = todayStr();
-let endDate      = todayStr();
-let isLoading    = false;
-let autoRefreshTimer = null;
+let analysisData = null;
 
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
 // UTILS
-// ─────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
 function todayStr() {
     const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${dd}`;
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
-function localDateStr(dateVal) {
-    const d = new Date(dateVal);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${dd}`;
+function localDate(dt) {
+    const d = new Date(dt);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
-function initials(name) {
-    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-}
-
-// Avatar otomatis dari nama (DiceBear - "avataaars" style, gratis & no-auth)
-// Deterministic: nama yang sama = avatar yang sama.
-function autoAvatar(name) {
-    const seed = encodeURIComponent((name || 'user').toLowerCase().trim());
-    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}&backgroundType=gradientLinear&radius=50`;
-}
-
-function avatarHtml(member) {
-    const src = (member && member.image) ? member.image : autoAvatar(member && member.name);
-    const safeName = (member && member.name) ? member.name.replace(/"/g, '&quot;') : '';
-    return `<img src="${src}" alt="${safeName}" onerror="this.onerror=null;this.src='${autoAvatar(member && member.name)}'">`;
-}
-
-function statusClass(s) {
-    if (s === 'Dalam Proses') return 's-proses';
-    if (s === 'Selesai')      return 's-selesai';
-    if (s === 'Menunggu')     return 's-menunggu';
-    return '';
-}
-
-function toast(msg, type = 'info') {
+function toast(msg, type='info') {
     const w = document.getElementById('toastWrap');
     const t = document.createElement('div');
     t.className = `toast ${type}`;
@@ -772,634 +393,396 @@ function toast(msg, type = 'info') {
     w.appendChild(t);
     setTimeout(() => t.remove(), 3200);
 }
-
-function setSyncUI(state, label) {
-    const dot = document.getElementById('syncDot');
-    const lbl = document.getElementById('syncLabel');
-    dot.className = 'sync-dot ' + state;
-    lbl.textContent = label || (
-        state === 'online'  ? 'Online' :
-        state === 'syncing' ? 'Memuat...' :
-        state === 'offline' ? 'Offline' : 'Mengecek...'
-    );
+async function api(path, opts={}) {
+    const r = await fetch(window.location.origin + path, { headers: {'Content-Type':'application/json'}, ...opts });
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.error||`HTTP ${r.status}`); }
+    return r.json();
 }
 
-// ─────────────────────────────────────────────────────
-// API HELPER — semua request ke server
-// ─────────────────────────────────────────────────────
-async function apiFetch(path, options = {}) {
-    const res = await fetch(window.location.origin + path, {
-        headers: { 'Content-Type': 'application/json', ...options.headers },
-        ...options
-    });
-    if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `HTTP ${res.status}`);
+// ═══════════════════════════════════════════════════════
+// LOAD DATA
+// ═══════════════════════════════════════════════════════
+async function loadActivities() {
+    try {
+        const today = todayStr();
+        const data = await api(`/api/activities?startDate=${today}&endDate=${today}`);
+        activities = data.map(a => ({
+            id: Number(a.id),
+            department: a.department,
+            activity: a.activity,
+            category: a.category,
+            status: a.status,
+            notes: a.notes || '',
+            date: a.created_at
+        }));
+    } catch(e) {
+        console.error('Load error:', e);
+        toast('Gagal memuat data', 'err');
     }
-    return res.json();
 }
 
-// ─────────────────────────────────────────────────────
-// LOAD ALL — tarik semua data dari server (ganti syncAll)
-// Tidak ada merge dengan lokal. Server = sumber kebenaran.
-// ─────────────────────────────────────────────────────
+async function loadAnalysis() {
+    try {
+        const today = todayStr();
+        analysisData = await api(`/api/analysis?date=${today}`);
+    } catch(e) {
+        console.error('Analysis error:', e);
+        analysisData = null;
+    }
+}
+
 async function loadAll() {
-    if (isLoading) return;
-    isLoading = true;
-    setSyncUI('syncing');
+    await Promise.all([loadActivities(), loadAnalysis()]);
+    renderAll();
+}
 
-    try {
-        const data = await apiFetch('/api/sync');
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+function renderAll() {
+    renderSummary();
+    renderDeptTabs();
+    renderActivities();
+    renderComposition();
+    renderAnalysis();
+}
 
-        // Update team dari server
-        if (Array.isArray(data.teams) && data.teams.length > 0) {
-            team = DEFAULT_TEAM.map((def, i) => {
-                const srv = data.teams.find(t => t.member_index === i);
-                return srv ? { name: srv.name, role: srv.role || def.role, image: srv.image || '' } : { ...def };
-            });
-        } else {
-            // Jika server belum punya data tim, push default
-            team = DEFAULT_TEAM.map(d => ({ ...d }));
-            pushTeamsToServer().catch(() => {});
-        }
+function renderSummary() {
+    const total = activities.length;
+    const reguler = activities.filter(a => a.category === 'reguler').length;
+    const additional = activities.filter(a => a.category === 'additional').length;
+    const project = activities.filter(a => a.category === 'project').length;
+    const closed = activities.filter(a => a.status === 'close').length;
+    const open = activities.filter(a => a.status === 'open').length;
+    const pending = activities.filter(a => a.status === 'pending').length;
 
-        // Laporan dari server — langsung pakai, tidak ada merge
-        if (Array.isArray(data.reports)) {
-            reports = data.reports.map(r => ({
-                id:          Number(r.id),
-                memberIndex: Number(r.member_index),
-                task:        r.task,
-                location:    r.location,
-                status:      r.status  || '',
-                notes:       r.notes   || '',
-                image:       r.image   || '',
-                date:        r.created_at
-            })).sort((a, b) => new Date(b.date) - new Date(a.date));
-        }
+    document.getElementById('summaryGrid').innerHTML = `
+        <div class="summary-card">
+            <div class="glow" style="background:var(--accent)"></div>
+            <div class="label">Total Aktivitas</div>
+            <div class="value" style="color:var(--accent)">${total}</div>
+            <div class="sub">Hari ini</div>
+        </div>
+        <div class="summary-card">
+            <div class="glow" style="background:var(--green)"></div>
+            <div class="label">Reguler</div>
+            <div class="value" style="color:var(--green)">${reguler}</div>
+            <div class="sub">${total?Math.round(reguler/total*100):0}% dari total</div>
+        </div>
+        <div class="summary-card">
+            <div class="glow" style="background:var(--amber)"></div>
+            <div class="label">Additional</div>
+            <div class="value" style="color:var(--amber)">${additional}</div>
+            <div class="sub">${total?Math.round(additional/total*100):0}% dari total</div>
+        </div>
+        <div class="summary-card">
+            <div class="glow" style="background:var(--purple)"></div>
+            <div class="label">Project</div>
+            <div class="value" style="color:var(--purple)">${project}</div>
+            <div class="sub">${total?Math.round(project/total*100):0}% dari total</div>
+        </div>
+        <div class="summary-card">
+            <div class="glow" style="background:var(--green)"></div>
+            <div class="label">Close</div>
+            <div class="value" style="color:var(--green)">${closed}</div>
+            <div class="sub">${total?Math.round(closed/total*100):0}% selesai</div>
+        </div>
+        <div class="summary-card">
+            <div class="glow" style="background:#60a5fa"></div>
+            <div class="label">Open</div>
+            <div class="value" style="color:#60a5fa">${open}</div>
+            <div class="sub">${pending} pending</div>
+        </div>
+    `;
+}
 
-        setSyncUI('online');
-        refreshUI();
-    } catch (e) {
-        console.error('loadAll error:', e.message);
-        setSyncUI('offline', 'Gagal terhubung');
-        // Tetap render UI dengan data yang ada (mungkin masih kosong)
-        refreshUI();
-    } finally {
-        isLoading = false;
+function renderDeptTabs() {
+    const counts = {};
+    DEPARTMENTS.forEach(d => { counts[d.id] = activities.filter(a => a.department === d.id).length; });
+    const totalCount = activities.length;
+
+    document.getElementById('deptTabs').innerHTML = `
+        <div class="dept-tab ${activeDept==='all'?'active':''}" onclick="setDept('all')">
+            <span class="icon">📊</span>
+            <span class="name">Semua</span>
+            <span class="count">${totalCount}</span>
+        </div>
+        ${DEPARTMENTS.map(d => `
+            <div class="dept-tab ${activeDept===d.id?'active':''}" onclick="setDept('${d.id}')">
+                <span class="icon">${d.icon}</span>
+                <span class="name">${d.name}</span>
+                <span class="count">${counts[d.id]}</span>
+            </div>
+        `).join('')}
+    `;
+}
+
+function renderActivities() {
+    let filtered = [...activities];
+
+    if (activeDept !== 'all') {
+        filtered = filtered.filter(a => a.department === activeDept);
     }
-}
-
-// ─────────────────────────────────────────────────────
-// PUSH TEAMS
-// ─────────────────────────────────────────────────────
-async function pushTeamsToServer() {
-    for (let i = 0; i < team.length; i++) {
-        await apiFetch('/api/teams', {
-            method: 'POST',
-            body: JSON.stringify({
-                member_index: i,
-                name:  team[i].name,
-                role:  team[i].role,
-                image: team[i].image || null
-            })
-        }).catch(() => {});
-    }
-}
-
-// ─────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────
-async function init() {
-    document.getElementById('dateDisplay').textContent =
-        new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-
-    document.getElementById('startDate').value = startDate;
-    document.getElementById('endDate').value   = endDate;
-
-    setupUpload();
-
-    // Load data dari server
-    await loadAll();
-
-    // Auto-refresh setiap 30 detik (hanya tarik dari server)
-    autoRefreshTimer = setInterval(() => {
-        if (!isLoading) loadAll();
-    }, 30000);
-}
-
-function refreshUI() {
-    renderTeam();
-    renderFilters();
-    renderReports();
-    updateStats();
-}
-
-// ─────────────────────────────────────────────────────
-// RENDER TEAM
-// ─────────────────────────────────────────────────────
-function renderTeam() {
-    const todayS = todayStr();
-    const grid = document.getElementById('teamGrid');
-    document.getElementById('teamCount').textContent = `${team.length} orang`;
-
-    grid.innerHTML = team.map((m, i) => {
-        const count = reports.filter(r =>
-            r.memberIndex === i && localDateStr(r.date) === todayS
-        ).length;
-        const ava = avatarHtml(m);
-        return `
-        <div class="team-card" onclick="openInputModal(${i})">
-            <div class="team-avatar av${i + 1}">${ava}<div class="online-dot"></div></div>
-            <div class="team-name">${m.name}</div>
-            <div class="team-role">${m.role}</div>
-            <div class="team-badge">📋 ${count} Laporan Hari Ini</div>
-        </div>`;
-    }).join('');
-}
-
-// ─────────────────────────────────────────────────────
-// MODAL INPUT LAPORAN
-// ─────────────────────────────────────────────────────
-function openInputModal(idx) {
-    currentMember = idx;
-    document.getElementById('modalTitle').textContent = `📝 ${team[idx].name}`;
-    ['fTask','fLocation','fNotes'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('fStatus').value = '';
-    currentImg = '';
-    document.getElementById('uploadPreview').style.display = 'none';
-    document.getElementById('uploadBox').style.display = 'block';
-    document.getElementById('fileInput').value = '';
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = false;
-    btn.textContent = '🚀 Kirim Laporan';
-    openModal('inputModal');
-}
-
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// ─────────────────────────────────────────────────────
-// UPLOAD FOTO
-// ─────────────────────────────────────────────────────
-function setupUpload() {
-    const box   = document.getElementById('uploadBox');
-    const input = document.getElementById('fileInput');
-
-    box.addEventListener('dragover',  e => { e.preventDefault(); box.classList.add('drag'); });
-    box.addEventListener('dragleave', () => box.classList.remove('drag'));
-    box.addEventListener('drop', e => {
-        e.preventDefault();
-        box.classList.remove('drag');
-        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-    });
-    input.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
-}
-
-const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
-const MAX_IMAGE_DATAURL_BYTES = 5 * 1024 * 1024;
-
-function handleFile(file) {
-    if (!file.type.startsWith('image/')) { toast('❌ File harus berupa gambar!', 'err'); return; }
-    if (file.size > MAX_IMAGE_FILE_SIZE) { toast('❌ File terlalu besar! Maks 5MB', 'err'); return; }
-
-    processImageFile(file).catch(err => {
-        console.error('Gagal memproses gambar:', err);
-        toast('❌ Tidak bisa memproses gambar. Gunakan file yang lebih kecil atau potong gambar.', 'err');
-    });
-}
-
-async function processImageFile(file) {
-    const originalDataUrl = await readFileAsDataURL(file);
-    let dataUrl = originalDataUrl;
-
-    if (getDataUrlSize(dataUrl) > MAX_IMAGE_DATAURL_BYTES) {
-        const compressed = await compressImageFile(file, MAX_IMAGE_DATAURL_BYTES);
-        if (!compressed) {
-            toast('❌ File terlalu besar! Pilih file lebih kecil dari 5MB.', 'err');
-            return;
-        }
-        dataUrl = compressed;
-        toast('ℹ️ Gambar dikompres otomatis agar bisa diupload.', 'info');
-    }
-
-    currentImg = dataUrl;
-    document.getElementById('previewImg').src = currentImg;
-    document.getElementById('uploadPreview').style.display = 'block';
-    document.getElementById('uploadBox').style.display = 'none';
-}
-
-function readFileAsDataURL(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
-function getDataUrlSize(dataUrl) {
-    return new Blob([dataUrl]).size;
-}
-
-function loadImage(src) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = src;
-    });
-}
-
-async function compressImageFile(file, maxBytes) {
-    const dataUrl = await readFileAsDataURL(file);
-    const img = await loadImage(dataUrl);
-    const canvas = document.createElement('canvas');
-    let width = img.width;
-    let height = img.height;
-    const maxSide = 1280;
-
-    if (width > maxSide || height > maxSide) {
-        if (width > height) {
-            height = Math.round(height * maxSide / width);
-            width = maxSide;
-        } else {
-            width = Math.round(width * maxSide / height);
-            height = maxSide;
-        }
-    }
-
-    const ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-    ctx.drawImage(img, 0, 0, width, height);
-
-    let quality = 0.92;
-    let compressed = canvas.toDataURL('image/jpeg', quality);
-
-    while (getDataUrlSize(compressed) > maxBytes && quality > 0.35) {
-        quality -= 0.08;
-        compressed = canvas.toDataURL('image/jpeg', quality);
-    }
-
-    while (getDataUrlSize(compressed) > maxBytes && (width > 640 || height > 640)) {
-        width = Math.max(640, Math.round(width * 0.85));
-        height = Math.max(640, Math.round(height * 0.85));
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-        quality = 0.92;
-        compressed = canvas.toDataURL('image/jpeg', quality);
-
-        while (getDataUrlSize(compressed) > maxBytes && quality > 0.35) {
-            quality -= 0.08;
-            compressed = canvas.toDataURL('image/jpeg', quality);
-        }
-    }
-
-    return getDataUrlSize(compressed) <= maxBytes ? compressed : null;
-}
-
-function removeImg(ev) {
-    ev.stopPropagation();
-    currentImg = '';
-    document.getElementById('uploadPreview').style.display = 'none';
-    document.getElementById('uploadBox').style.display = 'block';
-    document.getElementById('fileInput').value = '';
-}
-
-// ─────────────────────────────────────────────────────
-// SUBMIT LAPORAN — kirim ke server dulu, baru tampilkan
-// ─────────────────────────────────────────────────────
-async function submitReport() {
-    const task     = document.getElementById('fTask').value.trim();
-    const location = document.getElementById('fLocation').value.trim();
-    const status   = document.getElementById('fStatus').value;
-    const notes    = document.getElementById('fNotes').value.trim();
-
-    if (!task)     { toast('❌ Pekerjaan harus diisi!', 'err'); return; }
-    if (!location) { toast('❌ Lokasi harus diisi!', 'err'); return; }
-    if (!status)   { toast('❌ Status harus dipilih!', 'err'); return; }
-
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = '⏳ Menyimpan...';
-
-    const reportId = Date.now();
-    const reportDate = new Date().toISOString();
-
-    try {
-        // Kirim ke server dulu — BARU tampilkan ke UI
-        await apiFetch('/api/reports', {
-            method: 'POST',
-            body: JSON.stringify({
-                id:           reportId,
-                member_index: currentMember,
-                task,
-                location,
-                status,
-                notes,
-                image:        currentImg || null,
-                date:         reportDate
-            })
-        });
-
-        // Tutup modal
-        closeModal('inputModal');
-        toast('✅ Laporan berhasil disimpan!', 'ok');
-
-        // Tambahkan ke array lokal langsung (tanpa menunggu loadAll)
-        // agar tampilan update SEKETIKA tanpa delay
-        reports.unshift({
-            id:          reportId,
-            memberIndex: currentMember,
-            task,
-            location,
-            status,
-            notes,
-            image:       currentImg || '',
-            date:        reportDate
-        });
-
-        // Render ulang UI
-        refreshUI();
-
-        // Background reload dari server untuk konfirmasi
-        // Delay sedikit agar server sudah commit
-        setTimeout(() => {
-            loadAll().catch(() => {});
-        }, 1500);
-
-    } catch (e) {
-        console.error('Submit error:', e);
-        btn.disabled = false;
-        btn.textContent = '🚀 Kirim Laporan';
-        toast('❌ Gagal menyimpan: ' + e.message, 'err');
-    }
-}
-
-// ─────────────────────────────────────────────────────
-// DELETE — hapus dari server dulu, baru update UI
-// ─────────────────────────────────────────────────────
-async function deleteReport(id) {
-    if (!confirm('Yakin hapus laporan ini?')) return;
-
-    try {
-        await apiFetch(`/api/reports/${id}`, { method: 'DELETE' });
-        // Hapus dari array lokal
-        reports = reports.filter(r => r.id !== id);
-        refreshUI();
-        toast('🗑️ Laporan dihapus', 'info');
-    } catch (e) {
-        // Jika endpoint /:id tidak ada, coba dengan query string
-        try {
-            await apiFetch(`/api/reports?id=${id}`, { method: 'DELETE' });
-            reports = reports.filter(r => r.id !== id);
-            refreshUI();
-            toast('🗑️ Laporan dihapus', 'info');
-        } catch (e2) {
-            toast('❌ Gagal menghapus: ' + e2.message, 'err');
-        }
-    }
-}
-
-// ─────────────────────────────────────────────────────
-// FILTER
-// ─────────────────────────────────────────────────────
-function renderFilters() {
-    const wrap = document.getElementById('filterWrap');
-    wrap.innerHTML = '';
-
-    const allBtn = document.createElement('button');
-    allBtn.className = 'filter-pill' + (activeFilter === 'all' ? ' on' : '');
-    allBtn.textContent = 'Semua';
-    allBtn.onclick = () => setFilter('all', allBtn);
-    wrap.appendChild(allBtn);
-
-    team.forEach((m, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'filter-pill' + (activeFilter === String(i) ? ' on' : '');
-        btn.textContent = m.name;
-        btn.onclick = () => setFilter(String(i), btn);
-        wrap.appendChild(btn);
-    });
-}
-
-function setFilter(val, btn) {
-    activeFilter = val;
-    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('on'));
-    btn.classList.add('on');
-    renderReports();
-}
-
-function applyFilter() {
-    startDate = document.getElementById('startDate').value || todayStr();
-    endDate   = document.getElementById('endDate').value   || todayStr();
-    renderReports();
-    updateStats();
-}
-
-function setToday() {
-    startDate = todayStr();
-    endDate   = todayStr();
-    document.getElementById('startDate').value = startDate;
-    document.getElementById('endDate').value   = endDate;
-    renderReports();
-    updateStats();
-}
-
-// ─────────────────────────────────────────────────────
-// RENDER REPORTS
-// ─────────────────────────────────────────────────────
-function renderReports() {
-    const container = document.getElementById('reportList');
-
-    let filtered = reports.filter(r => {
-        const d = localDateStr(r.date);
-        return d >= startDate && d <= endDate;
-    });
-
     if (activeFilter !== 'all') {
-        filtered = filtered.filter(r => r.memberIndex === parseInt(activeFilter));
+        filtered = filtered.filter(a => a.category === activeFilter || a.status === activeFilter);
     }
 
-    document.getElementById('reportCount').textContent = `${filtered.length} laporan`;
-
+    const container = document.getElementById('activityList');
     if (!filtered.length) {
         container.innerHTML = `
             <div class="empty">
                 <div class="empty-icon">📭</div>
-                <h3>Belum ada laporan</h3>
-                <p>Pilih rentang tanggal lain atau tambahkan laporan baru.</p>
+                <h3>Belum ada aktivitas</h3>
+                <p>Klik "+ Tambah Aktivitas" untuk menambahkan kegiatan hari ini.</p>
             </div>`;
         return;
     }
 
-    container.innerHTML = filtered.map(r => buildReportCard(r)).join('');
-}
-
-function buildReportCard(r) {
-    const m    = team[r.memberIndex] || { name: 'Unknown', role: '-', image: '' };
-    const idx  = r.memberIndex;
-    const time = new Date(r.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    const date = new Date(r.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-
-    const ava = avatarHtml(m);
-    const sc = r.status ? statusClass(r.status) : '';
-    const cardCls = r.status === 'Selesai' ? 's-card-selesai'
-                  : r.status === 'Dalam Proses' ? 's-card-proses'
-                  : r.status === 'Menunggu' ? 's-card-menunggu' : '';
-
-    const escAttr = (s) => String(s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-    const photoHtml = r.image ? `
-        <div class="rpt-photo">
-            <img class="rpt-img" src="${r.image}" onclick="viewImg('${escAttr(r.image)}')" alt="Bukti">
-            <div class="rpt-photo-info">
-                <div class="label">📸 Bukti Foto</div>
-                <div class="hint">Klik foto untuk memperbesar</div>
-            </div>
-            <div class="rpt-photo-actions">
-                <button class="btn btn-ghost btn-sm" onclick="downloadImg('${escAttr(r.image)}','${escAttr(m.name)}_${escAttr(date)}')">📥 Unduh</button>
-            </div>
-        </div>` : '';
-
-    return `
-    <div class="report-card ${cardCls}" data-id="${r.id}">
-        <div class="rpt-head">
-            <div class="rpt-avatar av${(idx % 8) + 1}">${ava}</div>
-            <div class="rpt-head-info">
-                <div class="rpt-name">${m.name} <span class="role-pill">${m.role}</span></div>
-                <div class="rpt-head-meta">
-                    <span>🕐 ${time}</span>
+    container.innerHTML = filtered.map(a => {
+        const dept = DEPARTMENTS.find(d => d.id === a.department) || { icon: '📋', name: 'Unknown' };
+        const time = new Date(a.date).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+        return `
+        <div class="activity-card cat-${a.category}">
+            <div class="dept-icon">${dept.icon}</div>
+            <div class="info">
+                <div class="title">${a.activity}</div>
+                <div class="meta">
+                    <span>${dept.name}</span>
                     <span class="dot"></span>
-                    <span>📅 ${date}</span>
+                    <span>${time}</span>
+                    ${a.notes ? `<span class="dot"></span><span>${a.notes}</span>` : ''}
                 </div>
             </div>
-            <div class="rpt-head-actions">
-                ${r.status ? `<span class="status-chip ${sc}">${r.status}</span>` : ''}
-                <button class="delete-btn" onclick="deleteReport(${r.id})" title="Hapus laporan">🗑️</button>
+            <div class="badges">
+                <span class="badge badge-cat badge-${a.category}">${a.category}</span>
+                <span class="badge badge-${a.status}">${a.status}</span>
             </div>
-        </div>
-        <div class="rpt-body">
-            <div class="rpt-task-row">
-                <div class="rpt-task"><span class="icon">🔧</span>${r.task}</div>
+            <div class="actions">
+                <button class="icon-btn" onclick="cycleStatus(${a.id})" title="Ubah status">🔄</button>
+                <button class="icon-btn del" onclick="deleteActivity(${a.id})" title="Hapus">🗑️</button>
             </div>
-            <div class="rpt-info-grid">
-                <div class="rpt-info-item">
-                    <div class="rpt-info-icon loc">📍</div>
-                    <div class="rpt-info-text">
-                        <div class="rpt-info-label">Lokasi</div>
-                        <div class="rpt-info-value" title="${m.name}">${r.location}</div>
-                    </div>
-                </div>
-                <div class="rpt-info-item">
-                    <div class="rpt-info-icon tim">👤</div>
-                    <div class="rpt-info-text">
-                        <div class="rpt-info-label">Petugas</div>
-                        <div class="rpt-info-value">${m.name}</div>
-                    </div>
-                </div>
-            </div>
-            ${r.notes ? `<div class="rpt-notes"><span class="rpt-notes-label">💬 Catatan</span>${r.notes}</div>` : ''}
-            ${photoHtml}
-        </div>
-    </div>`;
+        </div>`;
+    }).join('');
 }
 
-// ─────────────────────────────────────────────────────
-// STATS
-// ─────────────────────────────────────────────────────
-function updateStats() {
-    const todayS   = todayStr();
-    const todayRpts = reports.filter(r => localDateStr(r.date) === todayS);
-    document.getElementById('statToday').textContent  = todayRpts.length;
-    const activeSet = new Set(todayRpts.map(r => r.memberIndex));
-    document.getElementById('statActive').textContent = `${activeSet.size}/${team.length}`;
-    document.getElementById('statImages').textContent = reports.filter(r => r.image).length;
-    document.getElementById('statTotal').textContent  = reports.length;
+function renderComposition() {
+    const total = activities.length;
+    if (total === 0) {
+        document.getElementById('compositionGrid').innerHTML = '';
+        return;
+    }
+
+    const reguler = activities.filter(a => a.category === 'reguler').length;
+    const additional = activities.filter(a => a.category === 'additional').length;
+    const project = activities.filter(a => a.category === 'project').length;
+    const open = activities.filter(a => a.status === 'open').length;
+    const close = activities.filter(a => a.status === 'close').length;
+    const pending = activities.filter(a => a.status === 'pending').length;
+
+    // SVG Donut
+    function donutPath(pct, offset) {
+        const r = 42, cx = 60, cy = 60;
+        const circumference = 2 * Math.PI * r;
+        const dash = circumference * pct / 100;
+        const gap = circumference - dash;
+        const startOffset = circumference * offset / 100;
+        return `stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-startOffset}"`;
+    }
+
+    const regPct = Math.round(reguler/total*100);
+    const addPct = Math.round(additional/total*100);
+    const prjPct = 100 - regPct - addPct;
+
+    const openPct = Math.round(open/total*100);
+    const closePct = Math.round(close/total*100);
+    const pendPct = 100 - openPct - closePct;
+
+    document.getElementById('compositionGrid').innerHTML = `
+        <div class="chart-card">
+            <h4>Komposisi Kategori</h4>
+            <div class="donut-wrap">
+                <svg class="donut-svg" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="42" fill="none" stroke="var(--green)" stroke-width="14" ${donutPath(regPct, 0)} transform="rotate(-90 60 60)"/>
+                    <circle cx="60" cy="60" r="42" fill="none" stroke="var(--amber)" stroke-width="14" ${donutPath(addPct, regPct)} transform="rotate(-90 60 60)"/>
+                    <circle cx="60" cy="60" r="42" fill="none" stroke="var(--purple)" stroke-width="14" ${donutPath(prjPct, regPct+addPct)} transform="rotate(-90 60 60)"/>
+                    <text x="60" y="56" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="800">${total}</text>
+                    <text x="60" y="72" text-anchor="middle" fill="var(--text3)" font-size="9">TOTAL</text>
+                </svg>
+                <div class="donut-legend">
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Reguler ${regPct}%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Additional ${addPct}%</div>
+                    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Project ${prjPct}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="chart-card">
+            <h4>Per Departemen</h4>
+            <div class="bar-chart">
+                ${DEPARTMENTS.map(d => {
+                    const count = activities.filter(a => a.department === d.id).length;
+                    const pct = total ? Math.round(count/total*100) : 0;
+                    return `<div class="bar-item">
+                        <div class="bar-label">${d.icon} ${d.name.split(' ')[0]}</div>
+                        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${d.color}"></div></div>
+                        <div class="bar-value">${count}</div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    `;
 }
 
-// ─────────────────────────────────────────────────────
-// EXPORT EXCEL (CSV)
-// ─────────────────────────────────────────────────────
+function renderAnalysis() {
+    const section = document.getElementById('analysisSection');
+    if (!analysisData || activities.length === 0) {
+        section.innerHTML = '';
+        return;
+    }
+
+    const { analysis, conclusion } = analysisData;
+
+    section.innerHTML = `
+        <div class="analysis-card">
+            <h3>📊 Analisa Kegiatan</h3>
+            ${(analysis || []).map(text => `
+                <div class="analysis-item">
+                    <div class="analysis-bullet"></div>
+                    <div class="analysis-text">${text}</div>
+                </div>
+            `).join('')}
+        </div>
+        <div class="analysis-card">
+            <h3>📝 Kesimpulan</h3>
+            <div class="conclusion-box">${conclusion || ''}</div>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════
+function setDept(dept) {
+    activeDept = dept;
+    renderDeptTabs();
+    renderActivities();
+}
+
+function setFilter(val, btn) {
+    activeFilter = val;
+    document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderActivities();
+}
+
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+function closeModal() { document.getElementById('addModal').classList.remove('open'); }
+
+async function submitActivity() {
+    const dept = document.getElementById('fDept').value;
+    const activity = document.getElementById('fActivity').value.trim();
+    const category = document.querySelector('input[name="category"]:checked');
+    const status = document.querySelector('input[name="status"]:checked');
+    const notes = document.getElementById('fNotes').value.trim();
+
+    if (!dept) { toast('Pilih departemen!', 'err'); return; }
+    if (!activity) { toast('Isi aktivitas!', 'err'); return; }
+    if (!category) { toast('Pilih kategori!', 'err'); return; }
+    if (!status) { toast('Pilih status!', 'err'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+
+    try {
+        await api('/api/activities', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: Date.now(),
+                department: dept,
+                activity,
+                category: category.value,
+                status: status.value,
+                notes: notes || null,
+                date: new Date().toISOString()
+            })
+        });
+        closeModal();
+        toast('Aktivitas berhasil ditambahkan!', 'ok');
+        // Reset form
+        document.getElementById('fDept').value = '';
+        document.getElementById('fActivity').value = '';
+        document.getElementById('fNotes').value = '';
+        document.querySelectorAll('input[name="category"], input[name="status"]').forEach(r => r.checked = false);
+        await loadAll();
+    } catch(e) {
+        toast('Gagal menyimpan: ' + e.message, 'err');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Simpan';
+    }
+}
+
+async function cycleStatus(id) {
+    const a = activities.find(x => x.id === id);
+    if (!a) return;
+    const next = a.status === 'open' ? 'pending' : a.status === 'pending' ? 'close' : 'open';
+    try {
+        await api(`/api/activities/${id}`, { method: 'PUT', body: JSON.stringify({ status: next }) });
+        a.status = next;
+        renderActivities();
+        renderSummary();
+        await loadAnalysis();
+        renderComposition();
+        renderAnalysis();
+        toast(`Status diubah ke ${next.toUpperCase()}`, 'ok');
+    } catch(e) {
+        toast('Gagal update: ' + e.message, 'err');
+    }
+}
+
+async function deleteActivity(id) {
+    if (!confirm('Yakin hapus aktivitas ini?')) return;
+    try {
+        await api(`/api/activities/${id}`, { method: 'DELETE' });
+        activities = activities.filter(a => a.id !== id);
+        renderAll();
+        await loadAnalysis();
+        renderAnalysis();
+        toast('Aktivitas dihapus', 'info');
+    } catch(e) {
+        toast('Gagal hapus: ' + e.message, 'err');
+    }
+}
+
 function downloadExcel() {
-    const data = reports.filter(r => {
-        const d = localDateStr(r.date);
-        return d >= startDate && d <= endDate;
+    if (!activities.length) { toast('Tidak ada data!', 'err'); return; }
+    let csv = 'No,Departemen,Aktivitas,Kategori,Status,Catatan,Waktu\n';
+    activities.forEach((a, i) => {
+        const dept = DEPARTMENTS.find(d => d.id === a.department);
+        const time = new Date(a.date).toLocaleString('id-ID');
+        const esc = v => `"${String(v||'-').replace(/"/g,'""')}"`;
+        csv += `${i+1},${esc(dept?dept.name:a.department)},${esc(a.activity)},${esc(a.category)},${esc(a.status)},${esc(a.notes)},${esc(time)}\n`;
     });
-
-    if (!data.length) { toast('❌ Tidak ada data untuk rentang ini!', 'err'); return; }
-
-    let csv = 'No,Tanggal,Jam,Nama,Jabatan,Status,Pekerjaan,Lokasi,Catatan\n';
-    data.forEach((r, i) => {
-        const dt   = new Date(r.date);
-        const m    = team[r.memberIndex] || { name: 'Unknown', role: '-' };
-        const date = dt.toLocaleDateString('id-ID');
-        const time = dt.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        const esc  = v => String(v || '-').replace(/"/g, '""');
-        csv += `${i+1},"${date}","${time}","${esc(m.name)}","${esc(m.role)}","${esc(r.status)}","${esc(r.task)}","${esc(r.location)}","${esc(r.notes)}"\n`;
-    });
-
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-    const a    = document.createElement('a');
-    a.href     = URL.createObjectURL(blob);
-    a.download = `Laporan_${startDate}_sd_${endDate}.csv`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-    toast('📥 File berhasil didownload!', 'ok');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Daily_Activity_GA_${todayStr()}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast('File berhasil didownload!', 'ok');
 }
 
-// ─────────────────────────────────────────────────────
-// IMAGE VIEWER
-// ─────────────────────────────────────────────────────
-function viewImg(src) {
-    document.getElementById('viewerImg').src = src;
-    document.getElementById('imgViewer').classList.add('open');
-}
-function closeImgViewer() {
-    document.getElementById('imgViewer').classList.remove('open');
-    document.getElementById('viewerImg').src = '';
-}
-function downloadImg(src, name) {
-    const a    = document.createElement('a');
-    a.href     = src;
-    a.download = name.replace(/[\s,/]/g, '_') + '.png';
-    a.click();
-    toast('📥 Foto berhasil didownload!', 'ok');
-}
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+document.getElementById('dateDisplay').textContent =
+    new Date().toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
-// ─────────────────────────────────────────────────────
-// TABS
-// ─────────────────────────────────────────────────────
-function switchTab(name, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b  => b.classList.remove('on'));
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
-    btn.classList.add('on');
-    document.getElementById('tab-' + name).classList.add('on');
-    if (name === 'reports') {
-        renderFilters();
-        renderReports();
-    }
-}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
 
-// ─────────────────────────────────────────────────────
-// KEYBOARD
-// ─────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-        closeModal('inputModal');
-        closeImgViewer();
-    }
-});
-
-// ─────────────────────────────────────────────────────
-// START
-// ─────────────────────────────────────────────────────
-init().catch(e => {
-    console.error('Init error:', e);
-    setSyncUI('offline', 'Error');
-    toast('⚠️ Gagal load data dari server', 'err');
-});
+loadAll();
+setInterval(loadAll, 30000);
 </script>
 </body>
 </html>

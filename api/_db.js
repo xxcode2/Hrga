@@ -1,15 +1,12 @@
 // api/_db.js - shared database connection untuk Vercel serverless functions
 const { Pool } = require('pg');
 
-const DEFAULT_TEAMS = [
-  { member_index: 0, name: 'fajar gumilar',          role: 'staff utility' },
-  { member_index: 1, name: 'deri agustin',          role: 'staff ts' },
-  { member_index: 2, name: 'candra warisman',       role: 'staff cs' },
-  { member_index: 3, name: 'ajeng kusumaningtias',  role: 'admin GA' },
-  { member_index: 4, name: 'muhamad rieza pratama', role: 'staff NRM' },
-  { member_index: 5, name: 'ibnu fadilah',          role: 'NRM' },
-  { member_index: 6, name: 'muhamad rizal',         role: 'teknisi utility' },
-  { member_index: 7, name: 'dadi heryana',          role: 'teknisi utility' }
+const DEPARTMENTS = [
+  { id: 'ts', name: 'Technical Support', icon: '🔧', color: '#2563eb' },
+  { id: 'utility', name: 'Utility', icon: '⚡', color: '#10b981' },
+  { id: 'cleaning', name: 'Cleaning Service', icon: '🧹', color: '#f59e0b' },
+  { id: 'nrm', name: 'NRM', icon: '📦', color: '#8b5cf6' },
+  { id: 'ga_internal', name: 'GA Internal', icon: '🏢', color: '#ec4899' }
 ];
 
 const pool = new Pool({
@@ -23,6 +20,7 @@ const pool = new Pool({
 async function initDb() {
   const client = await pool.connect();
   try {
+    // Keep legacy tables
     await client.query(`
       CREATE TABLE IF NOT EXISTS teams (
         id           SERIAL PRIMARY KEY,
@@ -46,17 +44,27 @@ async function initDb() {
         created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_reports_member ON reports(member_index);`);
-    await client.query(`CREATE INDEX IF NOT EXISTS idx_reports_date   ON reports(created_at);`);
 
+    // New activities table
     await client.query(`
-      INSERT INTO teams (member_index, name, role, image, updated_at)
-      VALUES ${DEFAULT_TEAMS.map((_, i) => `($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4}, CURRENT_TIMESTAMP)`).join(', ')}
-      ON CONFLICT (member_index) DO UPDATE SET
-        name       = EXCLUDED.name,
-        role       = EXCLUDED.role,
-        updated_at = CURRENT_TIMESTAMP
-    `, DEFAULT_TEAMS.flatMap(t => [t.member_index, t.name, t.role, null]));
+      CREATE TABLE IF NOT EXISTS activities (
+        id           BIGINT       PRIMARY KEY,
+        department   VARCHAR(50)  NOT NULL,
+        activity     TEXT         NOT NULL,
+        category     VARCHAR(20)  NOT NULL DEFAULT 'reguler',
+        status       VARCHAR(20)  NOT NULL DEFAULT 'open',
+        notes        TEXT,
+        image        TEXT,
+        created_at   TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_activities_dept ON activities(department);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_activities_date ON activities(created_at);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_activities_category ON activities(category);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_activities_status ON activities(status);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_reports_member ON reports(member_index);`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_reports_date ON reports(created_at);`);
   } catch (e) {
     if (!e.message.includes('already exists')) throw e;
   } finally {
@@ -64,4 +72,4 @@ async function initDb() {
   }
 }
 
-module.exports = { pool, initDb };
+module.exports = { pool, initDb, DEPARTMENTS };
