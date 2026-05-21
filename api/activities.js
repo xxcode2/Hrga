@@ -64,9 +64,16 @@ module.exports = async function handler(req, res) {
 
   // ── PUT (update) ────────────────────────────────────
   if (req.method === 'PUT') {
-    // Get id from query string for Vercel (no dynamic routes without config)
-    const id = req.query.id;
-    if (!id) return res.status(400).json({ error: 'id wajib diisi (query param)' });
+    // Get id from query string or from URL path
+    let id = req.query.id;
+    if (!id) {
+      const parts = (req.url || '').split('/').filter(Boolean);
+      const lastPart = parts[parts.length - 1];
+      if (lastPart && lastPart !== 'activities' && !lastPart.includes('?')) {
+        id = lastPart.split('?')[0];
+      }
+    }
+    if (!id) return res.status(400).json({ error: 'id wajib diisi' });
 
     const { status, category, activity, notes } = req.body;
     try {

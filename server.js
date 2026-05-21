@@ -86,7 +86,7 @@ app.post('/api/activities', async (req, res) => {
 
 // PUT update activity status
 app.put('/api/activities/:id', async (req, res) => {
-  const { id } = req.params;
+  const id = req.params.id || req.query.id;
   const { status, category, activity, notes } = req.body;
   try {
     const sets = [];
@@ -112,6 +112,29 @@ app.put('/api/activities/:id', async (req, res) => {
 // DELETE activity
 app.delete('/api/activities/:id', (req, res) => handleDeleteActivity(req.params.id, res));
 app.delete('/api/activities', (req, res) => handleDeleteActivity(req.query.id, res));
+
+// PUT with query param fallback
+app.put('/api/activities', async (req, res) => {
+  const id = req.query.id;
+  if (!id) return res.status(400).json({ error: 'id wajib diisi' });
+  const { status, category, activity, notes } = req.body;
+  try {
+    const sets = [];
+    const params = [];
+    let idx = 1;
+    if (status) { sets.push(`status = $${idx++}`); params.push(status); }
+    if (category) { sets.push(`category = $${idx++}`); params.push(category); }
+    if (activity) { sets.push(`activity = $${idx++}`); params.push(activity); }
+    if (notes !== undefined) { sets.push(`notes = $${idx++}`); params.push(notes); }
+    if (sets.length === 0) return res.status(400).json({ error: 'Tidak ada field yang diupdate' });
+    params.push(id);
+    await pool.query(`UPDATE activities SET ${sets.join(', ')} WHERE id = $${idx}`, params);
+    res.json({ success: true });
+  } catch (e) {
+    console.error('PUT /api/activities error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
 
 async function handleDeleteActivity(id, res) {
   if (!id) return res.status(400).json({ error: 'id wajib diisi' });

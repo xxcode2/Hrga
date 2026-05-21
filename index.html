@@ -368,6 +368,11 @@
 <!-- TOAST -->
 <div class="toast-wrap" id="toastWrap"></div>
 
+<!-- IMAGE VIEWER -->
+<div id="imgViewer" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:2000;align-items:center;justify-content:center;cursor:zoom-out" onclick="this.style.display='none'">
+<img id="viewerImg" src="" style="max-width:90%;max-height:90vh;border-radius:12px;object-fit:contain">
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════
 // CONFIG
@@ -556,7 +561,7 @@ function renderActivities() {
     container.innerHTML = filtered.map(a => {
         const dept = DEPARTMENTS.find(d => d.id === a.department) || { icon: '📋', name: 'Unknown' };
         const time = new Date(a.date).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
-        const photoHtml = a.image ? `<div style="margin-top:8px"><img src="${a.image}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="window.open(this.src)"></div>` : '';
+        const photoHtml = a.image ? `<div style="margin-top:8px"><img src="${a.image}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="viewPhoto(this.src)"></div>` : '';
         return `
         <div class="activity-card cat-${a.category}">
             <div class="dept-icon">${dept.icon}</div>
@@ -703,6 +708,12 @@ function removePhoto() {
     document.getElementById('uploadArea').style.display = 'block';
 }
 
+function viewPhoto(src) {
+    const viewer = document.getElementById('imgViewer');
+    document.getElementById('viewerImg').src = src;
+    viewer.style.display = 'flex';
+}
+
 // ═══════════════════════════════════════════════════════
 // INTERACTIONS
 // ═══════════════════════════════════════════════════════
@@ -774,7 +785,7 @@ async function cycleStatus(id) {
     if (!a) return;
     const next = a.status === 'open' ? 'pending' : a.status === 'pending' ? 'close' : 'open';
     try {
-        await api(`/api/activities/${id}`, { method: 'PUT', body: JSON.stringify({ status: next }) });
+        await api(`/api/activities?id=${id}`, { method: 'PUT', body: JSON.stringify({ status: next }) });
         a.status = next;
         renderActivities();
         renderSummary();
@@ -790,7 +801,7 @@ async function cycleStatus(id) {
 async function deleteActivity(id) {
     if (!confirm('Yakin hapus aktivitas ini?')) return;
     try {
-        await api(`/api/activities/${id}`, { method: 'DELETE' });
+        await api(`/api/activities?id=${id}`, { method: 'DELETE' });
         activities = activities.filter(a => a.id !== id);
         renderAll();
         await loadAnalysis();
