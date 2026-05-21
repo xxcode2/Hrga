@@ -142,6 +142,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
 <button onclick="prevDay()">◀</button>
 <button onclick="goToday()">●</button>
 <button onclick="nextDay()">▶</button>
+<button onclick="savePNG()" style="margin-left:8px;width:auto;padding:5px 14px;border-radius:14px;font-size:11px;font-weight:700;gap:4px">📸 Save PNG</button>
 <a href="/">← Kembali ke Input</a>
 </div>
 
@@ -149,6 +150,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
 <div id="reportContent"><div class="loading"><div class="spinner"></div><span>Memuat laporan...</span></div></div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const DEPARTMENTS=[
 {id:'nrm',name:'NRM',icon:'📦',color:'#2563eb',num:1,cls:'c1'},
@@ -244,6 +246,19 @@ function buildDonut(rP,aP,pP,total){
 const r=42,cx=55,cy=55,c=2*Math.PI*r;
 function arc(pct,off,col){if(pct<=0)return'';return`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-width="14" stroke-dasharray="${c*pct/100} ${c-c*pct/100}" stroke-dashoffset="${-(c*off/100)}" transform="rotate(-90 ${cx} ${cy})"/>`}
 return`<svg viewBox="0 0 110 110">${arc(rP,0,'#2ecc71')}${arc(aP,rP,'#f39c12')}${arc(pP,rP+aP,'#9b59b6')}<text x="${cx}" y="${cy-2}" text-anchor="middle" fill="white" font-size="18" font-weight="800">${total}</text><text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#5e7ea0" font-size="8" font-weight="700">TOTAL</text></svg>`;
+}
+
+function savePNG(){
+const el=document.querySelector('.page');
+const nav=document.querySelector('.nav-bar');
+nav.style.display='none';
+html2canvas(el,{backgroundColor:'#0b1a36',scale:2,useCORS:true}).then(canvas=>{
+nav.style.display='';
+const link=document.createElement('a');
+link.download=`Daily_Activity_Report_GA_${currentDate}.png`;
+link.href=canvas.toDataURL('image/png');
+link.click();
+}).catch(e=>{nav.style.display='';alert('Gagal save PNG: '+e.message)});
 }
 
 loadReport();

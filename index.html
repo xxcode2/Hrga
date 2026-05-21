@@ -344,6 +344,19 @@
                 <label class="form-label">Catatan (opsional)</label>
                 <textarea class="form-input" id="fNotes" placeholder="Catatan tambahan..."></textarea>
             </div>
+            <div class="form-group">
+                <label class="form-label">Foto Bukti (opsional)</label>
+                <div id="uploadArea" style="border:2px dashed var(--border);border-radius:var(--r-sm);padding:20px;text-align:center;cursor:pointer;transition:all 0.18s" onclick="document.getElementById('fPhoto').click()">
+                    <div style="font-size:28px;margin-bottom:6px">📸</div>
+                    <div style="font-size:12px;color:var(--text3)"><strong style="color:var(--text2)">Klik</strong> atau drag foto di sini</div>
+                    <div style="font-size:10px;color:var(--text3);margin-top:4px">JPG/PNG, maks 5MB</div>
+                </div>
+                <input type="file" id="fPhoto" accept="image/*" hidden onchange="handlePhoto(this)">
+                <div id="photoPreview" style="display:none;margin-top:10px;position:relative">
+                    <img id="previewImg" src="" style="width:100%;max-height:180px;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--border)">
+                    <button type="button" onclick="removePhoto()" style="position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:var(--red);border:2px solid var(--bg2);color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-ghost" onclick="closeModal()">Batal</button>
@@ -414,6 +427,7 @@ async function loadActivities() {
             category: a.category,
             status: a.status,
             notes: a.notes || '',
+            image: a.image || '',
             date: a.created_at
         }));
     } catch(e) {
@@ -542,6 +556,7 @@ function renderActivities() {
     container.innerHTML = filtered.map(a => {
         const dept = DEPARTMENTS.find(d => d.id === a.department) || { icon: '📋', name: 'Unknown' };
         const time = new Date(a.date).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+        const photoHtml = a.image ? `<div style="margin-top:8px"><img src="${a.image}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer" onclick="window.open(this.src)"></div>` : '';
         return `
         <div class="activity-card cat-${a.category}">
             <div class="dept-icon">${dept.icon}</div>
@@ -552,7 +567,9 @@ function renderActivities() {
                     <span class="dot"></span>
                     <span>${time}</span>
                     ${a.notes ? `<span class="dot"></span><span>${a.notes}</span>` : ''}
+                    ${a.image ? `<span class="dot"></span><span>📸</span>` : ''}
                 </div>
+                ${photoHtml}
             </div>
             <div class="badges">
                 <span class="badge badge-cat badge-${a.category}">${a.category}</span>
@@ -660,6 +677,33 @@ function renderAnalysis() {
 }
 
 // ═══════════════════════════════════════════════════════
+// PHOTO UPLOAD
+// ═══════════════════════════════════════════════════════
+let currentPhoto = '';
+
+function handlePhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { toast('File harus gambar!', 'err'); return; }
+    if (file.size > 5*1024*1024) { toast('Maks 5MB!', 'err'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+        currentPhoto = e.target.result;
+        document.getElementById('previewImg').src = currentPhoto;
+        document.getElementById('photoPreview').style.display = 'block';
+        document.getElementById('uploadArea').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removePhoto() {
+    currentPhoto = '';
+    document.getElementById('fPhoto').value = '';
+    document.getElementById('photoPreview').style.display = 'none';
+    document.getElementById('uploadArea').style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════════════
 // INTERACTIONS
 // ═══════════════════════════════════════════════════════
 function setDept(dept) {
@@ -704,6 +748,7 @@ async function submitActivity() {
                 category: category.value,
                 status: status.value,
                 notes: notes || null,
+                image: currentPhoto || null,
                 date: new Date().toISOString()
             })
         });
@@ -714,6 +759,7 @@ async function submitActivity() {
         document.getElementById('fActivity').value = '';
         document.getElementById('fNotes').value = '';
         document.querySelectorAll('input[name="category"], input[name="status"]').forEach(r => r.checked = false);
+        removePhoto();
         await loadAll();
     } catch(e) {
         toast('Gagal menyimpan: ' + e.message, 'err');
