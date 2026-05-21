@@ -1,863 +1,251 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Activity Report GA</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --navy: #0c1b3a;
-            --navy2: #132244;
-            --navy3: #1a2d55;
-            --gold: #c9a84c;
-            --gold-dim: rgba(201,168,76,0.15);
-            --white: #ffffff;
-            --text: #e8edf5;
-            --text2: #a0b4cc;
-            --text3: #6b87a8;
-            --green: #10b981;
-            --green-dim: rgba(16,185,129,0.12);
-            --amber: #f59e0b;
-            --amber-dim: rgba(245,158,11,0.12);
-            --purple: #8b5cf6;
-            --purple-dim: rgba(139,92,246,0.12);
-            --blue: #3b82f6;
-            --blue-dim: rgba(59,130,246,0.12);
-            --red: #ef4444;
-            --pink: #ec4899;
-            --r: 14px;
-            --r-sm: 8px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Activity Report GA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0b1a36;--navy2:#0f2040;--navy3:#142850;--white:#fff;--text:#e4eaf3;--text2:#9bb0cc;--text3:#5e7ea0;--green:#2ecc71;--green-bg:rgba(46,204,113,0.12);--amber:#f39c12;--amber-bg:rgba(243,156,18,0.12);--purple:#9b59b6;--purple-bg:rgba(155,89,182,0.12);--blue:#3498db;--gold:#d4a84b;--r:10px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text);min-height:100vh}
+.page{max-width:1440px;margin:0 auto;padding:24px 20px}
 
+/* HEADER */
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.hdr-left h1{font-size:36px;font-weight:900;color:var(--white);letter-spacing:-1px}
+.hdr-left .date-badge{display:inline-flex;align-items:center;gap:6px;background:var(--navy3);border:1px solid rgba(255,255,255,0.1);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;color:var(--white);margin-top:8px}
+.hdr-right{text-align:right}
+.hdr-right .org{font-size:20px;font-weight:800;color:var(--white)}
+.hdr-right .org-sub{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:2px;margin-top:3px}
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--navy);
-            color: var(--text);
-            min-height: 100vh;
-            padding: 0;
-        }
+/* NAV */
+.nav-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.nav-bar button{width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:var(--navy3);color:var(--text2);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.nav-bar button:hover{border-color:var(--gold);color:var(--gold)}
+.nav-bar a{margin-left:auto;font-size:12px;color:var(--text3);text-decoration:none;border:1px solid rgba(255,255,255,0.1);padding:5px 12px;border-radius:14px}
+.nav-bar a:hover{color:var(--gold);border-color:var(--gold)}
 
-        .report-page {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 24px;
-        }
+/* MAIN LAYOUT */
+.main{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:16px}
+@media(max-width:1080px){.main{grid-template-columns:1fr}}
 
-        /* TOP HEADER BAR */
-        .report-header {
-            background: linear-gradient(135deg, var(--navy2), var(--navy3));
-            border: 1px solid rgba(201,168,76,0.2);
-            border-radius: var(--r);
-            padding: 28px 36px;
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .report-header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--gold), #e8c84c, var(--gold));
-        }
-        .report-header-left h1 {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--white);
-            letter-spacing: -0.5px;
-            margin-bottom: 6px;
-        }
-        .report-header-left .subtitle {
-            font-size: 13px;
-            color: var(--gold);
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .report-header-right {
-            text-align: right;
-        }
-        .report-header-right .org-name {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--gold);
-            letter-spacing: 0.5px;
-        }
-        .report-header-right .org-sub {
-            font-size: 11px;
-            color: var(--text2);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-top: 4px;
-        }
+/* DETAIL BOX */
+.detail-box{background:var(--navy2);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:18px}
+.detail-box .sec-title{font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;padding-left:12px;border-left:3px solid var(--gold)}
 
+/* DEPT GRID - 5 columns like the image */
+.depts{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:900px){.depts{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.depts{grid-template-columns:1fr}}
 
-        /* DATE BAR */
-        .date-bar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .date-display {
-            background: var(--navy2);
-            border: 1px solid rgba(201,168,76,0.3);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--white);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .date-nav {
-            display: flex; gap: 6px;
-        }
-        .date-nav button {
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: var(--navy2);
-            color: var(--text2);
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-        }
-        .date-nav button:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-            background: var(--gold-dim);
-        }
-        .back-link {
-            margin-left: auto;
-            font-size: 13px;
-            color: var(--text2);
-            text-decoration: none;
-            padding: 8px 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            transition: all 0.15s;
-        }
-        .back-link:hover {
-            border-color: var(--gold);
-            color: var(--gold);
-        }
+.dept{border:1px solid rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;background:rgba(255,255,255,0.01)}
+.dept-head{display:flex;align-items:center;gap:8px;padding:10px 10px;position:relative}
+.dept-head .num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--white);flex-shrink:0}
+.dept-head .dept-icon{font-size:18px}
+.dept-head .dept-name{font-size:10px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:0.3px}
+.dept.c1 .dept-head{background:linear-gradient(135deg,#1a3a6b,#1e4d8a)} .dept.c1 .num{background:#2563eb}
+.dept.c2 .dept-head{background:linear-gradient(135deg,#1a4a3a,#1e6b4d)} .dept.c2 .num{background:#10b981}
+.dept.c3 .dept-head{background:linear-gradient(135deg,#4a3a1a,#6b4d1e)} .dept.c3 .num{background:#f59e0b}
+.dept.c4 .dept-head{background:linear-gradient(135deg,#2a1a4a,#3d1e6b)} .dept.c4 .num{background:#8b5cf6}
+.dept.c5 .dept-head{background:linear-gradient(135deg,#3a1a2a,#6b1e3d)} .dept.c5 .num{background:#ec4899}
 
+.dept-body{padding:8px 10px;min-height:80px}
+.act-item{display:flex;align-items:flex-start;gap:5px;padding:4px 0;font-size:10px;color:var(--text2);line-height:1.35;border-bottom:1px solid rgba(255,255,255,0.03)}
+.act-item:last-child{border-bottom:none}
+.act-item::before{content:'•';color:var(--text3);flex-shrink:0;margin-top:0px}
+.act-item .badge{margin-left:auto;font-size:8px;padding:1px 5px;border-radius:3px;font-weight:700;flex-shrink:0;text-transform:uppercase}
+.badge.r{background:var(--green-bg);color:var(--green)}
+.badge.a{background:var(--amber-bg);color:var(--amber)}
+.badge.p{background:var(--purple-bg);color:var(--purple)}
+.dept-foot{padding:6px 10px;border-top:1px solid rgba(255,255,255,0.06);font-size:10px;font-weight:700;color:var(--text3);text-align:center}
 
-        /* MAIN GRID */
-        .report-grid {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        @media (max-width: 1024px) {
-            .report-grid { grid-template-columns: 1fr; }
-        }
+/* LEGEND ROW */
+.legend-row{display:flex;gap:20px;align-items:center;justify-content:center;padding:10px;margin-top:12px;flex-wrap:wrap}
+.legend-row .li{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2);font-weight:600}
+.legend-row .dot{width:9px;height:9px;border-radius:50%}
 
-        /* DETAIL SECTION */
-        .detail-section {
-            background: var(--navy2);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--r);
-            padding: 24px;
-        }
-        .detail-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text2);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .detail-title::before {
-            content: '';
-            width: 4px;
-            height: 18px;
-            background: var(--gold);
-            border-radius: 2px;
-        }
+/* SUMMARY SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:12px}
+.sbox{background:var(--navy2);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:16px}
+.sbox-title{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;text-align:center}
+.stat-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:6px;margin-bottom:8px}
+.stat-row:last-child{margin-bottom:0}
+.stat-row .dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.stat-row .lbl{flex:1;font-size:11px;font-weight:700;color:var(--text2)}
+.stat-row .val{font-size:24px;font-weight:800;color:var(--white)}
+.stat-row .sub{font-size:9px;color:var(--text3);margin-left:3px}
+.stat-row.total{border-color:rgba(212,168,75,0.3);background:rgba(212,168,75,0.05)}
+.stat-row.total .lbl,.stat-row.total .val{color:var(--gold)}
 
-        /* DEPARTMENT COLUMNS */
-        .dept-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-        }
-        @media (max-width: 900px) {
-            .dept-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 500px) {
-            .dept-grid { grid-template-columns: 1fr; }
-        }
+/* DONUT */
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 0}
+.donut-wrap svg{width:110px;height:110px}
+.d-legend{display:flex;flex-direction:column;gap:8px}
+.d-legend .dl{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2)}
+.d-legend .dl .sq{width:10px;height:10px;border-radius:2px}
+.d-legend .dl .pct{margin-left:auto;font-weight:800;color:var(--white);min-width:32px;text-align:right}
 
+/* BOTTOM - ANALYSIS + CONCLUSION */
+.bottom{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px}
+@media(max-width:900px){.bottom{grid-template-columns:1fr}}
+.analysis-section{background:var(--navy2);border:1px solid rgba(255,255,255,0.06);border-radius:var(--r);padding:18px}
+.analysis-section h3{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px}
+.a-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:700px){.a-cards{grid-template-columns:1fr}}
+.a-card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:6px;padding:12px}
+.a-card h4{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+.a-card p{font-size:10px;color:var(--text2);line-height:1.5}
+.a-card .checklist{list-style:none;padding:0;margin-top:6px}
+.a-card .checklist li{font-size:9px;color:var(--text2);padding:2px 0;display:flex;align-items:center;gap:4px}
+.a-card .checklist li::before{content:'✓';color:var(--green);font-weight:700;font-size:10px}
 
-        .dept-col {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--r-sm);
-            overflow: hidden;
-        }
-        .dept-col-header {
-            padding: 14px 12px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            position: relative;
-        }
-        .dept-col-header::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-        }
-        .dept-col.dept-ts .dept-col-header::before { background: var(--blue); }
-        .dept-col.dept-utility .dept-col-header::before { background: var(--green); }
-        .dept-col.dept-cleaning .dept-col-header::before { background: var(--amber); }
-        .dept-col.dept-nrm .dept-col-header::before { background: var(--purple); }
-        .dept-col.dept-ga_internal .dept-col-header::before { background: var(--pink); }
+.conclusion-section{background:var(--navy2);border:1px solid rgba(212,168,75,0.2);border-radius:var(--r);padding:18px;position:relative}
+.conclusion-section::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);border-radius:var(--r) 0 0 var(--r)}
+.conclusion-section h3{font-size:12px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px}
+.conclusion-section .text{font-size:11px;color:var(--text);line-height:1.7;margin-bottom:12px}
+.focus-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.focus-items{display:flex;gap:6px;flex-wrap:wrap}
+.focus-items .fi{padding:5px 10px;border-radius:14px;font-size:9px;font-weight:700;background:rgba(212,168,75,0.08);border:1px solid rgba(212,168,75,0.2);color:var(--gold)}
 
-        .dept-col-icon {
-            font-size: 24px;
-            margin-bottom: 6px;
-        }
-        .dept-col-name {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .dept-col-body {
-            padding: 12px 10px;
-            min-height: 120px;
-        }
-        .dept-activity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.03);
-            font-size: 11px;
-            color: var(--text2);
-            line-height: 1.4;
-        }
-        .dept-activity-item:last-child { border-bottom: none; }
-        .dept-activity-item .bullet {
-            width: 4px; height: 4px;
-            border-radius: 50%;
-            margin-top: 5px;
-            flex-shrink: 0;
-        }
-        .dept-activity-item .bullet.reguler { background: var(--green); }
-        .dept-activity-item .bullet.additional { background: var(--amber); }
-        .dept-activity-item .bullet.project { background: var(--purple); }
-        .dept-activity-item .cat-badge {
-            font-size: 9px;
-            padding: 1px 5px;
-            border-radius: 4px;
-            font-weight: 700;
-            text-transform: uppercase;
-            flex-shrink: 0;
-            margin-left: auto;
-        }
-        .cat-badge.reguler { background: var(--green-dim); color: var(--green); }
-        .cat-badge.additional { background: var(--amber-dim); color: var(--amber); }
-        .cat-badge.project { background: var(--purple-dim); color: var(--purple); }
-        .dept-col-footer {
-            padding: 10px 12px;
-            border-top: 1px solid rgba(255,255,255,0.06);
-            text-align: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text3);
-        }
+/* FOOTER */
+.footer{text-align:center;padding:16px;font-size:10px;color:var(--text3);border-top:1px solid rgba(255,255,255,0.04)}
+.footer .star{color:var(--gold)}
 
-
-        /* SUMMARY SIDEBAR */
-        .summary-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .summary-box {
-            background: var(--navy2);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--r);
-            padding: 20px;
-        }
-        .summary-box-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text3);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 16px;
-        }
-
-        /* Summary stat cards */
-        .summary-stats {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .summary-stat-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: var(--r-sm);
-        }
-        .summary-stat-dot {
-            width: 10px; height: 10px;
-            border-radius: 3px;
-            flex-shrink: 0;
-        }
-        .summary-stat-label {
-            flex: 1;
-            font-size: 12px;
-            color: var(--text2);
-            font-weight: 600;
-        }
-        .summary-stat-value {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--white);
-        }
-        .summary-stat-sub {
-            font-size: 10px;
-            color: var(--text3);
-            margin-left: 4px;
-        }
-
-        /* DONUT CHART */
-        .donut-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            padding: 10px 0;
-        }
-        .donut-svg { width: 130px; height: 130px; }
-        .donut-legend {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .legend-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text2);
-        }
-        .legend-dot {
-            width: 12px; height: 12px;
-            border-radius: 3px;
-            flex-shrink: 0;
-        }
-        .legend-pct {
-            font-weight: 800;
-            color: var(--white);
-            margin-left: auto;
-            min-width: 36px;
-            text-align: right;
-        }
-
-
-        /* ANALYSIS & CONCLUSION BOTTOM */
-        .bottom-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-        @media (max-width: 768px) {
-            .bottom-grid { grid-template-columns: 1fr; }
-        }
-
-        .analysis-box {
-            background: var(--navy2);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--r);
-            padding: 24px;
-        }
-        .analysis-box h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .analysis-item {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .analysis-item:last-child { border-bottom: none; }
-        .analysis-bullet {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background: var(--gold);
-            margin-top: 6px;
-            flex-shrink: 0;
-        }
-        .analysis-text {
-            font-size: 12px;
-            color: var(--text2);
-            line-height: 1.6;
-        }
-
-        .conclusion-box {
-            background: var(--navy2);
-            border: 1px solid rgba(201,168,76,0.2);
-            border-radius: var(--r);
-            padding: 24px;
-            position: relative;
-        }
-        .conclusion-box::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0;
-            width: 4px;
-            background: var(--gold);
-            border-radius: var(--r) 0 0 var(--r);
-        }
-        .conclusion-box h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 14px;
-        }
-        .conclusion-text {
-            font-size: 13px;
-            color: var(--text);
-            line-height: 1.8;
-        }
-        .focus-tags {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 16px;
-        }
-        .focus-tag {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            background: rgba(201,168,76,0.1);
-            border: 1px solid rgba(201,168,76,0.25);
-            color: var(--gold);
-        }
-
-
-        /* LEGEND BAR */
-        .legend-bar {
-            display: flex;
-            gap: 24px;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 20px;
-            background: var(--navy2);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: var(--r);
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .legend-bar-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: var(--text2);
-            font-weight: 600;
-        }
-        .legend-bar-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-        }
-
-        /* FOOTER */
-        .report-footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 11px;
-            color: var(--text3);
-            border-top: 1px solid rgba(255,255,255,0.04);
-        }
-        .report-footer .star { color: var(--gold); }
-
-        /* LOADING */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 60px;
-            gap: 12px;
-            color: var(--text3);
-        }
-        .spinner {
-            width: 20px; height: 20px;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* EMPTY */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text3);
-        }
-        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-        .empty-state h3 { font-size: 16px; color: var(--text2); margin-bottom: 6px; }
-        .empty-state p { font-size: 13px; }
-
-        /* PRINT */
-        @media print {
-            body { background: white; color: #1a1a1a; }
-            .date-nav, .back-link { display: none; }
-            .report-page { padding: 10px; }
-        }
-    </style>
+/* LOADING / EMPTY */
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;gap:10px;color:var(--text3)}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty .ic{font-size:40px;margin-bottom:10px}
+.empty h3{font-size:15px;color:var(--text2);margin-bottom:4px}
+.empty p{font-size:12px}
+</style>
 </head>
-
 <body>
-<div class="report-page">
-    <!-- HEADER -->
-    <div class="report-header">
-        <div class="report-header-left">
-            <h1>DAILY ACTIVITY REPORT GA</h1>
-            <div class="subtitle">Supporting Operational Excellence</div>
-        </div>
-        <div class="report-header-right">
-            <div class="org-name">GENERAL AFFAIR</div>
-            <div class="org-sub">Supporting Operational Excellence</div>
-        </div>
-    </div>
+<div class="page">
+<!-- HEADER -->
+<div class="hdr">
+<div class="hdr-left">
+<h1>DAILY ACTIVITY REPORT GA</h1>
+<div class="date-badge" id="dateDisplay">📅 Loading...</div>
+</div>
+<div class="hdr-right">
+<div class="org">GENERAL AFFAIR</div>
+<div class="org-sub">Supporting Operational Excellence</div>
+</div>
+</div>
 
-    <!-- DATE BAR -->
-    <div class="date-bar">
-        <div class="date-display" id="dateDisplay">📅 Loading...</div>
-        <div class="date-nav">
-            <button onclick="prevDay()" title="Hari sebelumnya">◀</button>
-            <button onclick="goToday()" title="Hari ini">●</button>
-            <button onclick="nextDay()" title="Hari berikutnya">▶</button>
-        </div>
-        <a href="/" class="back-link">← Kembali ke Input</a>
-    </div>
+<!-- NAV -->
+<div class="nav-bar">
+<button onclick="prevDay()">◀</button>
+<button onclick="goToday()">●</button>
+<button onclick="nextDay()">▶</button>
+<a href="/">← Kembali ke Input</a>
+</div>
 
-    <!-- MAIN CONTENT -->
-    <div id="reportContent">
-        <div class="loading">
-            <div class="spinner"></div>
-            <span>Memuat laporan...</span>
-        </div>
-    </div>
+<!-- CONTENT -->
+<div id="reportContent"><div class="loading"><div class="spinner"></div><span>Memuat laporan...</span></div></div>
 </div>
 
 <script>
-
-// ═══════════════════════════════════════════════════════
-// CONFIG
-// ═══════════════════════════════════════════════════════
-const DEPARTMENTS = [
-    { id: 'ts', name: 'Technical Support', icon: '🔧', color: '#3b82f6' },
-    { id: 'utility', name: 'Utility', icon: '⚡', color: '#10b981' },
-    { id: 'cleaning', name: 'Cleaning Service', icon: '🧹', color: '#f59e0b' },
-    { id: 'nrm', name: 'NRM', icon: '📦', color: '#8b5cf6' },
-    { id: 'ga_internal', name: 'GA Internal', icon: '🏢', color: '#ec4899' }
+const DEPARTMENTS=[
+{id:'nrm',name:'NRM',icon:'📦',color:'#2563eb',num:1,cls:'c1'},
+{id:'cleaning',name:'Cleaning Service',icon:'🧹',color:'#10b981',num:2,cls:'c2'},
+{id:'utility',name:'Utility',icon:'⚡',color:'#f59e0b',num:3,cls:'c3'},
+{id:'ts',name:'TS',icon:'🔧',color:'#8b5cf6',num:4,cls:'c4'},
+{id:'ga_internal',name:'GA Internal',icon:'🏢',color:'#ec4899',num:5,cls:'c5'}
 ];
+let currentDate=todayStr(),activities=[],analysisData=null;
 
-// ═══════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════
-let currentDate = todayStr();
-let activities = [];
-let analysisData = null;
+function todayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function fmtDate(s){const d=new Date(s+'T00:00:00'),days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];return`${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`}
+function addD(s,n){const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+async function api(p){const r=await fetch(location.origin+p);if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json()}
+function prevDay(){currentDate=addD(currentDate,-1);loadReport()}
+function nextDay(){currentDate=addD(currentDate,1);loadReport()}
+function goToday(){currentDate=todayStr();loadReport()}
 
-// ═══════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════
-function todayStr() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+async function loadReport(){
+document.getElementById('dateDisplay').innerHTML=`📅 ${fmtDate(currentDate)}`;
+document.getElementById('reportContent').innerHTML=`<div class="loading"><div class="spinner"></div><span>Memuat...</span></div>`;
+try{
+const[act,ana]=await Promise.all([api(`/api/activities?startDate=${currentDate}&endDate=${currentDate}`),api(`/api/analysis?date=${currentDate}`)]);
+activities=act.map(a=>({id:a.id,department:a.department,activity:a.activity,category:a.category,status:a.status,notes:a.notes||''}));
+analysisData=ana;
+render();
+}catch(e){document.getElementById('reportContent').innerHTML=`<div class="empty"><div class="ic">⚠️</div><h3>Gagal memuat</h3><p>${e.message}</p></div>`}
 }
 
-function formatDateID(dateStr) {
-    const d = new Date(dateStr + 'T00:00:00');
-    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+function render(){
+if(!activities.length){document.getElementById('reportContent').innerHTML=`<div class="empty"><div class="ic">📭</div><h3>Belum ada aktivitas</h3><p>Belum ada data untuk ${fmtDate(currentDate)}</p></div>`;return}
+const total=activities.length,reg=activities.filter(a=>a.category==='reguler').length,add=activities.filter(a=>a.category==='additional').length,prj=activities.filter(a=>a.category==='project').length;
+const regP=total?Math.round(reg/total*100):0,addP=total?Math.round(add/total*100):0,prjP=total?100-regP-addP:0;
+const analysis=analysisData?analysisData.analysis:[],conclusion=analysisData?analysisData.conclusion:'';
+
+// Dept columns
+const cols=DEPARTMENTS.map(dept=>{
+const items=activities.filter(a=>a.department===dept.id);
+const rows=items.map(a=>`<div class="act-item"><span>${a.activity}</span><span class="badge ${a.category==='reguler'?'r':a.category==='additional'?'a':'p'}">${a.category==='reguler'?'REGULER':a.category==='additional'?'ADDITIONAL':'PROJECT'}</span></div>`).join('');
+return`<div class="dept ${dept.cls}"><div class="dept-head"><div class="num">${dept.num}</div><span class="dept-icon">${dept.icon}</span><span class="dept-name">${dept.name}</span></div><div class="dept-body">${rows||'<div style="text-align:center;color:var(--text3);font-size:9px;padding:16px 0">—</div>'}</div><div class="dept-foot">Total ${items.length} Activity</div></div>`;
+}).join('');
+
+// Donut
+const donut=buildDonut(regP,addP,prjP,total);
+
+// Analysis cards
+const aCards=analysis.length?analysis.map((t,i)=>`<div class="a-card"><h4>${i===0?'REGULER MENDOMINASI':i===1?'ADDITIONAL ACTIVITY':i===2?'PROJECT ACTIVITY':'INSIGHT'}</h4><p>${t}</p></div>`).join(''):`<div class="a-card"><p>Belum ada data analisa.</p></div>`;
+
+document.getElementById('reportContent').innerHTML=`
+<div class="main">
+<div class="detail-box">
+<div class="sec-title">Detail Activity</div>
+<div class="depts">${cols}</div>
+<div class="legend-row">
+<div class="li"><div class="dot" style="background:var(--green)"></div>REGULER — Pekerjaan rutin</div>
+<div class="li"><div class="dot" style="background:var(--amber)"></div>ADDITIONAL — Pekerjaan tambahan</div>
+<div class="li"><div class="dot" style="background:var(--purple)"></div>PROJECT — Project / improvement</div>
+</div>
+</div>
+<div class="sidebar">
+<div class="sbox">
+<div class="sbox-title">Summary Activity</div>
+<div class="stat-row"><div class="dot" style="background:var(--green)"></div><div class="lbl">REGULER</div><div class="val">${reg}</div><div class="sub">Activity</div></div>
+<div class="stat-row"><div class="dot" style="background:var(--amber)"></div><div class="lbl">ADDITIONAL</div><div class="val">${add}</div><div class="sub">Activity</div></div>
+<div class="stat-row"><div class="dot" style="background:var(--purple)"></div><div class="lbl">PROJECT</div><div class="val">${prj}</div><div class="sub">Activity</div></div>
+<div class="stat-row total"><div class="dot" style="background:var(--gold)"></div><div class="lbl">TOTAL ACTIVITY</div><div class="val">${total}</div><div class="sub">Activity</div></div>
+</div>
+<div class="sbox">
+<div class="sbox-title">Komposisi Aktivitas</div>
+<div class="donut-wrap">${donut}<div class="d-legend"><div class="dl"><div class="sq" style="background:var(--green)"></div><span>REGULER</span><span class="pct">${regP}%</span></div><div class="dl"><div class="sq" style="background:var(--amber)"></div><span>ADDITIONAL</span><span class="pct">${addP}%</span></div><div class="dl"><div class="sq" style="background:var(--purple)"></div><span>PROJECT</span><span class="pct">${prjP}%</span></div></div></div>
+</div>
+</div>
+</div>
+
+<div class="bottom">
+<div class="analysis-section">
+<h3>Analisa Kegiatan</h3>
+<div class="a-cards">${aCards}</div>
+</div>
+<div class="conclusion-section">
+<h3>Kesimpulan</h3>
+<div class="text">${conclusion||'Belum ada kesimpulan.'}</div>
+<div class="focus-title">Fokus Hari Ini</div>
+<div class="focus-items">${DEPARTMENTS.filter(d=>activities.some(a=>a.department===d.id)).map(d=>`<span class="fi">${d.icon} ${d.name}</span>`).join('')}</div>
+</div>
+</div>
+
+<div class="footer"><span class="star">★</span> Terima kasih atas kerja keras dan dedikasi seluruh tim GA. Tetap semangat, responsif, dan terus berikan yang terbaik untuk mendukung operasional perusahaan! <span class="star">★</span></div>
+`;
 }
 
-function addDays(dateStr, n) {
-    const d = new Date(dateStr + 'T00:00:00');
-    d.setDate(d.getDate() + n);
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function buildDonut(rP,aP,pP,total){
+const r=42,cx=55,cy=55,c=2*Math.PI*r;
+function arc(pct,off,col){if(pct<=0)return'';return`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${col}" stroke-width="14" stroke-dasharray="${c*pct/100} ${c-c*pct/100}" stroke-dashoffset="${-(c*off/100)}" transform="rotate(-90 ${cx} ${cy})"/>`}
+return`<svg viewBox="0 0 110 110">${arc(rP,0,'#2ecc71')}${arc(aP,rP,'#f39c12')}${arc(pP,rP+aP,'#9b59b6')}<text x="${cx}" y="${cy-2}" text-anchor="middle" fill="white" font-size="18" font-weight="800">${total}</text><text x="${cx}" y="${cy+12}" text-anchor="middle" fill="#5e7ea0" font-size="8" font-weight="700">TOTAL</text></svg>`;
 }
 
-async function api(path) {
-    const r = await fetch(window.location.origin + path);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
-}
-
-
-// ═══════════════════════════════════════════════════════
-// DATE NAVIGATION
-// ═══════════════════════════════════════════════════════
-function prevDay() { currentDate = addDays(currentDate, -1); loadReport(); }
-function nextDay() { currentDate = addDays(currentDate, 1); loadReport(); }
-function goToday() { currentDate = todayStr(); loadReport(); }
-
-// ═══════════════════════════════════════════════════════
-// LOAD REPORT DATA
-// ═══════════════════════════════════════════════════════
-async function loadReport() {
-    document.getElementById('dateDisplay').innerHTML = `📅 ${formatDateID(currentDate)}`;
-    document.getElementById('reportContent').innerHTML = `
-        <div class="loading"><div class="spinner"></div><span>Memuat laporan...</span></div>`;
-
-    try {
-        const [activitiesData, analysis] = await Promise.all([
-            api(`/api/activities?startDate=${currentDate}&endDate=${currentDate}`),
-            api(`/api/analysis?date=${currentDate}`)
-        ]);
-
-        activities = activitiesData.map(a => ({
-            id: a.id,
-            department: a.department,
-            activity: a.activity,
-            category: a.category,
-            status: a.status,
-            notes: a.notes || '',
-            date: a.created_at
-        }));
-
-        analysisData = analysis;
-        renderReport();
-    } catch(e) {
-        console.error('Load error:', e);
-        document.getElementById('reportContent').innerHTML = `
-            <div class="empty-state">
-                <div class="icon">⚠️</div>
-                <h3>Gagal memuat laporan</h3>
-                <p>${e.message}</p>
-            </div>`;
-    }
-}
-
-
-// ═══════════════════════════════════════════════════════
-// RENDER FULL REPORT
-// ═══════════════════════════════════════════════════════
-function renderReport() {
-    if (activities.length === 0) {
-        document.getElementById('reportContent').innerHTML = `
-            <div class="empty-state">
-                <div class="icon">📭</div>
-                <h3>Belum ada aktivitas</h3>
-                <p>Belum ada data aktivitas untuk tanggal ${formatDateID(currentDate)}.</p>
-            </div>`;
-        return;
-    }
-
-    const summary = analysisData ? analysisData.summary : null;
-    const analysis = analysisData ? analysisData.analysis : [];
-    const conclusion = analysisData ? analysisData.conclusion : '';
-
-    const total = activities.length;
-    const reguler = activities.filter(a => a.category === 'reguler').length;
-    const additional = activities.filter(a => a.category === 'additional').length;
-    const project = activities.filter(a => a.category === 'project').length;
-
-    const regPct = total ? Math.round(reguler/total*100) : 0;
-    const addPct = total ? Math.round(additional/total*100) : 0;
-    const prjPct = total ? (100 - regPct - addPct) : 0;
-
-    // Build department columns
-    const deptCols = DEPARTMENTS.map(dept => {
-        const deptActivities = activities.filter(a => a.department === dept.id);
-        const items = deptActivities.map(a => `
-            <div class="dept-activity-item">
-                <div class="bullet ${a.category}"></div>
-                <span>${a.activity}</span>
-                <span class="cat-badge ${a.category}">${a.category.toUpperCase().substring(0,3)}</span>
-            </div>
-        `).join('');
-
-        return `
-        <div class="dept-col dept-${dept.id}">
-            <div class="dept-col-header">
-                <div class="dept-col-icon">${dept.icon}</div>
-                <div class="dept-col-name">${dept.name}</div>
-            </div>
-            <div class="dept-col-body">
-                ${items || '<div style="text-align:center;color:var(--text3);font-size:11px;padding:20px 0">Tidak ada aktivitas</div>'}
-            </div>
-            <div class="dept-col-footer">Total ${deptActivities.length} Activity</div>
-        </div>`;
-    }).join('');
-
-
-    // Donut SVG
-    const donutSvg = buildDonut(regPct, addPct, prjPct, total);
-
-    // Analysis items
-    const analysisItems = analysis.map(text => `
-        <div class="analysis-item">
-            <div class="analysis-bullet"></div>
-            <div class="analysis-text">${text}</div>
-        </div>
-    `).join('');
-
-    // Focus tags from active departments
-    const activeDepts = DEPARTMENTS.filter(d => activities.some(a => a.department === d.id));
-    const focusTags = activeDepts.map(d => `<span class="focus-tag">${d.icon} ${d.name}</span>`).join('');
-
-    document.getElementById('reportContent').innerHTML = `
-        <!-- LEGEND -->
-        <div class="legend-bar">
-            <div class="legend-bar-item"><div class="legend-bar-dot" style="background:var(--green)"></div> REGULER — Pekerjaan rutin / berulang</div>
-            <div class="legend-bar-item"><div class="legend-bar-dot" style="background:var(--amber)"></div> ADDITIONAL — Pekerjaan tambahan / non rutin</div>
-            <div class="legend-bar-item"><div class="legend-bar-dot" style="background:var(--purple)"></div> PROJECT — Pekerjaan berbasis project / improvement</div>
-        </div>
-
-        <!-- MAIN GRID -->
-        <div class="report-grid">
-            <!-- LEFT: DETAIL -->
-            <div class="detail-section">
-                <div class="detail-title">Detail Activity</div>
-                <div class="dept-grid">${deptCols}</div>
-            </div>
-
-            <!-- RIGHT: SUMMARY -->
-            <div class="summary-sidebar">
-                <div class="summary-box">
-                    <div class="summary-box-title">Summary Activity</div>
-                    <div class="summary-stats">
-                        <div class="summary-stat-row">
-                            <div class="summary-stat-dot" style="background:var(--green)"></div>
-                            <div class="summary-stat-label">REGULER</div>
-                            <div class="summary-stat-value">${reguler}</div>
-                            <div class="summary-stat-sub">Activity</div>
-                        </div>
-                        <div class="summary-stat-row">
-                            <div class="summary-stat-dot" style="background:var(--amber)"></div>
-                            <div class="summary-stat-label">ADDITIONAL</div>
-                            <div class="summary-stat-value">${additional}</div>
-                            <div class="summary-stat-sub">Activity</div>
-                        </div>
-                        <div class="summary-stat-row">
-                            <div class="summary-stat-dot" style="background:var(--purple)"></div>
-                            <div class="summary-stat-label">PROJECT</div>
-                            <div class="summary-stat-value">${project}</div>
-                            <div class="summary-stat-sub">Activity</div>
-                        </div>
-                        <div class="summary-stat-row" style="border-color:rgba(201,168,76,0.3);background:rgba(201,168,76,0.05)">
-                            <div class="summary-stat-dot" style="background:var(--gold)"></div>
-                            <div class="summary-stat-label" style="color:var(--gold)">TOTAL ACTIVITY</div>
-                            <div class="summary-stat-value" style="color:var(--gold)">${total}</div>
-                            <div class="summary-stat-sub">Activity</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="summary-box">
-                    <div class="summary-box-title">Komposisi Aktivitas</div>
-                    <div class="donut-container">
-                        ${donutSvg}
-                        <div class="donut-legend">
-                            <div class="legend-row"><div class="legend-dot" style="background:var(--green)"></div><span>Reguler</span><span class="legend-pct">${regPct}%</span></div>
-                            <div class="legend-row"><div class="legend-dot" style="background:var(--amber)"></div><span>Additional</span><span class="legend-pct">${addPct}%</span></div>
-                            <div class="legend-row"><div class="legend-dot" style="background:var(--purple)"></div><span>Project</span><span class="legend-pct">${prjPct}%</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- BOTTOM: ANALYSIS & CONCLUSION -->
-        <div class="bottom-grid">
-            <div class="analysis-box">
-                <h3>📊 Analisa Kegiatan</h3>
-                ${analysisItems || '<div style="font-size:12px;color:var(--text3)">Belum ada analisa.</div>'}
-            </div>
-            <div class="conclusion-box">
-                <h3>📝 Kesimpulan</h3>
-                <div class="conclusion-text">${conclusion || 'Belum ada kesimpulan.'}</div>
-                <div class="focus-tags">
-                    ${focusTags}
-                </div>
-            </div>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="report-footer">
-            <span class="star">★</span> Terima kasih atas kerja keras dan dedikasi seluruh tim GA. Tetap semangat, responsif, dan terus berikan yang terbaik! <span class="star">★</span>
-        </div>
-    `;
-}
-
-
-// ═══════════════════════════════════════════════════════
-// DONUT CHART SVG
-// ═══════════════════════════════════════════════════════
-function buildDonut(regPct, addPct, prjPct, total) {
-    const r = 50, cx = 65, cy = 65;
-    const circumference = 2 * Math.PI * r;
-
-    function arc(pct, offset, color) {
-        if (pct <= 0) return '';
-        const dash = circumference * pct / 100;
-        const gap = circumference - dash;
-        const startOffset = -(circumference * offset / 100);
-        return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="16"
-            stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${startOffset}"
-            transform="rotate(-90 ${cx} ${cy})" />`;
-    }
-
-    return `
-        <svg class="donut-svg" viewBox="0 0 130 130">
-            ${arc(regPct, 0, '#10b981')}
-            ${arc(addPct, regPct, '#f59e0b')}
-            ${arc(prjPct, regPct + addPct, '#8b5cf6')}
-            <text x="${cx}" y="${cy - 4}" text-anchor="middle" fill="white" font-size="22" font-weight="800">${total}</text>
-            <text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#6b87a8" font-size="9" font-weight="700">TOTAL</text>
-        </svg>
-    `;
-}
-
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
 loadReport();
 </script>
 </body>
