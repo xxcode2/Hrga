@@ -9,6 +9,7 @@
     { "source": "/api/teams",            "destination": "/api/teams" },
     { "source": "/api/reports",          "destination": "/api/reports" },
     { "source": "/api/reports/(.*)",     "destination": "/api/reports" },
+    { "source": "/report",               "destination": "/report.html" },
     { "source": "/(.*)",                 "destination": "/index.html" }
   ]
 }

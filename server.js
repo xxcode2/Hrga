@@ -287,6 +287,11 @@ app.get('/api/reports', async (req, res) => {
   }
 });
 
+// ─── Serve report page ───────────────────────────────────
+app.get('/report', (req, res) => {
+  res.sendFile(path.join(__dirname, 'report.html'));
+});
+
 // ─── Catch-all: serve index.html ─────────────────────────
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
